@@ -1,8 +1,6 @@
 <?php
 // includes/header.php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include_once __DIR__ . '/session.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +32,24 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="nav-item">
                     <a class="nav-link text-warning" href="/roast-and-grind/item/index.php">
                         <i class="fa-solid fa-boxes-stacked me-1"></i>Manage Products
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <?php
+                    // total quantity of items currently in the cart
+                    $cart_count = 0;
+                    if (isset($_SESSION['cart_products'])) {
+                        foreach ($_SESSION['cart_products'] as $cart_itm) {
+                            $cart_count += $cart_itm['item_qty'];
+                        }
+                    }
+                    ?>
+                    <a class="nav-link" href="/roast-and-grind/view_cart.php">
+                        <i class="fa-solid fa-cart-shopping me-1"></i>Cart
+                        <?php if ($cart_count > 0): ?>
+                            <span class="badge bg-warning text-dark"><?= $cart_count; ?></span>
+                        <?php endif; ?>
                     </a>
                 </li>
             </ul>

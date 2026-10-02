@@ -49,6 +49,8 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 ?>
 
+<?php include("includes/alert.php"); ?>
+
 <div class="row mb-4">
     <div class="col-12 text-center">
         <h2 class="fw-bold">Artisan Coffee & Brewing Gear</h2>
@@ -121,11 +123,17 @@ $result = mysqli_stmt_get_result($stmt);
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                             <span class="fs-5 fw-bold text-dark">₱<?= number_format($item['sell_price'], 2); ?></span>
 
-                            <!-- Placeholder Add button for your partner to wire -->
                             <?php if ($item['qty'] > 0): ?>
-                                <button class="btn btn-sm btn-dark" type="button">
-                                    <i class="fa-solid fa-cart-plus me-1"></i> Add
-                                </button>
+                                    <form method="POST" action="cart_update.php" class="d-flex gap-1">
+                                    <input type="number" name="item_qty" class="form-control form-control-sm" style="width:65px"
+                                           value="1" min="1" max="<?= $item['qty']; ?>" />
+                                    <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>" />
+                                    <input type="hidden" name="type" value="add" />
+                                    <input type="hidden" name="redirect" value="index.php?<?= htmlspecialchars($_SERVER['QUERY_STRING']); ?>" />
+                                    <button class="btn btn-sm btn-dark" type="submit">
+                                        <i class="fa-solid fa-cart-plus me-1"></i> Add
+                                    </button>
+                                </form>
                             <?php else: ?>
                                 <button class="btn btn-sm btn-secondary" disabled>Unavailable</button>
                             <?php endif; ?>
