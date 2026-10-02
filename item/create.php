@@ -60,10 +60,18 @@ require_once "../includes/header.php";
                         </div>
                     </div>
 
-                    <!-- Product Image -->
+                  <!-- 1. Primary Card Image -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Primary Card Image (JPG/PNG)</label>
+                        <input type="file" name="product_image" class="form-control" accept=".jpg,.jpeg,.png" required>
+                        <small class="text-muted">This is the main image displayed on the storefront card.</small>
+                    </div>
+
+                    <!-- 2. Multiple Gallery Images for Right Drawer -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Product Image (JPG/JPEG, PNG)</label>
-                        <input type="file" name="product_image" class="form-control" accept=".jpg,.jpeg,.png">
+                        <label class="form-label fw-bold">Additional Gallery Photos (Multiple allowed)</label>
+                        <input type="file" name="gallery_images[]" class="form-control" accept=".jpg,.jpeg,.png" multiple>
+                        <small class="text-muted">Hold Ctrl/Cmd to select multiple images for the right-side carousel.</small>
                     </div>
 
                     <!-- Submit Button -->
