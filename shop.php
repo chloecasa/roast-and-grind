@@ -1,6 +1,12 @@
 <?php
-// shop.php - Minimal Cards (Image Only) + Custom Figma Drawer
+// shop.php - Boutique Catalog Page
+require_once "includes/session.php"; // Uses partner's session
 require_once "includes/config.php";
+
+// Count by NUMBER OF UNIQUE ITEMS (not total quantity)
+$cartCount = (isset($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])) 
+             ? count($_SESSION['cart_products']) 
+             : 0;
 
 $search   = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
@@ -61,35 +67,45 @@ $result = mysqli_stmt_get_result($stmt);
 </head>
 <body class="store-wrapper">
 
-   <!-- Top Navigation Bar (Stars at Edges, Links Flanking R&G) -->
+   <!-- Top Navigation Bar (Figma Aligned) -->
     <header class="store-top-bar">
         <!-- Far Left Star -->
         <i class="fa-solid fa-star store-star"></i>
 
-        <!-- Centered Nav Cluster -->
+        <!-- Centered Nav Links -->
         <div class="store-center-nav">
-            <a href="shop.php" class="store-nav-link">Storefront</a>
-            <a href="index.php" class="store-brand">R&G</a>
             <a href="item/index.php" class="store-nav-link">Manage Products</a>
-              <!-- Cart Link with Item Counter -->
-            <?php 
-                $cartCount = 0;
-                if (isset($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])) {
-                    foreach ($_SESSION['cart_products'] as $p) {
-                        $cartCount += $p['item_qty'];
-                    }
-                }
-            ?>
+            <a href="index.php" class="store-brand">R&G</a>
+            
         </div>
 
-        <!-- Far Right Star -->
-        <i class="fa-solid fa-star store-star"></i>
-    </header>
+        <!-- Right Side: Figma "See Cart Items" Button + Right Star -->
+        <div class="store-right-cart-group">
+            <a href="view_cart.php" class="figma-cart-btn" title="View Cart">
+                <!-- Green Pill (w-44 h-10 bg-stone-600 rounded-[20px]) -->
+                <div class="figma-cart-pill">
+                    <span>See cart items</span>
+                    <!-- Orange/Red Cart Icon from Figma -->
+                    <i class="fa-solid fa-cart-shopping figma-cart-icon"></i>
+                </div>
+                <!-- Overlapping Badge (size-8 bg-amber-900 rounded-full) -->
+                <div class="figma-cart-circle">
+                    <?= $cartCount; ?>
+                </div>
+            </a>
 
+            <!-- Far Right Star -->
+            <i class="fa-solid fa-star store-star"></i>
+        </div>
+    </header>
     <!-- Main Headline -->
     <h1 class="store-title">
         Explore our full shelf and<br>brew with intention
     </h1>
+
+    <div class="filter-bar-container">
+        <?php include("includes/alert.php"); ?>
+    </div>
 
     <!-- Filter & Search Controls Bar -->
     <div class="filter-bar-container">
@@ -235,19 +251,21 @@ $result = mysqli_stmt_get_result($stmt);
                                 </div>
                             </div>
 
-                           <!-- Form submitting to your partner's cart_update.php -->
+                           <!-- Form submitting EXACTLY what her cart_update.php expects -->
                             <form method="POST" action="cart_update.php" class="drawer-right-col">
+                                <input type="hidden" name="type" value="add">
                                 <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
-                                <input type="hidden" name="return_url" value="shop.php">
-                                <!-- Hidden input updated by the stepper -->
-                                <input type="hidden" name="product_qty" id="input-qty-<?= $item['item_id']; ?>" value="1">
+                                <input type="hidden" name="item_qty" id="input-qty-<?= $item['item_id']; ?>" value="1">
+                                <input type="hidden" name="redirect" value="shop.php?<?= htmlspecialchars($_SERVER['QUERY_STRING']); ?>">
 
+                                <!-- Quantity Stepper -->
                                 <div class="drawer-stepper">
                                     <button type="button" class="stepper-btn" onclick="stepQty(<?= $item['item_id']; ?>, -1)">-</button>
                                     <span class="stepper-val" id="qty-<?= $item['item_id']; ?>">1</span>
                                     <button type="button" class="stepper-btn" onclick="stepQty(<?= $item['item_id']; ?>, 1, <?= $item['qty']; ?>)">+</button>
                                 </div>
 
+                                <!-- Add to Cart Button -->
                                 <?php if ($item['qty'] > 0): ?>
                                     <button type="submit" class="drawer-add-btn">
                                         add to cart

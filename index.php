@@ -14,7 +14,6 @@
 </head>
 <body class="hero-body">
 
-<<<<<<< HEAD
 <div class="hero-wrapper" id="heroWrapper">
     <!-- Top Navigation Bar -->
     <header class="hero-top-bar">
@@ -32,14 +31,6 @@
     <!-- Right-side Description -->
     <div class="hero-subtext">
         Ethically sourced single-origin beans and precision drip gear designed to elevate your morning ritual, one cup at a time.
-=======
-<?php include("includes/alert.php"); ?>
-
-<div class="row mb-4">
-    <div class="col-12 text-center">
-        <h2 class="fw-bold">Artisan Coffee & Brewing Gear</h2>
-        <p class="text-muted">Freshly roasted single-origin beans and premium drip equipment.</p>
->>>>>>> 7d606f511870d49aa7b973d5705fbedee83fbcf9
     </div>
 
     <!-- The Infinite Curved Carousel Stage -->
@@ -79,7 +70,6 @@
         </a>
     </div>
 
-<<<<<<< HEAD
   <!-- The Brown Arch with Text Hugging the Top Crest -->
     <div class="hero-arch-container">
         <div class="hero-arch-shape">
@@ -92,65 +82,6 @@
                     </textPath>
                 </text>
             </svg>
-=======
-<!-- Product Grid -->
-<div class="row">
-    <?php if (mysqli_num_rows($result) > 0): ?>
-        <?php while ($item = mysqli_fetch_assoc($result)): ?>
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-header bg-white border-0 pt-3 pb-0">
-                        <span class="badge bg-secondary"><?= htmlspecialchars($item['category']); ?></span>
-                        <?php if ($item['origin'] !== 'N/A'): ?>
-                            <span class="badge bg-light text-dark border">
-                                <i class="fa-solid fa-location-dot me-1 text-danger"></i><?= htmlspecialchars($item['origin']); ?>
-                            </span>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold text-dark mt-2"><?= htmlspecialchars($item['item_name']); ?></h5>
-                        <p class="card-text text-muted small flex-grow-1"><?= htmlspecialchars($item['description']); ?></p>
-
-                        <div class="my-2">
-                            <!-- FR-13 Stock Badges -->
-                            <?php if ($item['qty'] > 5): ?>
-                                <span class="badge bg-success">In Stock (<?= $item['qty']; ?>)</span>
-                            <?php elseif ($item['qty'] > 0): ?>
-                                <span class="badge bg-warning text-dark">Low Stock (<?= $item['qty']; ?> left)</span>
-                            <?php else: ?>
-                                <span class="badge bg-danger">Out of Stock</span>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                            <span class="fs-5 fw-bold text-dark">₱<?= number_format($item['sell_price'], 2); ?></span>
-
-                            <?php if ($item['qty'] > 0): ?>
-                                    <form method="POST" action="cart_update.php" class="d-flex gap-1">
-                                    <input type="number" name="item_qty" class="form-control form-control-sm" style="width:65px"
-                                           value="1" min="1" max="<?= $item['qty']; ?>" />
-                                    <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>" />
-                                    <input type="hidden" name="type" value="add" />
-                                    <input type="hidden" name="redirect" value="index.php?<?= htmlspecialchars($_SERVER['QUERY_STRING']); ?>" />
-                                    <button class="btn btn-sm btn-dark" type="submit">
-                                        <i class="fa-solid fa-cart-plus me-1"></i> Add
-                                    </button>
-                                </form>
-                            <?php else: ?>
-                                <button class="btn btn-sm btn-secondary" disabled>Unavailable</button>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <div class="col-12 text-center py-5">
-            <i class="fa-solid fa-mug-saucer fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No products found matching your search.</h5>
-            <a href="index.php" class="btn btn-outline-dark mt-2">View All Products</a>
->>>>>>> 7d606f511870d49aa7b973d5705fbedee83fbcf9
         </div>
     </div>
 

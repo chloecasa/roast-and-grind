@@ -93,6 +93,7 @@ body.store-wrapper {
     align-items: center;
     padding: 24px var(--shop-spacing) 10px var(--shop-spacing);
     width: 100%;
+     transform: translateY(-12px)
 }
 .hero-star {
     color: var(--text-brown);
@@ -289,8 +290,10 @@ html, body.store-wrapper {
     overflow-x: hidden; /* Eliminates the horizontal scrollbar */
 }
 
-/* Store Navigation Bar */
+
+/* Top Bar */
 .store-top-bar {
+    position: relative; /* Allows true absolute centering for the middle links */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -298,18 +301,28 @@ html, body.store-wrapper {
     width: 100%;
 }
 
+
+.store-center-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-45%); /* Centers navigation with 3 links */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(30px, 5vw, 90px);
+}
+
+/* 2. Specifically for shop.php (where Storefront is hidden, only 2 items) */
+body.store-wrapper .store-center-nav {
+    transform: translateX(-83%); /* Centers navigation on the shop page */
+}
+
 .store-star {
     color: var(--text-brown);
     font-size: 1.5rem;
 }
 
-/* Centers Storefront, R&G, and Manage Products with a large gap from the stars */
-.store-center-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(40px, 10vw, 130px); /* Adjusts the space between Storefront, R&G, and Manage Products */
-}
+
 
 .store-nav-link {
     font-family: 'Alinore', sans-serif;
@@ -332,7 +345,7 @@ html, body.store-wrapper {
     color: var(--text-brown);
     text-decoration: none;
     letter-spacing: 2px;
-    transform: translateX(22px);
+  
 }
 
 /* Store Main Headline */
@@ -845,4 +858,91 @@ html, body.store-wrapper {
     color: #FFFFFF;
     transform: translateY(-2px) scale(1.03);
     box-shadow: 0 12px 25px rgba(116, 48, 20, 0.3);
+}
+/* =========================================================
+   FIGMA "SEE CART ITEMS" BUTTON (Exact Dimensions & Colors)
+========================================================= */
+.store-right-cart-group {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Space between the Cart Button and the Right Star */
+}
+
+/* Button Wrapper */
+.figma-cart-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.figma-cart-btn:hover {
+    transform: scale(1.03);
+}
+
+/* The Pill: w-44 (176px), h-10 (40px), rounded-[20px] */
+.figma-cart-pill {
+    background-color: #4A5B40 !important; /* Moss/stone green from your Figma */
+    color: #D6D3D1 !important;            /* text-stone-300 from Figma */
+    font-family: 'Alinore', sans-serif !important;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    height: 40px;
+    padding: 0 16px 0 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    border: none;
+}
+
+/* Red/Orange Cart Icon from Figma */
+.figma-cart-icon {
+    color: #EA580C; /* Accent orange/red */
+    font-size: 1.05rem;
+}
+
+/* Overlapping Badge: size-8 (32px), bg-amber-900 (#743014), rounded-full */
+.figma-cart-circle {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--arch-brown) !important; /* bg-amber-900 #743014 */
+    color: #D6D3D1 !important;                      /* text-stone-300 */
+    font-family: 'Alinore', sans-serif !important;
+    font-size: 1.15rem;
+    font-weight: normal;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-cream);              /* Cutout ring */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================================================
+   NOTIFICATION ALERT STYLES (Font & Theme)
+========================================================= */
+.alert {
+    font-family: 'Alinore', sans-serif !important; /* Change to 'Aqila' or 'Alinore' */
+    font-size: 1.15rem !important;
+    letter-spacing: 0.5px;
+    border-radius: 16px !important; /* Matches your rounded theme */
+    border: none !important;
+}
+
+/* Optional: Custom boutique green/terracotta to match your theme */
+.alert-success {
+    background-color: #E2EBDC !important; /* Soft moss background */
+    color: #2F472A !important;            /* Dark green text */
+}
+
+.alert-danger {
+    background-color: #F8D7DA !important; 
+    color: #743014 !important;            /* Terracotta red/brown text */
 }

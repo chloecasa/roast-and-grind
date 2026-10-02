@@ -10,7 +10,7 @@ $success = [];
 $redirect = 'index.php';
 if (isset($_POST['redirect'])) {
     $page = strtok($_POST['redirect'], '?');
-    if (in_array($page, ['index.php', 'view_cart.php'])) {
+    if (in_array($page, ['index.php', 'view_cart.php', 'shop.php'])) {
         $redirect = $_POST['redirect'];
     }
 }

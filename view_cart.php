@@ -65,7 +65,7 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) 
 
             <input type="hidden" name="redirect" value="view_cart.php" />
 
-            <a href="index.php" class="btn btn-outline-dark">Add More Items</a>
+           <a href="shop.php" class="btn btn-outline-dark">Add More Items</a>
             <button type="submit" class="btn btn-dark">Update Cart</button>
             <!-- checkout.php is FR-18 (next step) -->
             <a href="checkout.php" class="btn btn-warning float-end">Checkout</a>
@@ -76,7 +76,7 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) 
     echo '<div class="text-center py-5">';
     echo '<i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>';
     echo '<h5 class="text-muted">Your cart is empty.</h5>';
-    echo '<a href="index.php" class="btn btn-outline-dark mt-2">Continue Shopping</a>';
+   echo '<a href="shop.php" class="btn btn-outline-dark mt-2">Continue Shopping</a>';
     echo '</div>';
 }
 
