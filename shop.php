@@ -71,6 +71,15 @@ $result = mysqli_stmt_get_result($stmt);
             <a href="shop.php" class="store-nav-link">Storefront</a>
             <a href="index.php" class="store-brand">R&G</a>
             <a href="item/index.php" class="store-nav-link">Manage Products</a>
+              <!-- Cart Link with Item Counter -->
+            <?php 
+                $cartCount = 0;
+                if (isset($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])) {
+                    foreach ($_SESSION['cart_products'] as $p) {
+                        $cartCount += $p['item_qty'];
+                    }
+                }
+            ?>
         </div>
 
         <!-- Far Right Star -->
@@ -226,7 +235,13 @@ $result = mysqli_stmt_get_result($stmt);
                                 </div>
                             </div>
 
-                            <div class="drawer-right-col">
+                           <!-- Form submitting to your partner's cart_update.php -->
+                            <form method="POST" action="cart_update.php" class="drawer-right-col">
+                                <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
+                                <input type="hidden" name="return_url" value="shop.php">
+                                <!-- Hidden input updated by the stepper -->
+                                <input type="hidden" name="product_qty" id="input-qty-<?= $item['item_id']; ?>" value="1">
+
                                 <div class="drawer-stepper">
                                     <button type="button" class="stepper-btn" onclick="stepQty(<?= $item['item_id']; ?>, -1)">-</button>
                                     <span class="stepper-val" id="qty-<?= $item['item_id']; ?>">1</span>
@@ -234,7 +249,7 @@ $result = mysqli_stmt_get_result($stmt);
                                 </div>
 
                                 <?php if ($item['qty'] > 0): ?>
-                                    <button type="button" class="drawer-add-btn">
+                                    <button type="submit" class="drawer-add-btn">
                                         add to cart
                                     </button>
                                 <?php else: ?>
@@ -242,7 +257,7 @@ $result = mysqli_stmt_get_result($stmt);
                                         out of stock
                                     </button>
                                 <?php endif; ?>
-                            </div>
+                            </form>
                         </div>
 
                         <button type="button" class="drawer-close-link" data-bs-dismiss="offcanvas" aria-label="Close">
@@ -288,10 +303,16 @@ $result = mysqli_stmt_get_result($stmt);
 <script>
 function stepQty(id, delta, maxStock = 999) {
     const el = document.getElementById('qty-' + id);
+    const hiddenInput = document.getElementById('input-qty-' + id);
+    
     let val = parseInt(el.innerText) + delta;
     if (val < 1) val = 1;
     if (val > maxStock) val = maxStock;
+
     el.innerText = val;
+    if (hiddenInput) {
+        hiddenInput.value = val;
+    }
 }
 </script>
 
