@@ -305,18 +305,25 @@ html, body.store-wrapper {
 .store-center-nav {
     position: absolute;
     left: 50%;
-    transform: translateX(-45%); /* Centers navigation with 3 links */
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* equal left/right sides, so the logo stays in the exact center */
+    align-items: center;
+    column-gap: clamp(30px, 5vw, 90px);
+}
+ 
+/* Left side (Manage Products) hugs the logo; right side (Storefront / Login / Logout) starts after it */
+.store-nav-left {
+    justify-self: end;
+}
+ 
+.store-nav-right {
+    justify-self: start;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: clamp(30px, 5vw, 90px);
 }
-
-/* 2. Specifically for shop.php (where Storefront is hidden, only 2 items) */
-body.store-wrapper .store-center-nav {
-    transform: translateX(-83%); /* Centers navigation on the shop page */
-}
-
+ 
 .store-star {
     color: var(--text-brown);
     font-size: 1.5rem;

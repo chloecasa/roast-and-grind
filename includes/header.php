@@ -33,13 +33,19 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
 
     <!-- Centered Nav Links -->
     <div class="store-center-nav">
-        <!-- Storefront ONLY shows on admin pages -->
-        
- <a href="/roast-and-grind/item/index.php" class="store-nav-link">Manage Products</a>
+        <a href="/roast-and-grind/item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
         <a href="/roast-and-grind/index.php" class="store-brand">R&G</a>
-       <?php if ($is_admin): ?>
-            <a href="/roast-and-grind/shop.php" class="store-nav-link">Storefront</a>
-        <?php endif; ?>
+ 
+        <div class="store-nav-right">
+            <?php if ($is_admin): ?>
+                <a href="/roast-and-grind/shop.php" class="store-nav-link">Storefront</a>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="/roast-and-grind/user/logout.php" class="store-nav-link">Logout</a>
+            <?php else: ?>
+                <a href="/roast-and-grind/user/login.php" class="store-nav-link">Login</a>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- Right Side: Figma "See Cart Items" Button + Star -->

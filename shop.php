@@ -72,11 +72,18 @@ $result = mysqli_stmt_get_result($stmt);
         <!-- Far Left Star -->
         <i class="fa-solid fa-star store-star"></i>
 
-        <!-- Centered Nav Links -->
+         <!-- Centered Nav Links -->
         <div class="store-center-nav">
-            <a href="item/index.php" class="store-nav-link">Manage Products</a>
+            <a href="item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
             <a href="index.php" class="store-brand">R&G</a>
-            
+ 
+            <div class="store-nav-right">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="user/logout.php" class="store-nav-link">Logout</a>
+                <?php else: ?>
+                    <a href="user/login.php" class="store-nav-link">Login</a>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- Right Side: Figma "See Cart Items" Button + Right Star -->
