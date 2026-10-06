@@ -1,13 +1,16 @@
 <?php
 // shop.php - Boutique Catalog Page
-require_once "includes/session.php"; // Uses partner's session
+require_once "includes/session.php";
 require_once "includes/config.php";
 
 // Count by NUMBER OF UNIQUE ITEMS (not total quantity)
 $cartCount = (isset($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])) 
              ? count($_SESSION['cart_products']) 
              : 0;
-
+// after a cart action, come back to this same page (same search/filter) with the cart sidebar open
+$returnQuery = $_GET;
+$returnQuery['cart'] = 'open';
+$returnUrl   = 'shop.php?' . http_build_query($returnQuery);
 $search   = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 
@@ -88,7 +91,8 @@ $result = mysqli_stmt_get_result($stmt);
 
         <!-- Right Side: Figma "See Cart Items" Button + Right Star -->
         <div class="store-right-cart-group">
-            <a href="view_cart.php" class="figma-cart-btn" title="View Cart">
+            <a href="view_cart.php" class="figma-cart-btn" title="View Cart"
+   data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
                 <!-- Green Pill (w-44 h-10 bg-stone-600 rounded-[20px]) -->
                 <div class="figma-cart-pill">
                     <span>See cart items</span>
@@ -263,7 +267,7 @@ $result = mysqli_stmt_get_result($stmt);
                                 <input type="hidden" name="type" value="add">
                                 <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
                                 <input type="hidden" name="item_qty" id="input-qty-<?= $item['item_id']; ?>" value="1">
-                                <input type="hidden" name="redirect" value="shop.php?<?= htmlspecialchars($_SERVER['QUERY_STRING']); ?>">
+                                <input type="hidden" name="redirect" value="<?= htmlspecialchars($returnUrl); ?>">
 
                                 <!-- Quantity Stepper -->
                                 <div class="drawer-stepper">
@@ -323,7 +327,8 @@ $result = mysqli_stmt_get_result($stmt);
             <?php endif; ?>
         </div>
     </div>
-
+<!-- Cart sidebar -->
+<?php include("includes/cart_drawer.php"); ?>
 <!-- Quantity Stepper Logic -->
 <script>
 function stepQty(id, delta, maxStock = 999) {
@@ -343,5 +348,28 @@ function stepQty(id, delta, maxStock = 999) {
 
 <!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Cart sidebar logic -->
+<script>
+(function () {
+    const el = document.getElementById('cartDrawer');
+    if (!el) return;
+    const drawer = bootstrap.Offcanvas.getOrCreateInstance(el);
+
+    // page makes room while the cart is open; remember it so search/filter reloads keep it open
+    el.addEventListener('show.bs.offcanvas',   () => { document.body.classList.add('cart-open');    sessionStorage.setItem('cartOpen', '1'); });
+    el.addEventListener('hidden.bs.offcanvas', () => { document.body.classList.remove('cart-open'); sessionStorage.removeItem('cartOpen'); });
+
+    // open after a cart action (?cart=open) or if it was left open on the previous page load
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('cart') === 'open' || sessionStorage.getItem('cartOpen') === '1') {
+        drawer.show();
+    }
+    if (params.has('cart')) {
+        params.delete('cart');
+        const qs = params.toString();
+        history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+    }
+})();
+</script>
 </body>
 </html>
