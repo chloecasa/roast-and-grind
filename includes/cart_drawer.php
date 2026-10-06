@@ -1,71 +1,125 @@
 <?php
-// includes/cart_drawer.php - cart panel on the right side of shop.php (FR-17)
-// same idea as the cart panel in the professor's index.php: Qty box + item name + Remove checkbox + Update / Checkout
-// needs: $conn (config.php) and $returnUrl (set in shop.php, brings the customer back here with the cart open)
+// includes/cart_drawer.php - Slide-out Cart Drawer (Exact Figma Specs)
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/session.php';
+
+// Fixes the 4 undefined variable warnings
+$returnUrl = $returnUrl ?? 'shop.php?cart=open';
 ?>
-<!-- No backdrop and page scrolling stays on, so the customer can keep browsing while the cart is open -->
-<div class="offcanvas offcanvas-end cart-drawer"
-     tabindex="-1"
-     id="cartDrawer"
-     data-bs-backdrop="false"
-     data-bs-scroll="true"
-     aria-labelledby="cartDrawerLabel">
 
-    <button type="button" class="drawer-close-link" data-bs-dismiss="offcanvas" aria-label="Close">[close]</button>
 
-<?php
-if (isset($_SESSION["cart_products"]) && count($_SESSION["cart_products"]) > 0) {
+<link rel="stylesheet" href="includes/style/style.css?v=<?= time(); ?>">
 
-    // prepared once, executed for every cart row (same idea as view_cart.php)
-    $sql = "SELECT quantity FROM stock WHERE item_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $product_code);
 
-    echo '<div class="cart-view-table-front" id="view-cart">';
-    echo '<h3 id="cartDrawerLabel">Your Shopping Cart</h3>';
-    echo '<form method="POST" action="cart_update.php">';
-    echo '<input type="hidden" name="redirect" value="' . htmlspecialchars($returnUrl) . '" />';
-    echo '<table width="100%" cellpadding="6" cellspacing="0">';
-    echo '<tbody>';
-    $total = 0;
-    $b = 0;
-    foreach ($_SESSION["cart_products"] as $cart_itm) {
-        $product_name  = $cart_itm["item_name"];
-        $product_qty   = $cart_itm["item_qty"];
-        $product_price = $cart_itm["item_price"];
-        $product_code  = $cart_itm["item_id"];
-        $bg_color = ($b++ % 2 == 1) ? 'odd' : 'even';
+<!-- =======================================================
+     OFFCANVAS HTML CONTAINER
+======================================================== -->
+<div class="offcanvas offcanvas-end" 
+     tabindex="-1" 
+     id="cartDrawer" 
+     aria-labelledby="cartDrawerTitle">
+    
+    <!-- 1. Sticky Top Header -->
+    <div class="cart-header-box">
+        <h2 class="cart-header-title" id="cartDrawerTitle">YOUR CART</h2>
+        <button type="button" class="cart-header-close" data-bs-dismiss="offcanvas" aria-label="Close">[CLOSE]</button>
+    </div>
 
-        // current stock, used as the max of the quantity box
-        mysqli_stmt_execute($stmt);
-        $stock_row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-        $max_qty   = $stock_row ? $stock_row['quantity'] : 0;
+    <!-- 2. Scrollable Middle Area -->
+    <div class="cart-body-scroll">
+        <?php 
+        $grandTotal = 0;
+        if (!empty($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])): 
+            foreach ($_SESSION['cart_products'] as $p_code => $c_item): 
+                $sub = $c_item['item_price'] * $c_item['item_qty'];
+                $grandTotal += $sub;
 
-        echo '<tr class="' . $bg_color . '">';
-        echo "<td>Qty <input type='number' min='1' max='{$max_qty}' name='product_qty[$product_code]' value='{$product_qty}' /></td>";
-        echo '<td>' . htmlspecialchars($product_name) . '</td>';
-        echo '<td><input type="checkbox" name="remove_code[]" value="' . $product_code . '" /> Remove</td>';
-        echo '</tr>';
-        $subtotal = ($product_price * $product_qty);
-        $total += $subtotal;
-    }
-    echo '<tr class="cart-total-row">';
-    echo '<td colspan="3">Amount Payable : ₱' . number_format($total, 2) . '</td>';
-    echo '</tr>';
-    echo '<tr>';
-    echo '<td colspan="3" class="cart-actions">';
-    echo '<button type="submit">Update</button><a href="checkout.php" class="button">Checkout</a>';
-    echo '</td>';
-    echo '</tr>';
-    echo '</tbody>';
-    echo '</table>';
-    echo '</form>';
-    echo '</div>';
-} else {
-    echo '<div class="cart-drawer-empty">';
-    echo '<i class="fa-solid fa-cart-shopping"></i>';
-    echo '<p>Your cart is empty.</p>';
-    echo '</div>';
-}
-?>
+                // STRICTLY GET THE PRIMARY IMAGE FROM THE 'item' TABLE
+                $img_q = mysqli_query($conn, "SELECT img_path FROM item WHERE item_id = " . intval($p_code));
+                $img_row = mysqli_fetch_assoc($img_q);
+                
+                $c_img = "https://placehold.co/264x231/EDEAE1/743014?text=" . urlencode($c_item['item_name']);
+                if ($img_row && !empty($img_row['img_path'])) {
+                    $test_file = "item/images/" . $img_row['img_path'];
+                    if (file_exists($test_file)) {
+                        $c_img = $test_file;
+                    }
+                }
+        ?>
+            <!-- Single Cart Product Row -->
+            <div class="cart-row-item">
+                <!-- Fixed 170x160 Primary Image Thumbnail -->
+                <div class="cart-img-frame">
+                    <img src="<?= $c_img; ?>" alt="<?= htmlspecialchars($c_item['item_name']); ?>">
+                </div>
+
+                <!-- Product Details Column -->
+                <div class="cart-details-col">
+                    <h4 class="cart-item-name"><?= htmlspecialchars($c_item['item_name']); ?></h4>
+                    
+                    <div class="cart-item-unit-price">
+                        PRICE: ₱<?= number_format($c_item['item_price'], 2); ?>
+                    </div>
+
+                    <!-- Quantity Stepper Row -->
+                    <div class="cart-qty-line">
+                        <span class="cart-qty-text">QUANTITY</span>
+                        
+                        <div class="cart-stepper-box">
+                            <form method="POST" action="cart_update.php" style="display:inline; margin:0;">
+                                <input type="hidden" name="redirect" value="<?= htmlspecialchars($returnUrl); ?>">
+                                <input type="hidden" name="product_qty[<?= $p_code; ?>]" value="<?= max(1, $c_item['item_qty'] - 1); ?>">
+                                <button type="submit" class="cart-stepper-btn">-</button>
+                            </form>
+
+                            <span class="cart-stepper-count"><?= $c_item['item_qty']; ?></span>
+
+                            <form method="POST" action="cart_update.php" style="display:inline; margin:0;">
+                                <input type="hidden" name="redirect" value="<?= htmlspecialchars($returnUrl); ?>">
+                                <input type="hidden" name="product_qty[<?= $p_code; ?>]" value="<?= $c_item['item_qty'] + 1; ?>">
+                                <button type="submit" class="cart-stepper-btn">+</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Delete Link and Subtotal -->
+                    <div class="cart-bottom-actions">
+                        <form method="POST" action="cart_update.php" style="display:inline; margin:0;">
+                            <input type="hidden" name="redirect" value="<?= htmlspecialchars($returnUrl); ?>">
+                            <input type="hidden" name="remove_code[]" value="<?= $p_code; ?>">
+                            <button type="submit" class="cart-delete-link">[DELETE]</button>
+                        </form>
+
+                        <span class="cart-subtotal-text">
+                            TOTAL ₱<?= number_format($sub, 2); ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        <?php 
+            endforeach; 
+        else: 
+        ?>
+            <!-- Empty Cart Notice -->
+            <div class="cart-empty-box">
+                <i class="fa-solid fa-cart-shopping fa-3x mb-3" style="color: #FED7AA; opacity: 0.5;"></i>
+                <h4 style="font-family: 'Aqila', serif; color: #FED7AA;">Your Cart is Empty</h4>
+                <p style="font-family: 'Alinore', sans-serif;">Add some coffee to see it here.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- 3. Sticky Bottom Footer -->
+    <div class="cart-footer-box">
+        <div class="cart-amount-line">
+            <span>AMOUNT PAYABLE:</span>
+            <span>₱<?= number_format($grandTotal, 2); ?></span>
+        </div>
+
+        <?php if (!empty($_SESSION['cart_products'])): ?>
+            <a href="checkout.php" class="cart-checkout-pill">CHECKOUT</a>
+        <?php else: ?>
+            <button class="cart-checkout-pill" disabled style="opacity: 0.5; cursor: not-allowed;">CHECKOUT</button>
+        <?php endif; ?>
+    </div>
 </div>

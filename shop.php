@@ -328,6 +328,8 @@ $result = mysqli_stmt_get_result($stmt);
         </div>
     </div>
 <!-- Cart sidebar -->
+ <!-- Boutique Footer -->
+<?php include("includes/footer.php"); ?>
 <?php include("includes/cart_drawer.php"); ?>
 <!-- Quantity Stepper Logic -->
 <script>

@@ -21,7 +21,7 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Custom Theme Stylesheet -->
-    <link rel="stylesheet" href="/roast-and-grind/includes/style/style.css">
+    <link rel="stylesheet" href="/roast-and-grind/includes/style/style.css?v=<?= time(); ?>">
 </head>
 <!-- Automatically assigns store-wrapper to user pages so the -84% centering applies! -->
 <body class="<?= $is_admin ? 'admin-page' : 'store-wrapper'; ?>" style="background-color: var(--bg-cream); min-height: 100vh;">
