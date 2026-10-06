@@ -953,3 +953,131 @@ html, body.store-wrapper {
     background-color: #F8D7DA !important; 
     color: #743014 !important;            /* Terracotta red/brown text */
 }
+
+/* =========================================================
+   CART SIDEBAR (shop.php) - the reference's cart panel, in the shop's colours
+========================================================= */
+.cart-drawer {
+    width: 420px !important;
+    max-width: 92vw;
+    background-color: var(--arch-brown) !important;
+    padding: 24px 20px;
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+ 
+.cart-drawer .drawer-close-link {
+    align-self: flex-end;
+    font-size: 1.3rem;
+    margin: 0 0 6px 0;
+}
+ 
+.cart-drawer .cart-view-table-front h3 {
+    font-family: 'Aqila', serif;
+    font-size: 2.2rem;
+    font-weight: normal;
+    color: #FED7AA;
+    text-align: center;
+    margin: 0 0 16px 0;
+}
+ 
+.cart-drawer table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Alinore', sans-serif;
+    font-size: 1.2rem;
+    color: #FED7AA;
+}
+ 
+.cart-drawer table td {
+    padding: 10px 8px;
+    vertical-align: middle;
+}
+ 
+.cart-drawer table tr.even { background-color: rgba(254, 215, 170, 0.08); }
+.cart-drawer table tr.odd  { background-color: rgba(254, 215, 170, 0.16); }
+ 
+.cart-drawer input[type="number"] {
+    width: 64px;
+    margin-left: 4px;
+    padding: 3px 6px;
+    background-color: var(--bg-cream);
+    color: var(--text-brown);
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+}
+ 
+.cart-drawer input[type="checkbox"] {
+    accent-color: #FB7185;
+    margin-right: 4px;
+}
+ 
+.cart-drawer table tr.cart-total-row td {
+    padding-top: 18px;
+    text-align: right;
+    color: #BEF264;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+ 
+.cart-drawer td.cart-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 6px 0 0 0;
+}
+ 
+.cart-drawer .cart-view-table-front button,
+.cart-drawer .cart-view-table-front .button {
+    padding: 10px 26px;
+    border-radius: 30px;
+    border: 1px solid #F5F5F4;
+    background-color: transparent;
+    color: #F7F4EE;
+    font-family: 'Alinore', sans-serif;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.cart-drawer .cart-view-table-front .button {
+    background-color: #4A7239;
+}
+.cart-drawer .cart-view-table-front button:hover,
+.cart-drawer .cart-view-table-front .button:hover {
+    background-color: #DA4E14;
+    color: #FFFFFF;
+}
+ 
+.cart-drawer-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #D6D3D1;
+    font-family: 'Alinore', sans-serif;
+    font-size: 1.4rem;
+}
+.cart-drawer-empty i {
+    font-size: 2.6rem;
+    color: #FED7AA;
+}
+.cart-drawer-empty p {
+    margin: 0;
+}
+ 
+/* With the cart open on a wide screen the page makes room for it instead of being covered */
+@media (min-width: 992px) {
+    body.store-wrapper {
+        transition: padding-right 0.3s ease;
+    }
+    body.store-wrapper.cart-open {
+        padding-right: 420px;
+    }
+}
