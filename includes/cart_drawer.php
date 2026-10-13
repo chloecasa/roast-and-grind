@@ -1,9 +1,9 @@
 <?php
-// includes/cart_drawer.php - Slide-out Cart Drawer (Exact Figma Specs)
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/session.php';
 
-// Fixes the 4 undefined variable warnings
+
 $returnUrl = $returnUrl ?? 'shop.php?cart=open';
 ?>
 
@@ -11,21 +11,19 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
 <link rel="stylesheet" href="includes/style/style.css?v=<?= time(); ?>">
 
 
-<!-- =======================================================
-     OFFCANVAS HTML CONTAINER
-======================================================== -->
+
 <div class="offcanvas offcanvas-end" 
      tabindex="-1" 
      id="cartDrawer" 
      aria-labelledby="cartDrawerTitle">
     
-    <!-- 1. Sticky Top Header -->
+    
     <div class="cart-header-box">
         <h2 class="cart-header-title" id="cartDrawerTitle">YOUR CART</h2>
         <button type="button" class="cart-header-close" data-bs-dismiss="offcanvas" aria-label="Close">[CLOSE]</button>
     </div>
 
-    <!-- 2. Scrollable Middle Area -->
+    
     <div class="cart-body-scroll">
         <?php 
         $grandTotal = 0;
@@ -34,7 +32,7 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
                 $sub = $c_item['item_price'] * $c_item['item_qty'];
                 $grandTotal += $sub;
 
-                // STRICTLY GET THE PRIMARY IMAGE FROM THE 'item' TABLE
+                
                 $img_q = mysqli_query($conn, "SELECT img_path FROM item WHERE item_id = " . intval($p_code));
                 $img_row = mysqli_fetch_assoc($img_q);
                 
@@ -46,14 +44,14 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
                     }
                 }
         ?>
-            <!-- Single Cart Product Row -->
+          
             <div class="cart-row-item">
-                <!-- Fixed 170x160 Primary Image Thumbnail -->
+               
                 <div class="cart-img-frame">
                     <img src="<?= $c_img; ?>" alt="<?= htmlspecialchars($c_item['item_name']); ?>">
                 </div>
 
-                <!-- Product Details Column -->
+               
                 <div class="cart-details-col">
                     <h4 class="cart-item-name"><?= htmlspecialchars($c_item['item_name']); ?></h4>
                     
@@ -61,7 +59,7 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
                         PRICE: ₱<?= number_format($c_item['item_price'], 2); ?>
                     </div>
 
-                    <!-- Quantity Stepper Row -->
+                   
                     <div class="cart-qty-line">
                         <span class="cart-qty-text">QUANTITY</span>
                         
@@ -82,7 +80,7 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
                         </div>
                     </div>
 
-                    <!-- Delete Link and Subtotal -->
+                
                     <div class="cart-bottom-actions">
                         <form method="POST" action="cart_update.php" style="display:inline; margin:0;">
                             <input type="hidden" name="redirect" value="<?= htmlspecialchars($returnUrl); ?>">
@@ -100,7 +98,7 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
             endforeach; 
         else: 
         ?>
-            <!-- Empty Cart Notice -->
+            
             <div class="cart-empty-box">
                 <i class="fa-solid fa-cart-shopping fa-3x mb-3" style="color: #FED7AA; opacity: 0.5;"></i>
                 <h4 style="font-family: 'Aqila', serif; color: #FED7AA;">Your Cart is Empty</h4>
@@ -109,7 +107,7 @@ $returnUrl = $returnUrl ?? 'shop.php?cart=open';
         <?php endif; ?>
     </div>
 
-    <!-- 3. Sticky Bottom Footer -->
+ 
     <div class="cart-footer-box">
         <div class="cart-amount-line">
             <span>AMOUNT PAYABLE:</span>

@@ -1,6 +1,4 @@
-/* =========================================================
-   1. LOCAL CUSTOM FONTS
-========================================================= */
+
 @font-face {
     font-family: 'Aqila';
     src: url('../../assets/fonts/Aqila.ttf') format('truetype'),
@@ -17,10 +15,8 @@
     font-style: normal;
 }
 
-/* =========================================================
-   HIDE VISUAL SCROLLBAR (STILL ALLOWS SCROLLING)
-========================================================= */
-/* Hide scrollbar for Chrome, Safari, Edge, and Opera */
+
+
 *::-webkit-scrollbar,
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -30,15 +26,13 @@ body::-webkit-scrollbar {
     background: transparent !important;
 }
 
-/* Hide scrollbar for Firefox and IE */
+
 * {
     -ms-overflow-style: none !important; /* IE and legacy Edge */
     scrollbar-width: none !important;    /* Firefox */
 }
 
-/* =========================================================
-   2. GLOBAL COLOR PALETTE
-========================================================= */
+
 :root {
     --bg-cream: #F5F3EC;
     --text-brown: #54220E;
@@ -53,7 +47,7 @@ body::-webkit-scrollbar {
     padding: 0;
 }
 
-/* Lock Hero completely: No vertical or horizontal scrollbar */
+
 html:has(body.hero-body), 
 body.hero-body {
     background-color: var(--bg-cream);
@@ -61,7 +55,7 @@ body.hero-body {
     height: 100vh;
     max-width: 100vw;
     max-height: 100vh;
-    overflow: hidden !important; /* Strictly disables scrollbars */
+    overflow: hidden !important; 
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -75,9 +69,7 @@ body.store-wrapper {
     overflow-x: hidden;
 }
 
-/* =========================================================
-   3. HERO VIEWPORT (100vh / 100vw)
-========================================================= */
+
 .hero-wrapper {
     position: relative;
     width: 100vw;
@@ -86,7 +78,7 @@ body.store-wrapper {
     overflow: hidden;
 }
 
-/* Top Mini Bar */
+
 .hero-top-bar {
  display: flex;
     justify-content: space-between;
@@ -109,7 +101,7 @@ body.store-wrapper {
   
 .hero-nav-links a {
    font-family: 'Alinore', sans-serif;
-    color: #4D6443; /* Moss green */
+    color: #4D6443; 
     text-transform: uppercase;
     font-size: clamp(1.1rem, 1.4vw, 1.8rem);
     text-decoration: none;
@@ -124,7 +116,7 @@ body.store-wrapper {
 
 .hero-title {
     font-family: 'Aqila', serif;
-    font-weight: normal; /* Removes browser default bold */
+    font-weight: normal; 
     color: var(--text-brown);
      font-size: clamp(1.8rem, 2.5vw, 3rem);
     text-align: center;
@@ -142,7 +134,7 @@ body.store-wrapper {
     top: 28vh;
     width: 20vw;
     font-family: 'Alinore', sans-serif;
-    font-size: clamp(1.45rem, 1.6vw, 1.8rem); /* Made bigger */
+    font-size: clamp(1.45rem, 1.6vw, 1.8rem); 
     color: var(--text-brown);
     text-transform: uppercase;
     line-height: 1;
@@ -151,9 +143,7 @@ body.store-wrapper {
     z-index: 15;
 }
 
-/* =========================================================
-   4. THE BROWN ARCH & CURVED WATERMARK TEXT
-========================================================= */
+
 .hero-arch-container {
     position: absolute;
     bottom: -15vh;
@@ -175,7 +165,7 @@ body.store-wrapper {
 
 .hero-curved-svg {
     position: absolute;
-    top: 0; /* Was 5vh - moving it to 0 brings text right to the top edge */
+    top: 0; 
     left: 0;
     width: 100%;
     height: 100%;
@@ -184,12 +174,10 @@ body.store-wrapper {
     font-family: 'Aqila', serif;
     font-size: 78px;
     fill: var(--text-cream);
-    letter-spacing: 18px; /* Slightly wider spacing for the steeper curve */
+    letter-spacing: 18px; 
 }
 
-/* =========================================================
-   5. INFINITE ORBIT ITEMS
-========================================================= */
+
 .infinite-stage {
     position: absolute;
     width: 100vw;
@@ -234,7 +222,7 @@ body.store-wrapper {
     transition: all 0.3s ease;
 }
 
-/* Hover Lift Effect */
+
 .orbit-item:hover img {
     transform: translateY(-20px) scale(1.08);
     filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.35));
@@ -245,9 +233,7 @@ body.store-wrapper {
     transform: translateY(0);
 }
 
-/* =========================================================
-   6. EXPLORE SHOP BUTTON
-========================================================= */
+
 .hero-cta-btn {
     position: absolute;
     bottom: 14vh;
@@ -274,11 +260,9 @@ body.store-wrapper {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-/* =========================================================
-   7. STORE PAGE (shop.php) STYLES
-========================================================= */
+
 :root {
-    --shop-spacing: 32px; /* Uniform gap between cards AND left/right padding */
+    --shop-spacing: 32px; 
 }
 
 html, body.store-wrapper {
@@ -287,13 +271,13 @@ html, body.store-wrapper {
     padding-bottom: 0 !important;
     width: 100%;
     max-width: 100vw;
-    overflow-x: hidden; /* Eliminates the horizontal scrollbar */
+    overflow-x: hidden; 
 }
 
 
-/* Top Bar */
+
 .store-top-bar {
-    position: relative; /* Allows true absolute centering for the middle links */
+    position: relative; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -307,12 +291,12 @@ html, body.store-wrapper {
     left: 50%;
     transform: translateX(-50%);
     display: grid;
-    grid-template-columns: 1fr auto 1fr; /* equal left/right sides, so the logo stays in the exact center */
+    grid-template-columns: 1fr auto 1fr; 
     align-items: center;
     column-gap: clamp(30px, 5vw, 90px);
 }
  
-/* Left side (Manage Products) hugs the logo; right side (Storefront / Login / Logout) starts after it */
+
 .store-nav-left {
     justify-self: end;
 }
@@ -333,7 +317,7 @@ html, body.store-wrapper {
 
 .store-nav-link {
     font-family: 'Alinore', sans-serif;
-    color: #4D6443; /* Moss green */
+    color: #4D6443; 
     text-transform: uppercase;
     font-size: clamp(1.1rem, 1.4vw, 1.8rem);
     text-decoration: none;
@@ -355,7 +339,7 @@ html, body.store-wrapper {
   
 }
 
-/* Store Main Headline */
+
 .store-title {
     font-family: 'Aqila', serif;
     color: var(--text-brown);
@@ -368,14 +352,14 @@ html, body.store-wrapper {
     letter-spacing: 1px;
 }
 
-/* Filter Controls Bar (Same Left/Right Padding as Grid) */
+
 .filter-bar-container {
     width: 100%;
     padding: 0 var(--shop-spacing);
     margin: 0 auto 35px auto;
 }
 
-/* Search Box (60% placeholder opacity, 100% typed text opacity) */
+
 .shop-search-input {
     border-radius: 20px !important;
     border: 1px solid var(--arch-brown) !important;
@@ -401,8 +385,7 @@ html, body.store-wrapper {
     background-color: #FFFFFF !important;
 }
 
-/* Category Select */
-/* Category Select Box */
+
 .shop-category-select {
     border-radius: 20px !important;
     border: 1px solid var(--arch-brown) !important;
@@ -416,27 +399,27 @@ html, body.store-wrapper {
     outline: none !important;
 }
 
-/* Dropdown Menu Options (Red/Terracotta BG + Cream Text) */
+
 .shop-category-select option {
-    background-color: var(--arch-brown) !important; /* Rich terracotta red/brown */
-    color: #FFF5EA !important; /* Cream text */
+    background-color: var(--arch-brown) !important; 
+    color: #FFF5EA !important; 
     font-family: 'Alinore', sans-serif;
     font-size: 1.15rem;
     padding: 12px 18px;
 }
 
-/* Selected / Hovered Option in Dropdown (Changed from grey to #4A7239) */
+
 .shop-category-select option:hover,
 .shop-category-select option:focus,
 .shop-category-select option:active,
 .shop-category-select option:checked {
     background-color: #4A7239 !important;
-    /* Uses linear-gradient trick so Chrome/Edge on Windows won't force the grey theme */
+    
     background: #4A7239 linear-gradient(0deg, #4A7239 0%, #4A7239 100%) !important;
     color: #FFFFFF !important;
 }
 
-/* Filter & Reset Buttons */
+
 .shop-filter-btn {
     border-radius: 20px;
     background-color: var(--arch-brown);
@@ -476,20 +459,18 @@ html, body.store-wrapper {
     color: var(--arch-brown);
 }
 
-/* =========================================================
-   8. PRODUCT GRID (EQUAL GAPS & ROW-BY-ROW STACKING)
-========================================================= */
+
 .shop-grid {
     width: 100%;
-    padding: 0 var(--shop-spacing); /* Exact same padding as gaps */
+    padding: 0 var(--shop-spacing); 
     margin: 0 auto;
 }
 
-/* Row-by-Row Responsive Layout (No Horizontal Scroll) */
+
 .shop-grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Automatically moves to row 2 when space runs out */
-    gap: var(--shop-spacing); /* Exact same gap between all cards horizontally and vertically */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: var(--shop-spacing); 
     width: 100%;
 }
 
@@ -498,7 +479,7 @@ html, body.store-wrapper {
     background: #EDEAE1;
     border-radius: 5px;
     height: 380px;
-    padding: 0 !important; /* Removed padding so image reaches edges */
+    padding: 0 !important; 
     overflow: hidden;
     cursor: pointer;
    
@@ -507,7 +488,7 @@ html, body.store-wrapper {
 
 .shop-card-pure:hover {
     transform: translateY(-6px);
-   box-shadow: none !important; /* No shadow */
+   box-shadow: none !important; 
 }
 
 .shop-pure-img {
@@ -515,18 +496,18 @@ html, body.store-wrapper {
     height: 100% !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    object-fit: cover !important; /* Fills and covers the full card frame */
+    object-fit: cover !important; 
     display: block;
     transition: filter 0.35s ease, transform 0.35s ease;
 }
 
-/* Card Hover Blur */
+
 .shop-card-pure:hover .shop-pure-img {
     filter: blur(2.5px);
     transform: scale(1.04);
 }
 
-/* Centered "VIEW INFO" Pill Button */
+
 .shop-view-btn {
     position: absolute;
     top: 50%;
@@ -560,11 +541,9 @@ html, body.store-wrapper {
     transform: translate(-50%, -50%) scale(1.06);
 }
 
-/* =========================================================
-   9. RIGHT-SIDE PRODUCT DRAWER (Exact Figma Specs)
-========================================================= */
+
 .product-drawer {
-    width: 588px !important; /* Exact width from Figma */
+    width: 588px !important; 
     max-width: 92vw;
     background-color: var(--arch-brown) !important;
     padding: 24px 20px;
@@ -576,7 +555,7 @@ html, body.store-wrapper {
 
 .drawer-img-box {
     width: 100%;
-    height: 540px; /* Adjust height as you like */
+    height: 540px;
     border-radius: 16px;
     overflow: hidden;
     margin-bottom: 24px;
@@ -584,7 +563,7 @@ html, body.store-wrapper {
     padding: 0 !important;
     background-color: transparent !important;
 }
-/* Force image to cover 100% of the box frame */
+
 .drawer-carousel-img {
     width: 100% !important;
     height: 100% !important;
@@ -596,21 +575,21 @@ html, body.store-wrapper {
     height: 100% !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    object-fit: cover !important; /* Fills and covers the full drawer frame */
+    object-fit: cover !important; 
     display: block;
 }
 
-/* Product Title */
+
 .drawer-title {
     font-family: 'Aqila', serif;
     font-size: 2.3rem;
-    color: #FED7AA; /* text-orange-200 */
+    color: #FED7AA; 
     font-weight: normal;
     margin-bottom: 8px;
     line-height: 1.2;
 }
 
-/* Category & Origin Row */
+
 .drawer-info-row {
     display: flex;
     align-items: center;
@@ -620,18 +599,18 @@ html, body.store-wrapper {
     margin-bottom: 30px;
 }
 .drawer-category {
-    color: #FDBA74; /* text-orange-300 */
+    color: #FDBA74; 
     text-transform: uppercase;
 }
 .drawer-from {
-    color: #D6D3D1; /* text-stone-300 */
+    color: #D6D3D1; 
 }
 .drawer-location {
-    color: #FDBA74; /* text-orange-300 */
+    color: #FDBA74; 
     text-transform: uppercase;
 }
 
-/* Actions Bar (Price, Stock, Stepper, Add to Cart) */
+
 .drawer-action-container {
     display: flex;
     justify-content: space-between;
@@ -640,10 +619,9 @@ html, body.store-wrapper {
     padding-bottom: 30px;
 }
 
-/* Price Line */
 .drawer-price-line {
     font-family: 'Alinore', sans-serif;
-    color: #BEF264; /* text-lime-300 */
+    color: #BEF264; 
     font-size: 1.4rem;
     display: flex;
     gap: 6px;
@@ -651,23 +629,23 @@ html, body.store-wrapper {
     margin-bottom: 6px;
 }
 
-/* Stock Line */
+
 .drawer-stock-line {
     font-family: 'Alinore', sans-serif;
-    color: #FB7185; /* text-rose-400 */
+    color: #FB7185; 
     font-size: 1.4rem;
     display: flex;
     align-items: center;
 }
 
-/* Stepper & Button Column */
+
 .drawer-right-col {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-/* Quantity Stepper */
+
 .drawer-stepper {
     display: flex;
     align-items: center;
@@ -677,8 +655,8 @@ html, body.store-wrapper {
 .stepper-btn {
     width: 26px;
     height: 26px;
-    background-color: #FED7AA; /* bg-orange-200 */
-    color: #57534E; /* text-stone-600 */
+    background-color: #FED7AA; 
+    color: #57534E; 
     border: none;
     font-weight: bold;
     font-size: 1.2rem;
@@ -690,16 +668,16 @@ html, body.store-wrapper {
     line-height: 1;
 }
 .stepper-val {
-    color: #FB7185; /* text-rose-400 */
+    color: #FB7185; 
     font-size: 1.4rem;
     min-width: 18px;
     text-align: center;
 }
 
-/* Add to Cart Button */
+
 .drawer-add-btn {
-    background-color: #4A7239; /* bg-stone-600 */
-    color: #F7F4EE; /* text-orange-200 */
+    background-color: #4A7239; 
+    color: #F7F4EE; 
     border: 1px solid #F5F5F4;
     border-radius: 30px;
     padding: 12px 28px;
@@ -716,10 +694,10 @@ html, body.store-wrapper {
     transform: scale(1.03);
 }
 
-/* [close] Link */
+
 .drawer-close-link {
     font-family: 'Alinore', sans-serif;
-    color: #D4D4D4; /* text-neutral-300 */
+    color: #D4D4D4; 
     font-size: 1.6rem;
     background: none;
     border: none;
@@ -733,7 +711,7 @@ html, body.store-wrapper {
     color: #909090;
 }
 
-/* Drawer Carousel Controls */
+
 .drawer-nav-arrow {
     background: rgba(116, 48, 20, 0.85);
     color: #FFF5EA;
@@ -767,9 +745,7 @@ html, body.store-wrapper {
     pointer-events: none;
 }
 
-/* =========================================================
-   10. DRAWER DESCRIPTION & FULL DESCRIPTION MODAL
-========================================================= */
+
 .drawer-desc-box {
     font-weight: normal;
     margin-bottom: 24px;
@@ -783,7 +759,7 @@ html, body.store-wrapper {
     background: none;
     border: none;
     padding: 0;
-    color: #FED7AA; /* Distinct accent color (orange-200) */
+    color: #FED7AA; 
     font-family: 'Alinore', sans-serif;
     font-size: 1.15rem;
     font-weight: bold;
@@ -796,10 +772,10 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* Centered Pop-up Modal (Matches the Right Side Color) */
+
 .desc-modal-content {
     font-weight: normal;
-    background-color: var(--arch-brown) !important; /* Exact same brown #743014 */
+    background-color: var(--arch-brown) !important; 
    
     border-radius: 20px !important;
     padding: 28px 32px !important;
@@ -821,7 +797,7 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* Centered Empty Search Results State */
+
 .shop-empty-state {
     width: 100%;
     max-width: 800px;
@@ -835,7 +811,7 @@ html, body.store-wrapper {
 
 .shop-empty-title {
     font-family: 'Alinore', sans-serif;
-    color: var(--text-brown); /* Rich brown color matching the theme */
+    color: var(--text-brown); 
     font-size: clamp(1.6rem, 2.3vw, 2.6rem);
     letter-spacing: 1.5px;
     line-height: 1.35;
@@ -843,7 +819,7 @@ html, body.store-wrapper {
     font-weight: normal;
 }
 
-/* Balanced Pill Button */
+
 .shop-empty-btn {
     background-color: var(--arch-brown);
     color: var(--text-cream);
@@ -866,16 +842,14 @@ html, body.store-wrapper {
     transform: translateY(-2px) scale(1.03);
     box-shadow: 0 12px 25px rgba(116, 48, 20, 0.3);
 }
-/* =========================================================
-   FIGMA "SEE CART ITEMS" BUTTON (Exact Dimensions & Colors)
-========================================================= */
+
 .store-right-cart-group {
     display: flex;
     align-items: center;
-    gap: 30px; /* Space between the Cart Button and the Right Star */
+    gap: 30px; 
 }
 
-/* Button Wrapper */
+
 .figma-cart-btn {
     position: relative;
     display: inline-flex;
@@ -888,10 +862,10 @@ html, body.store-wrapper {
     transform: scale(1.03);
 }
 
-/* The Pill: w-44 (176px), h-10 (40px), rounded-[20px] */
+
 .figma-cart-pill {
-    background-color: #4A5B40 !important; /* Moss/stone green from your Figma */
-    color: #D6D3D1 !important;            /* text-stone-300 from Figma */
+    background-color: #4A5B40 !important; 
+    color: #D6D3D1 !important;          
     font-family: 'Alinore', sans-serif !important;
     font-size: 1.15rem;
     text-transform: uppercase;
@@ -906,21 +880,21 @@ html, body.store-wrapper {
     border: none;
 }
 
-/* Red/Orange Cart Icon from Figma */
+
 .figma-cart-icon {
-    color: #EA580C; /* Accent orange/red */
+    color: #EA580C; 
     font-size: 1.05rem;
 }
 
-/* Overlapping Badge: size-8 (32px), bg-amber-900 (#743014), rounded-full */
+
 .figma-cart-circle {
     position: absolute;
     top: -8px;
     right: -8px;
     width: 32px;
     height: 32px;
-    background-color: var(--arch-brown) !important; /* bg-amber-900 #743014 */
-    color: #D6D3D1 !important;                      /* text-stone-300 */
+    background-color: var(--arch-brown) !important;
+    color: #D6D3D1 !important;                     
     font-family: 'Alinore', sans-serif !important;
     font-size: 1.15rem;
     font-weight: normal;
@@ -928,40 +902,36 @@ html, body.store-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--bg-cream);              /* Cutout ring */
+    border: 2px solid var(--bg-cream);              
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-/* =========================================================
-   NOTIFICATION ALERT STYLES (Font & Theme)
-========================================================= */
+
 .alert {
-    font-family: 'Alinore', sans-serif !important; /* Change to 'Aqila' or 'Alinore' */
+    font-family: 'Alinore', sans-serif !important; 
     font-size: 1.15rem !important;
     letter-spacing: 0.5px;
-    border-radius: 16px !important; /* Matches your rounded theme */
+    border-radius: 16px !important; 
     border: none !important;
 }
 
-/* Optional: Custom boutique green/terracotta to match your theme */
+
 .alert-success {
-    background-color: #E2EBDC !important; /* Soft moss background */
-    color: #2F472A !important;            /* Dark green text */
+    background-color: #E2EBDC !important; 
+    color: #2F472A !important;          
 }
 
 .alert-danger {
     background-color: #F8D7DA !important; 
-    color: #743014 !important;            /* Terracotta red/brown text */
+    color: #743014 !important;            
 }
 
 
-/* =========================================================
-   CART DRAWER (Figma Specs - Moss Green & Terracotta)
-========================================================= */
+
 #cartDrawer.offcanvas {
     width: 588px !important;
     max-width: 95vw !important;
-    background-color: #435936 !important; /* Rich Moss Green from Figma */
+    background-color: #435936 !important; 
     color: #FFF5EA !important;
     display: flex !important;
     flex-direction: column !important;
@@ -982,7 +952,7 @@ html, body.store-wrapper {
 
 #cartDrawer .cart-header-title {
     font-family: 'Aqila', serif !important;
-    color: #FED7AA !important; /* text-orange-200 */
+    color: #FED7AA !important; 
     font-size: 2.2rem !important;
     margin: 0 !important;
     line-height: 1 !important;
@@ -1014,7 +984,7 @@ html, body.store-wrapper {
     gap: 20px;
 }
 
-/* Single Cart Item Row */
+
 #cartDrawer .cart-row-item {
     display: flex;
     gap: 16px;
@@ -1024,7 +994,7 @@ html, body.store-wrapper {
     padding: 12px;
 }
 
-/* Primary Image Fixed Frame */
+
 #cartDrawer .cart-img-frame {
     width: 170px !important;
     min-width: 170px !important;
@@ -1061,7 +1031,7 @@ html, body.store-wrapper {
 
 #cartDrawer .cart-item-unit-price {
     font-family: 'Alinore', sans-serif !important;
-    color: #BEF264 !important; /* text-lime-300 */
+    color: #BEF264 !important;
     font-size: 1.15rem !important;
     text-transform: uppercase !important;
 }
@@ -1074,7 +1044,7 @@ html, body.store-wrapper {
 
 #cartDrawer .cart-qty-text {
     font-family: 'Alinore', sans-serif !important;
-    color: #FDBA74 !important; /* text-orange-300 */
+    color: #FDBA74 !important;
     font-size: 1.15rem !important;
     text-transform: uppercase !important;
 }
@@ -1088,8 +1058,8 @@ html, body.store-wrapper {
 #cartDrawer .cart-stepper-btn {
     width: 22px !important;
     height: 22px !important;
-    background-color: #FED7AA !important; /* bg-orange-200 */
-    color: #57534E !important;            /* text-stone-600 */
+    background-color: #FED7AA !important; 
+    color: #57534E !important;           
     border: none !important;
     border-radius: 3px !important;
     font-weight: bold !important;
@@ -1103,7 +1073,7 @@ html, body.store-wrapper {
 
 #cartDrawer .cart-stepper-count {
     font-family: 'Alinore', sans-serif !important;
-    color: #FB7185 !important; /* text-rose-400 */
+    color: #FB7185 !important; 
     font-size: 1.25rem !important;
     font-weight: bold !important;
     min-width: 18px !important;
@@ -1119,7 +1089,7 @@ html, body.store-wrapper {
 #cartDrawer .cart-delete-link {
     background: none !important;
     border: none !important;
-    color: #FB7185 !important; /* text-rose-400 */
+    color: #FB7185 !important; 
     font-family: 'Alinore', sans-serif !important;
     font-size: 1.15rem !important;
     text-transform: uppercase !important;
@@ -1133,13 +1103,13 @@ html, body.store-wrapper {
 
 #cartDrawer .cart-subtotal-text {
     font-family: 'Alinore', sans-serif !important;
-    color: #BEF264 !important; /* text-lime-300 */
+    color: #BEF264 !important; 
     font-size: 1.2rem !important;
     font-weight: bold !important;
     text-transform: uppercase !important;
 }
 
-/* Sticky Bottom Footer */
+
 #cartDrawer .cart-footer-box {
     padding: 16px 24px 24px 24px;
     border-top: 1px solid rgba(255, 255, 255, 0.35);
@@ -1153,7 +1123,7 @@ html, body.store-wrapper {
     align-items: center;
     gap: 8px;
     font-family: 'Alinore', sans-serif !important;
-    color: #BEF264 !important; /* text-lime-300 */
+    color: #BEF264 !important; 
     font-size: 1.8rem !important;
     text-transform: uppercase !important;
     margin-bottom: 16px;
@@ -1163,7 +1133,7 @@ html, body.store-wrapper {
     display: block !important;
     width: 100% !important;
     height: 60px !important;
-    background-color: #743014 !important; /* Terracotta Brown from Figma */
+    background-color: #743014 !important; 
     border: 1px solid #F5F5F4 !important;
     border-radius: 30px !important;
     color: #F5F5F4 !important;
@@ -1188,21 +1158,19 @@ html, body.store-wrapper {
     color: #D6D3D1;
 }
 
-/* =========================================================
-   12. BOUTIQUE FOOTER (20px Padding & Exact Alignment)
-========================================================= */
+
 .boutique-footer {
     width: 100%;
-    background-color: var(--arch-brown); /* #743014 */
+    background-color: var(--arch-brown); 
     position: relative;
     overflow: hidden;
-    padding: 30px 20px 20px 20px !important; /* Locked to exactly 20px padding */
+    padding: 30px 20px 20px 20px !important; 
     color: #FFF5EA;
     box-sizing: border-box;
-    margin-top: 60px; /* Space between products and footer */
+    margin-top: 60px; 
 }
 
-/* Top Row: Slogan pinned left, Links pinned right */
+
 .footer-top-row {
     display: flex;
     justify-content: space-between;
@@ -1211,10 +1179,10 @@ html, body.store-wrapper {
     margin-bottom: 8px;
 }
 
-/* Left-aligned Slogan */
+
 .footer-slogan {
     font-family: 'Aqila', serif;
-    color: #FED7AA; /* text-orange-200 */
+    color: #FED7AA; 
     font-size: clamp(1.2rem, 1.9vw, 2.1rem);
     line-height: 1.25;
     max-width: 600px;
@@ -1224,11 +1192,11 @@ html, body.store-wrapper {
     padding: 0;
 }
 
-/* Right-aligned Navigation Links */
+
 .footer-nav-links {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Pins links flush to the right 20px edge */
+    align-items: flex-end; 
     text-align: right;
     gap: 0;
     margin: 0;
@@ -1237,7 +1205,7 @@ html, body.store-wrapper {
 
 .footer-link {
     font-family: 'Alinore', sans-serif;
-    color: #D6D3D1; /* text-stone-300 */
+    color: #D6D3D1; 
     font-size: clamp(2rem, 2.9vw, 3.2rem);
     text-transform: uppercase;
     text-decoration: none !important;
@@ -1251,11 +1219,11 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* Massive Brand Text - Scaled bigger to fill the 20px margins */
+
 .footer-huge-brand {
     font-family: 'Aqila', serif;
     color: #FFFFFF;
-    font-size: clamp(3.6rem, 12.6vw, 13.6rem); /* Enlarged to span edge-to-edge */
+    font-size: clamp(3.6rem, 12.6vw, 13.6rem); 
     line-height: 0.92;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -1266,7 +1234,7 @@ html, body.store-wrapper {
     user-select: none;
 }
 
-/* Bottom Copyright */
+
 .footer-bottom-line {
     font-family: 'Alinore', sans-serif;
     color: #FFFFFF;

@@ -1,5 +1,5 @@
 <?php
-// includes/alert.php - shows (then clears) $_SESSION['message'] (errors) and $_SESSION['success']
+
 
 if (isset($_SESSION['message'])) {
 
