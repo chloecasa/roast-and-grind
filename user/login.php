@@ -3,7 +3,7 @@
 include('../includes/session.php');
 include('../includes/config.php');
 
-// page to return to after login (checkout.php sets it); only these are allowed
+
 function afterLoginPage()
 {
     $pages = ['checkout.php' => '../checkout.php', 'shop.php' => '../shop.php', 'index.php' => '../index.php'];

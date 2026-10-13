@@ -3,14 +3,14 @@
 require_once "../includes/config.php";
 require_once "../includes/header.php";
 
-// 1. Validate that an item ID is provided in the URL
+
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid product ID.");
 }
 
 $item_id = intval($_GET['id']);
 
-// 2. Fetch current product and stock details
+
 $sql = "SELECT i.*, s.quantity 
         FROM item i 
         INNER JOIN stock s USING (item_id) 
@@ -35,16 +35,16 @@ if (!$product) {
             </div>
             <div class="card-body p-4">
                 <form action="update.php" method="POST" enctype="multipart/form-data">
-                    <!-- Hidden field to pass item_id -->
+               
                     <input type="hidden" name="item_id" value="<?= $product['item_id']; ?>">
                     
-                    <!-- Product Name -->
+                
                     <div class="mb-3">
                         <label class="form-label fw-bold">Product Name</label>
                         <input type="text" name="item_name" class="form-control" value="<?= htmlspecialchars($product['item_name']); ?>" required>
                     </div>
 
-                    <!-- Category & Origin -->
+                  
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Category</label>
@@ -60,13 +60,13 @@ if (!$product) {
                         </div>
                     </div>
 
-                    <!-- Description -->
+            
                     <div class="mb-3">
                         <label class="form-label fw-bold">Description & Tasting Notes</label>
                         <textarea name="description" rows="3" class="form-control" required><?= htmlspecialchars($product['description']); ?></textarea>
                     </div>
 
-                    <!-- Prices & Stock Restocking -->
+                   
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">Cost Price (₱)</label>
@@ -83,7 +83,7 @@ if (!$product) {
                         </div>
                     </div>
 
-                    <!-- Product Image -->
+                 
                     <div class="mb-4">
                         <label class="form-label fw-bold">Replace Product Image (Optional)</label>
                         <input type="file" name="product_image" class="form-control" accept=".jpg,.jpeg,.png">
@@ -96,7 +96,7 @@ if (!$product) {
         <i class="fa-solid fa-check me-2"></i>Update Product & Stock
     </button>
     
-    <!-- Delete Button right inside the Edit page -->
+    
     <a href="delete.php?id=<?= $product['item_id']; ?>" 
        class="btn btn-outline-danger btn-lg" 
        onclick="return confirm('Are you sure you want to delete \'<?= addslashes(htmlspecialchars($product['item_name'])); ?>\'?');">

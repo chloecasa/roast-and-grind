@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $allowed_exts = ['jpg', 'jpeg', 'png'];
     $upload_dir   = __DIR__ . "/images/";
 
-    // 1. Process Primary Image
+   
     $primary_img = "default_coffee.jpg";
     if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
         $file_ext = strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
@@ -26,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // 2. Database Insert Transaction
+  
     mysqli_begin_transaction($conn);
 
     try {
-        // Insert Item
+  
         $sql_item = "INSERT INTO item (item_name, description, origin, category, cost_price, sell_price, img_path) 
                      VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt_item = mysqli_prepare($conn, $sql_item);
@@ -39,14 +39,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $item_id = mysqli_insert_id($conn);
         mysqli_stmt_close($stmt_item);
 
-        // Insert Stock
+     
         $sql_stock = "INSERT INTO stock (item_id, quantity) VALUES (?, ?)";
         $stmt_stock = mysqli_prepare($conn, $sql_stock);
         mysqli_stmt_bind_param($stmt_stock, "ii", $item_id, $quantity);
         mysqli_stmt_execute($stmt_stock);
         mysqli_stmt_close($stmt_stock);
 
-        // 3. Process Multiple Gallery Images
+   
         if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
             $sql_gal = "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)";
             $stmt_gal = mysqli_prepare($conn, $sql_gal);

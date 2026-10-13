@@ -12,16 +12,16 @@ require_once "../includes/header.php";
                 <a href="../index.php" class="btn btn-sm btn-outline-light">Back to Shop</a>
             </div>
             <div class="card-body p-4">
-                <!-- multipart/form-data is required for image uploads -->
+                
                 <form action="store.php" method="POST" enctype="multipart/form-data">
                     
-                    <!-- Product Name -->
+                   
                     <div class="mb-3">
                         <label class="form-label fw-bold">Product Name</label>
                         <input type="text" name="item_name" class="form-control" placeholder="e.g., Sagada Dark Roast (250g)" required>
                     </div>
 
-                    <!-- Category & Origin -->
+                  
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Category</label>
@@ -38,13 +38,13 @@ require_once "../includes/header.php";
                         </div>
                     </div>
 
-                    <!-- Description -->
+               
                     <div class="mb-3">
                         <label class="form-label fw-bold">Description & Tasting Notes</label>
                         <textarea name="description" rows="3" class="form-control" placeholder="Describe flavor notes, roast profile, or equipment specs..." required></textarea>
                     </div>
 
-                    <!-- Prices & Stock -->
+               
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">Cost Price (₱)</label>
@@ -60,21 +60,21 @@ require_once "../includes/header.php";
                         </div>
                     </div>
 
-                  <!-- 1. Primary Card Image -->
+              
                     <div class="mb-3">
                         <label class="form-label fw-bold">Primary Card Image (JPG/PNG)</label>
                         <input type="file" name="product_image" class="form-control" accept=".jpg,.jpeg,.png" required>
                         <small class="text-muted">This is the main image displayed on the storefront card.</small>
                     </div>
 
-                    <!-- 2. Multiple Gallery Images for Right Drawer -->
+              
                     <div class="mb-4">
                         <label class="form-label fw-bold">Additional Gallery Photos (Multiple allowed)</label>
                         <input type="file" name="gallery_images[]" class="form-control" accept=".jpg,.jpeg,.png" multiple>
                         <small class="text-muted">Hold Ctrl/Cmd to select multiple images for the right-side carousel.</small>
                     </div>
 
-                    <!-- Submit Button -->
+         
                     <div class="d-grid">
                         <button type="submit" class="btn btn-dark btn-lg">
                             <i class="fa-solid fa-save me-2"></i>Save Product
