@@ -33,7 +33,7 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
 
    
     <div class="store-center-nav">
-        <a href="/roast-and-grind/item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+        <a href="/roast-and-grind/item/create.php" class="store-nav-link store-nav-left">Manage Products</a>
         <a href="/roast-and-grind/index.php" class="store-brand">R&G</a>
  
         <div class="store-nav-right">

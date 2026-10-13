@@ -77,7 +77,7 @@ $result = mysqli_stmt_get_result($stmt);
 
          <!-- Centered Nav Links -->
         <div class="store-center-nav">
-            <a href="item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+            <a href="item/create.php" class="store-nav-link store-nav-left">Manage Products</a>
             <a href="index.php" class="store-brand">R&G</a>
  
             <div class="store-nav-right">
