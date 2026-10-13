@@ -4,7 +4,7 @@
 include('./includes/session.php');
 include('./includes/config.php');
 
-// make mysqli throw exceptions on any SQL error so the catch block can roll back
+
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -38,7 +38,7 @@ $user_id = (int) $_SESSION['user_id'];
 mysqli_begin_transaction($conn);
 
 try {
-    // lock each product + stock row so two customers cannot buy the last item at the same time
+    
     $sel = mysqli_prepare($conn,
         "SELECT i.item_name, i.cost_price, i.sell_price, s.quantity AS qty
          FROM item i INNER JOIN stock s USING (item_id)
@@ -64,7 +64,7 @@ try {
                 . ': only ' . $row['qty'] . ' left.');
         }
 
-        // price comes from the database, not from the session copy
+       
         $lines[] = [
             'item_id' => $item_id,
             'name'    => $row['item_name'],
@@ -75,13 +75,13 @@ try {
         $total += $row['sell_price'] * $qty;
     }
 
-    // 1. the order
+  
     $ins_order = mysqli_prepare($conn, "INSERT INTO orders (user_id, total_amount, payment_method) VALUES (?, ?, ?)");
     mysqli_stmt_bind_param($ins_order, 'ids', $user_id, $total, $payment_method);
     mysqli_stmt_execute($ins_order);
     $order_id = mysqli_insert_id($conn);
 
-    // 2. its items + 3. FR-15 stock decrement for each one
+    
     $ins_item = mysqli_prepare($conn,
         "INSERT INTO order_items (order_id, item_id, item_name, unit_price, unit_cost, quantity) VALUES (?, ?, ?, ?, ?, ?)");
     $dec = mysqli_prepare($conn, "UPDATE stock SET quantity = quantity - ? WHERE item_id = ? AND quantity >= ?");
@@ -97,7 +97,7 @@ try {
         }
     }
 
-    // all saved together, or (on any error above) none of it
+    
     mysqli_commit($conn);
 
     unset($_SESSION['cart_products']);

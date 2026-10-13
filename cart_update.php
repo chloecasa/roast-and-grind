@@ -1,12 +1,12 @@
 <?php
 // cart_update.php - FR-17: add to cart, change quantity, remove item (guests and customers)
-include('./includes/session.php'); // own session name for this app
+include('./includes/session.php'); 
 include('./includes/config.php');
 
 $errors  = [];
 $success = [];
 
-// only our own two pages are allowed as the page to go back to
+
 $redirect = 'index.php';
 if (isset($_POST['redirect'])) {
     $page = strtok($_POST['redirect'], '?');
@@ -15,7 +15,7 @@ if (isset($_POST['redirect'])) {
     }
 }
 
-// fetch a product together with its current stock
+
 function getProduct($conn, $item_id)
 {
     $sql = "SELECT i.item_id, i.item_name, i.sell_price, s.quantity AS qty
@@ -28,7 +28,7 @@ function getProduct($conn, $item_id)
     return mysqli_fetch_assoc($result);
 }
 
-// ---------- ADD ----------
+
 if (isset($_POST['type']) && $_POST['type'] == 'add') {
 
     $item_id  = (int) ($_POST['item_id'] ?? 0);
@@ -43,7 +43,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'add') {
         // FR-17: Out of Stock items cannot be added
         $errors[] = htmlspecialchars($row['item_name']) . ' is out of stock.';
     } else {
-        // quantity already in the cart for this item
+        
         $in_cart = isset($_SESSION['cart_products'][$item_id]) ? $_SESSION['cart_products'][$item_id]['item_qty'] : 0;
 
         if ($in_cart + $item_qty > $row['qty']) {
@@ -63,7 +63,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'add') {
     }
 }
 
-// ---------- REMOVE ----------
+//  REMOVE 
 if (isset($_POST['remove_code']) && is_array($_POST['remove_code'])) {
     foreach ($_POST['remove_code'] as $key) {
         $key = (int) $key;
@@ -74,7 +74,7 @@ if (isset($_POST['remove_code']) && is_array($_POST['remove_code'])) {
     }
 }
 
-// ---------- UPDATE QUANTITIES ----------
+// UPDATE QUANTITIES 
 if (isset($_POST['product_qty']) && is_array($_POST['product_qty'])) {
     foreach ($_POST['product_qty'] as $key => $value) {
         $item_id = (int) $key;
@@ -106,7 +106,7 @@ if (isset($_POST['product_qty']) && is_array($_POST['product_qty'])) {
     }
 }
 
-// empty cart -> remove the session variable
+
 if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) == 0) {
     unset($_SESSION['cart_products']);
 }

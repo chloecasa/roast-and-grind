@@ -12,7 +12,7 @@ $email       = trim($_POST['email']);
 $password    = trim($_POST['password']);
 $confirmPass = trim($_POST['confirmPass']);
 
-// validation
+
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['message'] = 'email invalid format';
     header('Location: register.php');
@@ -30,7 +30,7 @@ if ($password !== $confirmPass) {
 }
 
 try {
-    $password = password_hash($password, PASSWORD_BCRYPT); // hashed, never stored plain
+    $password = password_hash($password, PASSWORD_BCRYPT); 
 
     $sql   = "INSERT INTO users (email, password_hash) VALUES (?, ?)";
     $stmt1 = mysqli_prepare($conn, $sql);
@@ -38,7 +38,7 @@ try {
     mysqli_stmt_execute($stmt1);
     $new_id = mysqli_insert_id($conn);
 } catch (mysqli_sql_exception $e) {
-    // email is UNIQUE, so a duplicate email lands here
+    
     $_SESSION['message'] = ($e->getCode() == 1062)
         ? 'that email is already registered. Try logging in.'
         : 'could not create the account. Please try again.';

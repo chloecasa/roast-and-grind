@@ -1,6 +1,6 @@
 <?php
 // view_cart.php - FR-17: view cart, change quantities, remove items, cart total
-include('./includes/session.php'); // own session name for this app
+include('./includes/session.php');
 include('./includes/header.php');
 include('./includes/config.php');
 ?>
@@ -11,7 +11,7 @@ include('./includes/config.php');
 <?php
 if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) {
 
-    // prepared once, executed for every cart row (same idea as checkout.php)
+    
     $sql = "SELECT quantity FROM stock WHERE item_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $product_code);
@@ -30,18 +30,18 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) 
                 </thead>
                 <tbody>
                     <?php
-                    $total = 0; // set initial total value
+                    $total = 0; 
 
                     foreach ($_SESSION['cart_products'] as $cart_itm) {
 
-                        // set variables to use in content below
+                        
                         $product_name  = $cart_itm['item_name'];
                         $product_qty   = $cart_itm['item_qty'];
                         $product_price = $cart_itm['item_price'];
                         $product_code  = $cart_itm['item_id'];
                         $subtotal      = $product_price * $product_qty; // Price x Qty
 
-                        // current stock, used as the max of the quantity box
+                        
                         mysqli_stmt_execute($stmt);
                         $stock_row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
                         $max_qty   = $stock_row ? $stock_row['quantity'] : 0;
@@ -54,7 +54,7 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) 
                         echo '<td class="text-center"><input type="checkbox" class="form-check-input" name="remove_code[]" value="' . $product_code . '" /></td>';
                         echo '</tr>';
 
-                        $total += $subtotal; // add subtotal to total var
+                        $total += $subtotal; 
                     }
                     ?>
                     <tr>
@@ -67,7 +67,7 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) > 0) 
 
            <a href="shop.php" class="btn btn-outline-dark">Add More Items</a>
             <button type="submit" class="btn btn-dark">Update Cart</button>
-            <!-- checkout.php is FR-18 (next step) -->
+            
             <a href="checkout.php" class="btn btn-warning float-end">Checkout</a>
         </form>
     </div>

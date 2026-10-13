@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sell_price  = floatval($_POST['sell_price']);
     $quantity    = intval($_POST['quantity']);
 
-    // 2. Check if a new image was uploaded
+   
     $new_image_uploaded = false;
     $new_filename = null;
 
@@ -34,11 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // 3. Database Updates using Transaction
+   
     mysqli_begin_transaction($conn);
 
     try {
-        // Update 'item' table (with or without image replacement)
+        
         if ($new_image_uploaded) {
             $sql_item = "UPDATE item SET 
                             item_name = ?, 
@@ -74,10 +74,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         mysqli_stmt_execute($stmt_stock);
         mysqli_stmt_close($stmt_stock);
 
-        // Commit all changes
+      
         mysqli_commit($conn);
 
-        // Redirect back to storefront to verify
+        
         header("Location: ../index.php");
         exit;
 

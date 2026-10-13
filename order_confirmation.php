@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $order_id = (int) ($_GET['id'] ?? 0);
 
-// a customer can only open their OWN order
+
 $stmt = mysqli_prepare($conn,
     "SELECT order_id, order_date, total_amount, payment_method, status FROM orders WHERE order_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($stmt, 'ii', $order_id, $_SESSION['user_id']);

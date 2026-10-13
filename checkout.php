@@ -4,7 +4,7 @@ include('./includes/session.php');
 include('./includes/config.php');
 
 // FR-18: a guest must log in or register first. The cart stays in the session, and
-// user/login.php / user/store.php send the customer back here afterwards.
+
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = 'Please log in or register to place your order. Your cart has been kept.';
     $_SESSION['redirect_after_login'] = 'checkout.php';
@@ -18,7 +18,7 @@ if (!isset($_SESSION['cart_products']) || count($_SESSION['cart_products']) == 0
     exit;
 }
 
-// FR-18: re-verify the available stock of EVERY cart item (live from the database)
+// FR-18: re-verify the available stock of EVERY cart item
 $sql = "SELECT i.item_name, i.sell_price, s.quantity AS qty
         FROM item i INNER JOIN stock s USING (item_id)
         WHERE i.item_id = ?";
@@ -46,7 +46,7 @@ foreach ($_SESSION['cart_products'] as $cart_itm) {
     }
 }
 
-// block the order if anything is short
+
 if ($problems) {
     $_SESSION['message'] = implode('<br>', $problems) . '<br>Order not placed. Please update your cart.';
     header('Location: view_cart.php');
