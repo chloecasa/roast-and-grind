@@ -3,10 +3,11 @@
 include('../includes/admin_check.php');
 include('../includes/config.php');
 
-// the customer's name is their email for now (names come with the customer profile, FR-5)
-$sql = "SELECT o.order_id, u.email, o.order_date, o.total_amount, o.status
+// FR-19: customer name comes from the customer profile (FR-5); the email is the fallback
+$sql = "SELECT o.order_id, u.email, c.first_name, c.last_name, o.order_date, o.total_amount, o.status
         FROM orders o
         LEFT JOIN users u ON u.user_id = o.user_id
+        LEFT JOIN customers c ON c.user_id = o.user_id
         ORDER BY o.order_date DESC, o.order_id DESC";
 $orders = mysqli_query($conn, $sql);
 
@@ -36,7 +37,13 @@ include('../includes/header.php');
             <?php while ($o = mysqli_fetch_assoc($orders)): ?>
                 <tr>
                     <td>#<?= $o['order_id']; ?></td>
-                    <td><?= htmlspecialchars($o['email'] ?? 'Unknown customer'); ?></td>
+                    <?php $name = trim(($o['first_name'] ?? '') . ' ' . ($o['last_name'] ?? '')); ?>
+                    <td>
+                        <?= htmlspecialchars($name !== '' ? $name : ($o['email'] ?? 'Unknown customer')); ?>
+                        <?php if ($name !== ''): ?>
+                            <br><small class="text-muted"><?= htmlspecialchars($o['email'] ?? ''); ?></small>
+                        <?php endif; ?>
+                    </td>
                     <td><?= date('F j, Y g:i A', strtotime($o['order_date'])); ?></td>
                     <td>₱<?= number_format($o['total_amount'], 2); ?></td>
                     <td><?= statusBadge($o['status']); ?></td>

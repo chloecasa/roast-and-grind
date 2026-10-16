@@ -6,9 +6,11 @@ include('../includes/config.php');
 $order_id = (int) ($_GET['id'] ?? 0);
 
 $stmt = mysqli_prepare($conn,
-    "SELECT o.order_id, o.order_date, o.total_amount, o.payment_method, o.status, u.email
+    "SELECT o.order_id, o.order_date, o.total_amount, o.payment_method, o.status, u.email,
+            c.first_name, c.last_name, c.address, c.town, c.postal_code, c.phone
      FROM orders o
      LEFT JOIN users u ON u.user_id = o.user_id
+     LEFT JOIN customers c ON c.user_id = o.user_id
      WHERE o.order_id = ?");
 mysqli_stmt_bind_param($stmt, 'i', $order_id);
 mysqli_stmt_execute($stmt);
@@ -27,6 +29,12 @@ $items = mysqli_stmt_get_result($stmt);
 
 $is_canceled = ($order['status'] === 'Canceled');
 
+// FR-19: customer details come from the customer profile (FR-5)
+$customer_name = trim(($order['first_name'] ?? '') . ' ' . ($order['last_name'] ?? ''));
+$address_parts = array_filter([$order['address'] ?? '', $order['town'] ?? '', $order['postal_code'] ?? ''], 'strlen');
+$full_address  = implode(', ', $address_parts);
+$phone         = $order['phone'] ?? '';
+
 include('../includes/header.php');
 ?>
 
@@ -34,10 +42,18 @@ include('../includes/header.php');
 <?php include('../includes/alert.php'); ?>
 
 <div class="cart-view-table-back">
-    <p class="mb-1"><strong>Customer:</strong> <?= htmlspecialchars($order['email'] ?? 'Unknown customer'); ?></p>
-    <!-- delivery address and contact number come from the customer profile (FR-5), built later -->
-    <p class="mb-1"><strong>Delivery address:</strong> <span class="text-muted">Not provided</span></p>
-    <p class="mb-1"><strong>Contact number:</strong> <span class="text-muted">Not provided</span></p>
+    <p class="mb-1"><strong>Customer:</strong>
+        <?= htmlspecialchars($customer_name !== '' ? $customer_name : ($order['email'] ?? 'Unknown customer')); ?>
+        <?php if ($customer_name !== ''): ?>
+            <small class="text-muted">(<?= htmlspecialchars($order['email'] ?? ''); ?>)</small>
+        <?php endif; ?>
+    </p>
+    <p class="mb-1"><strong>Delivery address:</strong>
+        <?php if ($full_address !== ''): ?><?= htmlspecialchars($full_address); ?><?php else: ?><span class="text-muted">Not provided</span><?php endif; ?>
+    </p>
+    <p class="mb-1"><strong>Contact number:</strong>
+        <?php if ($phone !== ''): ?><?= htmlspecialchars($phone); ?><?php else: ?><span class="text-muted">Not provided</span><?php endif; ?>
+    </p>
     <p class="mb-1"><strong>Date ordered:</strong> <?= date('F j, Y g:i A', strtotime($order['order_date'])); ?></p>
     <p class="mb-3"><strong>Payment method:</strong> <?= htmlspecialchars($order['payment_method']); ?></p>
 

@@ -85,6 +85,7 @@ $result = mysqli_stmt_get_result($stmt);
  
             <div class="store-nav-right">
                 <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="user/profile.php" class="store-nav-link">My Profile</a>
                     <a href="user/logout.php" class="store-nav-link">Logout</a>
                 <?php else: ?>
                     <a href="user/login.php" class="store-nav-link">Login</a>
