@@ -1,5 +1,6 @@
 <?php
 // item/delete.php - FR-10: Delete Product & Inventory Record
+require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

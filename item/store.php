@@ -1,5 +1,6 @@
 <?php
 // item/store.php - Handles FR-8 with Multiple Gallery Images
+require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
