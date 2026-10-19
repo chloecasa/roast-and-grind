@@ -11,7 +11,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user_id = (int) $_SESSION['user_id'];
 
-// load this user's profile (registration creates the row; older accounts get one on first save)
 $stmt = mysqli_prepare($conn,
     "SELECT customer_id, first_name, last_name, address, town, postal_code, phone
      FROM customers WHERE user_id = ? LIMIT 1");
@@ -55,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // keep what they typed; alert.php shows the messages
         $_SESSION['message'] = implode('<br>', $errors);
     } else {
-        // the row is always found through the logged-in user_id, never through anything the form sends
         if ($profile) {
             $sql  = "UPDATE customers
                      SET first_name = ?, last_name = ?, address = ?, town = ?, postal_code = ?, phone = ?

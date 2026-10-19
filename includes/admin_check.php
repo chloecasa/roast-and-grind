@@ -1,6 +1,5 @@
 <?php
 // includes/admin_check.php - FR-19: only users with the admin role may open order management pages.
-// Include this at the very top of every admin page, before any output.
 require_once __DIR__ . '/session.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -15,7 +14,6 @@ if (($_SESSION['user_role'] ?? '') !== 'admin') {
     exit;
 }
 
-// FR-19: the allowed order statuses
 $order_statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Canceled'];
 
 function statusBadge($status)

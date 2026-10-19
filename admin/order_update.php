@@ -23,7 +23,6 @@ if (!in_array($new_status, $order_statuses, true)) {
 mysqli_begin_transaction($conn);
 
 try {
-    // lock the order row so two admins can't cancel the same order (and restock it) twice
     $sel = mysqli_prepare($conn, "SELECT status FROM orders WHERE order_id = ? FOR UPDATE");
     mysqli_stmt_bind_param($sel, 'i', $order_id);
     mysqli_stmt_execute($sel);
@@ -50,7 +49,6 @@ try {
         foreach ($rows as $r) {
             mysqli_stmt_bind_param($restock, 'ii', $r['quantity'], $r['item_id']);
             mysqli_stmt_execute($restock);
-            // if the product was deleted since the order, there is no stock row to update - skip it
         }
     }
 
