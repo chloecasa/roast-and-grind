@@ -48,6 +48,7 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
                 <a href="/roast-and-grind/shop.php" class="store-nav-link">Storefront</a>
             <?php endif; ?>
             <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="/roast-and-grind/user/orders.php" class="store-nav-link">My Orders</a>
                 <a href="/roast-and-grind/user/profile.php" class="store-nav-link">My Profile</a>
                 <a href="/roast-and-grind/user/logout.php" class="store-nav-link">Logout</a>
             <?php else: ?>
