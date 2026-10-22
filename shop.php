@@ -54,6 +54,18 @@ if (!empty($params)) {
 
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+
+// FR-13: stock status badge - In Stock (green), Low Stock (orange, 5 or below), Out of Stock (red, 0)
+function stockBadge($qty, $extraStyle = '')
+{
+    if ($qty <= 0) {
+        return '<span class="badge text-bg-danger" style="' . $extraStyle . '">Out of Stock</span>';
+    }
+    if ($qty <= 5) {
+        return '<span class="badge" style="background-color:#fd7e14;color:#fff;' . $extraStyle . '">Low Stock</span>';
+    }
+    return '<span class="badge text-bg-success" style="' . $extraStyle . '">In Stock</span>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -177,6 +189,7 @@ $result = mysqli_stmt_get_result($stmt);
                
                     <div class="shop-card-pure">
                         <img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($item['item_name']); ?>" class="shop-pure-img">
+                        <?= stockBadge((int) $item['qty'], 'position:absolute;top:12px;left:12px;z-index:2;font-size:.9rem;'); ?>
                         <button type="button" 
                                 class="shop-view-btn" 
                                 data-bs-toggle="offcanvas" 
@@ -265,8 +278,9 @@ $result = mysqli_stmt_get_result($stmt);
                                     <span class="drawer-price-value">₱<?= number_format($item['sell_price'], 2); ?></span>
                                 </div>
                                 <div class="drawer-stock-line">
-                                    <span>in stock</span>
-                                    <span class="ms-1 fw-bold"><?= $item['qty']; ?></span>
+                                    <?= stockBadge((int) $item['qty']); ?>
+                                    <span class="ms-2 fw-bold"><?= (int) $item['qty']; ?></span>
+                                    <span class="ms-1">available</span>
                                 </div>
                             </div>
 
