@@ -34,7 +34,10 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
    
     <div class="store-center-nav">
         <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-            <a href="/roast-and-grind/item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+            <div class="store-nav-left" style="display:flex; gap:clamp(30px, 5vw, 90px);">
+                <a href="/roast-and-grind/admin/dashboard.php" class="store-nav-link">Dashboard</a>
+                <a href="/roast-and-grind/item/index.php" class="store-nav-link">Manage Products</a>
+            </div>
         <?php else: ?>
             <span></span><!-- keeps the logo centered in the 3-column nav grid -->
         <?php endif; ?>
