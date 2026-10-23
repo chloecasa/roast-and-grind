@@ -33,14 +33,22 @@ $is_admin = (strpos($_SERVER['REQUEST_URI'], '/item/') !== false || strpos($_SER
 
    
     <div class="store-center-nav">
-        <a href="/roast-and-grind/item/create.php" class="store-nav-link store-nav-left">Manage Products</a>
+        <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+            <a href="/roast-and-grind/item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+        <?php else: ?>
+            <span></span><!-- keeps the logo centered in the 3-column nav grid -->
+        <?php endif; ?>
         <a href="/roast-and-grind/index.php" class="store-brand">R&G</a>
  
         <div class="store-nav-right">
+            <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+                <a href="/roast-and-grind/admin/orders.php" class="store-nav-link">Manage Orders</a>
+            <?php endif; ?>
             <?php if ($is_admin): ?>
                 <a href="/roast-and-grind/shop.php" class="store-nav-link">Storefront</a>
             <?php endif; ?>
             <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="/roast-and-grind/user/profile.php" class="store-nav-link">My Profile</a>
                 <a href="/roast-and-grind/user/logout.php" class="store-nav-link">Logout</a>
             <?php else: ?>
                 <a href="/roast-and-grind/user/login.php" class="store-nav-link">Login</a>

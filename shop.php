@@ -76,11 +76,16 @@ $result = mysqli_stmt_get_result($stmt);
 
          
         <div class="store-center-nav">
-            <a href="item/create.php" class="store-nav-link store-nav-left">Manage Products</a>
+            <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+                <a href="item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+            <?php else: ?>
+                <span></span><!-- keeps the logo centered in the 3-column nav grid -->
+            <?php endif; ?>
             <a href="index.php" class="store-brand">R&G</a>
  
             <div class="store-nav-right">
                 <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="user/profile.php" class="store-nav-link">My Profile</a>
                     <a href="user/logout.php" class="store-nav-link">Logout</a>
                 <?php else: ?>
                     <a href="user/login.php" class="store-nav-link">Login</a>

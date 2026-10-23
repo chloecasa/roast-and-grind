@@ -1,9 +1,9 @@
 <?php
 // item/update.php - Handles FR-9 product update and FR-14 restocking
+require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // 1. Collect and sanitize form inputs
     $item_id     = intval($_POST['item_id']);
     $item_name   = trim($_POST['item_name']);
     $category    = trim($_POST['category']);

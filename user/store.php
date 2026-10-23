@@ -32,12 +32,22 @@ if ($password !== $confirmPass) {
 try {
     $password = password_hash($password, PASSWORD_BCRYPT); 
 
+    // FR-5: every new user gets a customer profile row; both rows are saved together or not at all
+    mysqli_begin_transaction($conn);
+
     $sql   = "INSERT INTO users (email, password_hash) VALUES (?, ?)";
     $stmt1 = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt1, 'ss', $email, $password);
     mysqli_stmt_execute($stmt1);
     $new_id = mysqli_insert_id($conn);
+
+    $stmt2 = mysqli_prepare($conn, "INSERT INTO customers (user_id) VALUES (?)");
+    mysqli_stmt_bind_param($stmt2, 'i', $new_id);
+    mysqli_stmt_execute($stmt2);
+
+    mysqli_commit($conn);
 } catch (mysqli_sql_exception $e) {
+    mysqli_rollback($conn);
     
     $_SESSION['message'] = ($e->getCode() == 1062)
         ? 'that email is already registered. Try logging in.'

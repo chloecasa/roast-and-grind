@@ -1,5 +1,6 @@
 <?php
 // item/create.php - FR-8: Add Product Form
+require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
 require_once "../includes/header.php";
 ?>
