@@ -1,14 +1,14 @@
 <?php
-// admin/dashboard.php - FR-20: sales dashboard (admin only)
-include('../includes/admin_check.php');
-include('../includes/config.php');
+// admin/dashboard.php - FR-20: Sales Dashboard (Admin Only)
+require_once "../includes/admin_check.php";
+require_once "../includes/config.php";
 
 function peso($n)
 {
     return ($n < 0 ? '-' : '') . '₱' . number_format(abs($n), 2);
 }
 
-// orders per status (every status is listed, even when its count is 0)
+// Orders per status count
 $per_status = array_fill_keys($order_statuses, 0);
 $res = mysqli_query($conn, "SELECT status, COUNT(*) AS total FROM orders GROUP BY status");
 while ($r = mysqli_fetch_assoc($res)) {
@@ -16,12 +16,12 @@ while ($r = mysqli_fetch_assoc($res)) {
 }
 $total_orders = array_sum($per_status);
 
-// FR-20: Canceled orders are left out of the sales revenue
+// FR-20: Total revenue excluding Canceled orders
 $row = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT COALESCE(SUM(total_amount), 0) AS revenue FROM orders WHERE status <> 'Canceled'"));
 $total_revenue = (float) $row['revenue'];
 
-// FR-21: total profit across non-canceled orders (shown here too; the detail is in profit.php)
+// FR-21: Total profit across non-canceled orders
 $row = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT COALESCE(SUM((oi.unit_price - oi.unit_cost) * oi.quantity), 0) AS profit
      FROM order_items oi
@@ -29,7 +29,7 @@ $row = mysqli_fetch_assoc(mysqli_query($conn,
      WHERE o.status <> 'Canceled'"));
 $total_profit = (float) $row['profit'];
 
-// FR-20: products at Low Stock (5 or below) or Out of Stock (a product with no stock row counts as 0)
+// FR-20: Products at Low Stock (5 or below) or Out of Stock
 $low_stock = mysqli_query($conn,
     "SELECT i.item_id, i.item_name, i.category, COALESCE(s.quantity, 0) AS quantity
      FROM item i
@@ -37,88 +37,116 @@ $low_stock = mysqli_query($conn,
      WHERE COALESCE(s.quantity, 0) <= 5
      ORDER BY quantity ASC, i.item_name ASC");
 
-include('../includes/header.php');
+require_once "../includes/header.php";
 ?>
 
-<h1 align="center" class="mb-4">Sales Dashboard</h1>
-<?php include('../includes/alert.php'); ?>
+<div class="dashboard-wrapper">
+    <h1 class="dashboard-title">Sales Dashboard</h1>
+    <p class="dashboard-subtitle">Real-time overview of orders, revenue, profit, and inventory alerts</p>
 
-<div class="cart-view-table-back">
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="text-muted">Total Orders</div>
-                    <div class="fs-2 fw-bold"><?= $total_orders; ?></div>
-                    <small class="text-muted">all orders, including canceled</small>
+    <?php require_once "../includes/alert.php"; ?>
+
+    <!-- 1. Top KPI Summary Cards -->
+    <div class="dashboard-kpi-grid">
+        <!-- Card 1: Total Orders -->
+        <div class="dashboard-kpi-card">
+            <div>
+                <div class="kpi-label">Total Orders</div>
+                <div class="kpi-number"><?= $total_orders; ?></div>
+            </div>
+            <div class="kpi-hint">All customer orders recorded</div>
+        </div>
+
+        <!-- Card 2: Sales Revenue -->
+        <div class="dashboard-kpi-card">
+            <div>
+                <div class="kpi-label">Total Sales Revenue</div>
+                <div class="kpi-number kpi-revenue"><?= peso($total_revenue); ?></div>
+            </div>
+            <div class="kpi-hint">Excludes canceled orders</div>
+        </div>
+
+        <!-- Card 3: Net Profit -->
+        <div class="dashboard-kpi-card">
+            <div>
+                <div class="kpi-label">Total Estimated Profit</div>
+                <div class="kpi-number kpi-profit <?= $total_profit < 0 ? 'text-danger' : ''; ?>">
+                    <?= peso($total_profit); ?>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="text-muted">Total Sales Revenue</div>
-                    <div class="fs-2 fw-bold"><?= peso($total_revenue); ?></div>
-                    <small class="text-muted">canceled orders excluded</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <div class="text-muted">Total Profit</div>
-                    <div class="fs-2 fw-bold <?= $total_profit < 0 ? 'text-danger' : ''; ?>"><?= peso($total_profit); ?></div>
-                    <a href="profit.php" class="small">View profit report</a>
-                </div>
+            <div>
+                <a href="profit.php" class="kpi-link">View Detailed Profit Report &rarr;</a>
             </div>
         </div>
     </div>
 
-    <h5 class="fw-bold">Orders per Status</h5>
-    <div class="row g-3 mb-4">
+    <!-- 2. Order Status Pipeline -->
+    <h3 class="dashboard-section-header">Order Pipeline</h3>
+    <div class="dashboard-status-grid">
         <?php foreach ($per_status as $status => $count): ?>
-            <div class="col">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body text-center">
-                        <?= statusBadge($status); ?>
-                        <div class="fs-3 fw-bold mt-2"><?= $count; ?></div>
-                    </div>
-                </div>
+            <div class="dashboard-status-card">
+                <div><?= statusBadge($status); ?></div>
+                <div class="dashboard-status-count"><?= $count; ?></div>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <h5 class="fw-bold">Low Stock and Out of Stock Products</h5>
-    <table class="table table-striped table-bordered align-middle">
-        <thead>
-            <tr><th>Product</th><th>Category</th><th>Stock</th><th>Status</th><th></th></tr>
-        </thead>
-        <tbody>
-            <?php if (mysqli_num_rows($low_stock) === 0): ?>
-                <tr><td colspan="5" class="text-center text-muted py-3">All products are well stocked.</td></tr>
-            <?php endif; ?>
-            <?php while ($p = mysqli_fetch_assoc($low_stock)): ?>
+    <!-- 3. Low Stock / Out of Stock Alert Table -->
+    <h3 class="dashboard-section-header">Inventory Watchlist (Stock &le; 5)</h3>
+    <div class="dashboard-table-box">
+        <table class="dashboard-table">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($p['item_name']); ?></td>
-                    <td><?= htmlspecialchars($p['category']); ?></td>
-                    <td><?= (int) $p['quantity']; ?></td>
-                    <td>
-                        <?php if ((int) $p['quantity'] === 0): ?>
-                            <span class="badge text-bg-danger">Out of Stock</span>
-                        <?php else: ?>
-                            <span class="badge" style="background-color:#fd7e14;color:#fff;">Low Stock</span>
-                        <?php endif; ?>
-                    </td>
-                    <td class="text-center">
-                        <a href="../item/edit.php?id=<?= $p['item_id']; ?>" class="btn btn-sm btn-outline-primary">Restock</a>
-                    </td>
+                    <th class="text-start">Product</th>
+                    <th class="text-start">Category</th>
+                    <th class="text-center">Current Stock</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end">Action</th>
                 </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if (mysqli_num_rows($low_stock) === 0): ?>
+                    <tr>
+                        <td colspan="5" class="text-center py-4" style="font-family: 'Alinore'; color: #78716C; font-size: 1.2rem;">
+                            All products are currently well-stocked.
+                        </td>
+                    </tr>
+                <?php endif; ?>
 
-    <a href="orders.php" class="btn btn-outline-dark">Manage Orders</a>
-    <a href="profit.php" class="btn btn-dark float-end">Profit Report</a>
+                <?php while ($p = mysqli_fetch_assoc($low_stock)): ?>
+                    <tr>
+                        <td class="dashboard-item-name"><?= htmlspecialchars($p['item_name']); ?></td>
+                        <td><?= htmlspecialchars($p['category']); ?></td>
+                        <td class="text-center fw-bold fs-5" style="color: <?= ((int)$p['quantity'] === 0) ? '#FB7185' : '#D97706'; ?>;">
+                            <?= (int) $p['quantity']; ?>
+                        </td>
+                        <td class="text-center">
+                            <?php if ((int) $p['quantity'] === 0): ?>
+                                <span class="order-badge-custom badge-canceled">Out of Stock</span>
+                            <?php else: ?>
+                                <span class="order-badge-custom badge-pending">Low Stock</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-end">
+                            <a href="../item/edit.php?id=<?= $p['item_id']; ?>" class="dashboard-restock-btn">
+                                Restock &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 4. Action Buttons Bar -->
+    <div class="dashboard-actions-bar">
+        <a href="orders.php" class="dashboard-btn-outline">
+            &larr; Manage Orders
+        </a>
+        <a href="profit.php" class="dashboard-btn-primary">
+            Profit Breakdown &rarr;
+        </a>
+    </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+<?php require_once "../includes/footer.php"; ?>

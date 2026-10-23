@@ -1,7 +1,7 @@
 <?php
-// admin/order_view.php - FR-19: order details + status update form (admin only)
-include('../includes/admin_check.php');
-include('../includes/config.php');
+// admin/order_view.php - FR-19: Order Details + Status Update Form (Admin Only)
+require_once "../includes/admin_check.php";
+require_once "../includes/config.php";
 
 $order_id = (int) ($_GET['id'] ?? 0);
 
@@ -29,74 +29,126 @@ $items = mysqli_stmt_get_result($stmt);
 
 $is_canceled = ($order['status'] === 'Canceled');
 
-// FR-19: customer details come from the customer profile (FR-5)
 $customer_name = trim(($order['first_name'] ?? '') . ' ' . ($order['last_name'] ?? ''));
 $address_parts = array_filter([$order['address'] ?? '', $order['town'] ?? '', $order['postal_code'] ?? ''], 'strlen');
 $full_address  = implode(', ', $address_parts);
 $phone         = $order['phone'] ?? '';
 
-include('../includes/header.php');
+require_once "../includes/header.php";
 ?>
 
-<h1 align="center" class="mb-4">Order #<?= $order['order_id']; ?></h1>
-<?php include('../includes/alert.php'); ?>
+<div class="order-view-wrapper">
+    <h1 class="order-view-title">Order #<?= $order['order_id']; ?></h1>
+    <p class="order-view-subtitle">Detailed customer summary, fulfillment tracking, and status management</p>
 
-<div class="cart-view-table-back">
-    <p class="mb-1"><strong>Customer:</strong>
-        <?= htmlspecialchars($customer_name !== '' ? $customer_name : ($order['email'] ?? 'Unknown customer')); ?>
-        <?php if ($customer_name !== ''): ?>
-            <small class="text-muted">(<?= htmlspecialchars($order['email'] ?? ''); ?>)</small>
-        <?php endif; ?>
-    </p>
-    <p class="mb-1"><strong>Delivery address:</strong>
-        <?php if ($full_address !== ''): ?><?= htmlspecialchars($full_address); ?><?php else: ?><span class="text-muted">Not provided</span><?php endif; ?>
-    </p>
-    <p class="mb-1"><strong>Contact number:</strong>
-        <?php if ($phone !== ''): ?><?= htmlspecialchars($phone); ?><?php else: ?><span class="text-muted">Not provided</span><?php endif; ?>
-    </p>
-    <p class="mb-1"><strong>Date ordered:</strong> <?= date('F j, Y g:i A', strtotime($order['order_date'])); ?></p>
-    <p class="mb-3"><strong>Payment method:</strong> <?= htmlspecialchars($order['payment_method']); ?></p>
+    <?php require_once "../includes/alert.php"; ?>
 
-    <table class="table table-striped table-bordered align-middle">
-        <thead>
-            <tr><th>Item</th><th>Price</th><th>Quantity</th><th>Total</th></tr>
-        </thead>
-        <tbody>
-            <?php while ($it = mysqli_fetch_assoc($items)): ?>
-                <tr>
-                    <td><?= htmlspecialchars($it['item_name']); ?></td>
-                    <td>₱<?= number_format($it['unit_price'], 2); ?></td>
-                    <td><?= $it['quantity']; ?></td>
-                    <td>₱<?= number_format($it['unit_price'] * $it['quantity'], 2); ?></td>
-                </tr>
-            <?php endwhile; ?>
-            <tr>
-                <td colspan="4" class="text-end fw-bold">Order Total : ₱<?= number_format($order['total_amount'], 2); ?></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="order-view-card">
+        <!-- Customer & Order Metadata Grid -->
+        <div class="order-info-grid">
+            <div class="order-info-group">
+                <span class="order-info-label">Customer Name</span>
+                <span class="order-info-val">
+                    <?= htmlspecialchars($customer_name !== '' ? $customer_name : ($order['email'] ?? 'Unknown Customer')); ?>
+                </span>
+                <?php if ($customer_name !== ''): ?>
+                    <span class="order-info-val-sub">&lt;<?= htmlspecialchars($order['email'] ?? ''); ?>&gt;</span>
+                <?php endif; ?>
+            </div>
 
-    <form method="POST" action="order_update.php"
-          onsubmit="return this.status.value !== 'Canceled' || confirm('Cancel this order? The items will be returned to stock and this cannot be undone.');">
-        <input type="hidden" name="order_id" value="<?= $order['order_id']; ?>">
+            <div class="order-info-group">
+                <span class="order-info-label">Contact Number</span>
+                <span class="order-info-val">
+                    <?= $phone !== '' ? htmlspecialchars($phone) : '<span style="color:#78716C;">Not provided</span>'; ?>
+                </span>
+            </div>
 
-        <div class="mb-3" style="max-width:320px">
-            <label class="form-label fw-bold">Status: <?= statusBadge($order['status']); ?></label>
-            <select name="status" class="form-select" <?= $is_canceled ? 'disabled' : ''; ?>>
-                <?php foreach ($order_statuses as $s): ?>
-                    <option value="<?= $s; ?>" <?= $s === $order['status'] ? 'selected' : ''; ?>><?= $s; ?></option>
-                <?php endforeach; ?>
-            </select>
-            <?php if ($is_canceled): ?>
-                <div class="form-text">A canceled order can't be changed.</div>
-            <?php endif; ?>
+            <div class="order-info-group">
+                <span class="order-info-label">Delivery Address</span>
+                <span class="order-info-val" style="font-size: 1.1rem; line-height: 1.3;">
+                    <?= $full_address !== '' ? htmlspecialchars($full_address) : '<span style="color:#78716C;">Not provided</span>'; ?>
+                </span>
+            </div>
+
+            <div class="order-info-group">
+                <span class="order-info-label">Date Ordered</span>
+                <span class="order-info-val"><?= date('M j, Y • g:i A', strtotime($order['order_date'])); ?></span>
+            </div>
+
+            <div class="order-info-group">
+                <span class="order-info-label">Payment Method</span>
+                <span class="order-info-val"><?= htmlspecialchars($order['payment_method']); ?></span>
+            </div>
+
+            <div class="order-info-group">
+                <span class="order-info-label">Current Status</span>
+                <div><?= statusBadge($order['status']); ?></div>
+            </div>
         </div>
 
-        <a href="orders.php" class="btn btn-outline-dark">Back to Orders</a>
-        <?php if (!$is_canceled): ?>
-            <button type="submit" class="btn btn-warning float-end">Update Status</button>
-        <?php endif; ?>
-    </form>
+        <!-- Itemized Order Table -->
+        <div class="profit-table-box mb-0">
+            <table class="profit-table">
+                <thead>
+                    <tr>
+                        <th class="text-start">Item</th>
+                        <th class="text-center">Unit Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($it = mysqli_fetch_assoc($items)): ?>
+                        <tr>
+                            <td class="profit-item-title"><?= htmlspecialchars($it['item_name']); ?></td>
+                            <td class="text-center">₱<?= number_format($it['unit_price'], 2); ?></td>
+                            <td class="text-center"><?= $it['quantity']; ?></td>
+                            <td class="text-end fw-bold">₱<?= number_format($it['unit_price'] * $it['quantity'], 2); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+
+            <!-- Total Line -->
+            <div class="confirm-total-box">
+                <span class="confirm-total-label">Order Total:</span>
+                <span class="confirm-total-amount">₱<?= number_format($order['total_amount'], 2); ?></span>
+            </div>
+        </div>
+
+        <!-- Status Update Form Box -->
+        <form method="POST" action="order_update.php"
+              onsubmit="return this.status.value !== 'Canceled' || confirm('Cancel this order? The items will be returned to stock and this cannot be undone.');">
+            <input type="hidden" name="order_id" value="<?= $order['order_id']; ?>">
+
+            <div class="order-update-box">
+                <div style="max-width: 320px; width: 100%;">
+                    <label class="form-label" style="font-family: 'Alinore', sans-serif; font-size: 1.1rem; color: var(--text-brown); text-transform: uppercase; margin-bottom: 6px;">
+                        Update Fulfillment Status
+                    </label>
+                    <select name="status" class="form-select order-select-input" <?= $is_canceled ? 'disabled' : ''; ?>>
+                        <?php foreach ($order_statuses as $s): ?>
+                            <option value="<?= $s; ?>" <?= $s === $order['status'] ? 'selected' : ''; ?>><?= $s; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if ($is_canceled): ?>
+                        <div class="form-text text-danger" style="font-family: 'Alinore';">A canceled order cannot be modified.</div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="d-flex gap-3 align-items-center">
+                    <a href="orders.php" class="dashboard-btn-outline" style="padding: 12px 28px; font-size: 1.2rem;">
+                        &larr; Back
+                    </a>
+                    <?php if (!$is_canceled): ?>
+                        <button type="submit" class="dashboard-btn-primary" style="padding: 12px 32px; font-size: 1.2rem;">
+                            Update Status
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+<?php require_once "../includes/header.php"; // (Footer included via layout pattern) ?>

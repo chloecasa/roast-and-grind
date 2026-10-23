@@ -1,8 +1,9 @@
 <?php
 // admin/order_update.php - FR-19: change an order's status
-//                          FR-16: Canceled returns the items to stock, in ONE transaction
+//                          FR-16: Canceled returns the items to stock
 include('../includes/admin_check.php');
 include('../includes/config.php');
+require_once('../includes/send_receipt.php'); // Include our new Mailer script
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -58,9 +59,32 @@ try {
 
     mysqli_commit($conn);
 
+    // ========================================================
+    // TERM TEST LAB: Trigger Email Notification & PDF Receipt
+    // ========================================================
+    $cust_q = mysqli_prepare($conn, "
+        SELECT u.email, c.first_name, c.last_name 
+        FROM orders o 
+        JOIN users u ON o.user_id = u.user_id 
+        LEFT JOIN customers c ON u.user_id = c.user_id 
+        WHERE o.order_id = ?
+    ");
+    mysqli_stmt_bind_param($cust_q, 'i', $order_id);
+    mysqli_stmt_execute($cust_q);
+    $cust_data = mysqli_fetch_assoc(mysqli_stmt_get_result($cust_q));
+    
+    if ($cust_data) {
+        $cust_name = trim($cust_data['first_name'] . ' ' . $cust_data['last_name']);
+        if (empty($cust_name)) $cust_name = "Valued Customer";
+        
+        // Dispatches the PHPMailer + PDF attachment function
+        sendOrderReceiptEmail($conn, $order_id, $cust_data['email'], $cust_name, $new_status);
+    }
+    // ========================================================
+
     $_SESSION['success'] = ($new_status === 'Canceled')
         ? "Order #$order_id canceled. The items were returned to stock."
-        : "Order #$order_id is now $new_status.";
+        : "Order #$order_id is now $new_status. A notification email with a PDF receipt was sent via Mailtrap.";
 } catch (Throwable $e) {
     mysqli_rollback($conn);
 

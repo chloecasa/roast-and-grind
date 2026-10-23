@@ -66,7 +66,9 @@ function stockBadge($qty, $extraStyle = '')
     }
     return '<span class="badge text-bg-success" style="' . $extraStyle . '">In Stock</span>';
 }
-?>
+
+
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,50 +84,33 @@ function stockBadge($qty, $extraStyle = '')
 </head>
 <body class="store-wrapper">
 
+   <!-- Top Navigation Bar for Shop -->
     <header class="store-top-bar">
-        
-        <i class="fa-solid fa-star store-star"></i>
-
-         
-        <div class="store-center-nav">
-            <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-                <div class="store-nav-left" style="display:flex; gap:clamp(30px, 5vw, 90px);">
-                    <a href="admin/dashboard.php" class="store-nav-link">Dashboard</a>
-                    <a href="item/index.php" class="store-nav-link">Manage Products</a>
-                </div>
-            <?php else: ?>
-                <span></span><!-- keeps the logo centered in the 3-column nav grid -->
-            <?php endif; ?>
-            <a href="index.php" class="store-brand">R&G</a>
- 
-            <div class="store-nav-right">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="user/orders.php" class="store-nav-link">My Orders</a>
-                    <a href="user/profile.php" class="store-nav-link">My Profile</a>
-                    <a href="user/logout.php" class="store-nav-link">Logout</a>
-                <?php else: ?>
-                    <a href="user/login.php" class="store-nav-link">Login</a>
-                <?php endif; ?>
-            </div>
+        <!-- Left Group: Star + Menu Button -->
+        <div class="store-left-menu-group">
+            <i class="fa-solid fa-star store-star"></i>
+            <button type="button" class="menu-trigger-btn" data-bs-toggle="offcanvas" data-bs-target="#leftMenuDrawer" aria-controls="leftMenuDrawer">
+                <i class="fa-solid fa-bars me-1"></i> MENU
+            </button>
         </div>
 
-        
+        <!-- Center: R&G Logo -->
+        <div class="store-center-nav">
+            <a href="index.php" class="store-brand">R&G</a>
+        </div>
+
+        <!-- Right Side: See Cart Items Button + Star -->
         <div class="store-right-cart-group">
             <a href="view_cart.php" class="figma-cart-btn" title="View Cart"
-   data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
-                
+               data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
                 <div class="figma-cart-pill">
                     <span>See cart items</span>
-                    
                     <i class="fa-solid fa-cart-shopping figma-cart-icon"></i>
                 </div>
-                
                 <div class="figma-cart-circle">
                     <?= $cartCount; ?>
                 </div>
             </a>
-
-            
             <i class="fa-solid fa-star store-star"></i>
         </div>
     </header>
@@ -310,7 +295,73 @@ function stockBadge($qty, $extraStyle = '')
                                 <?php endif; ?>
                             </form>
                         </div>
+<!-- =======================================================
+                             MP4: REVIEWS SECTION
+                        ======================================================== -->
+                        <?php
+                        // Fetch existing reviews for this item
+                        $rev_q = mysqli_query($conn, "SELECT r.*, c.first_name, c.last_name FROM reviews r JOIN customers c ON r.user_id = c.user_id WHERE r.item_id = " . intval($item['item_id']) . " ORDER BY r.created_at DESC");
+                        
+                        $has_bought = false;
+                        $my_review = "";
+                        
+                        if (isset($_SESSION['user_id'])) {
+                            $uid = (int)$_SESSION['user_id'];
+                            $iid = (int)$item['item_id'];
+                            
+                            // Check if they bought it
+                            $chk_p = mysqli_query($conn, "SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.user_id = $uid AND oi.item_id = $iid AND o.status != 'Canceled' LIMIT 1");
+                            if (mysqli_num_rows($chk_p) > 0) $has_bought = true;
+                            
+                            // Get their existing review if any
+                            $chk_r = mysqli_query($conn, "SELECT review_text FROM reviews WHERE user_id = $uid AND item_id = $iid");
+                            if ($r_row = mysqli_fetch_assoc($chk_r)) {
+                                $my_review = $r_row['review_text'];
+                            }
+                        }
+                        ?>
+                        
+                        <div class="mt-4 pt-4 border-top border-secondary">
+                            <h4 style="font-family: 'Aqila', serif; color: #FED7AA; font-size: 1.5rem; margin-bottom: 16px;">Customer Reviews</h4>
+                            
+                            <!-- Review Form (Only if they bought the product) -->
+                            <?php if ($has_bought): ?>
+                                <form action="review_store.php" method="POST" class="mb-4 p-3 rounded" style="background: rgba(0,0,0,0.15);">
+                                    <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
+                                    <input type="hidden" name="redirect" value="shop.php?cart=open">
+                                    <label class="form-label" style="font-family: 'Alinore'; color: #FDBA74; font-size: 1.1rem; text-transform: uppercase;">
+                                        <?= $my_review !== '' ? 'Update Your Review' : 'Write a Review'; ?>
+                                    </label>
+                                    <textarea name="review_text" rows="2" class="form-control mb-2" style="background: #FAF7F2; border-radius: 12px; font-family: 'Alinore'; font-size: 1.1rem; border:none; resize:none;" placeholder="Tell us what you think..." required><?= htmlspecialchars($my_review); ?></textarea>
+                                    <button type="submit" style="background: transparent; color: #FED7AA; border: 1px solid #FED7AA; border-radius: 20px; padding: 6px 16px; font-family: 'Alinore'; font-size: 1rem; text-transform: uppercase; transition: all 0.2s ease;">
+                                        <?= $my_review !== '' ? 'Save Changes' : 'Submit Review'; ?>
+                                    </button>
+                                </form>
+                            <?php elseif (isset($_SESSION['user_id'])): ?>
+                                <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">You must purchase this item to leave a review.</p>
+                            <?php else: ?>
+                                <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">Please <a href="user/login.php" style="color: #FED7AA;">log in</a> to leave a review.</p>
+                            <?php endif; ?>
 
+                            <!-- List of Reviews -->
+                            <div>
+                                <?php if (mysqli_num_rows($rev_q) > 0): ?>
+                                    <?php while($rev = mysqli_fetch_assoc($rev_q)): ?>
+                                        <div class="mb-3">
+                                            <div style="font-family: 'Alinore'; font-size: 1.1rem; color: #FDBA74; text-transform: uppercase; font-weight: bold; margin-bottom: 2px;">
+                                                <?= htmlspecialchars($rev['first_name'] . ' ' . $rev['last_name']); ?>
+                                            </div>
+                                            <div style="font-family: 'Alinore'; font-size: 1.15rem; color: #E6D8CC; line-height: 1.4; background: rgba(0,0,0,0.1); padding: 10px 14px; border-radius: 8px;">
+                                                <?= nl2br(htmlspecialchars($rev['review_text'])); ?>
+                                            </div>
+                                        </div>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">No reviews yet.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <!-- End of Reviews Section -->
                         <button type="button" class="drawer-close-link" data-bs-dismiss="offcanvas" aria-label="Close">
                             [close]
                         </button>
@@ -352,7 +403,10 @@ function stockBadge($qty, $extraStyle = '')
 
 
 <?php include("includes/footer.php"); ?>
-<?php include("includes/cart_drawer.php"); ?>
+<?php 
+include("includes/left_menu.php");
+include("includes/cart_drawer.php"); ?>
+
 
 <script>
 function stepQty(id, delta, maxStock = 999) {
@@ -372,6 +426,7 @@ function stepQty(id, delta, maxStock = 999) {
 
 <!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <script>
 (function () {

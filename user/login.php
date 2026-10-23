@@ -1,8 +1,7 @@
 <?php
-// user/login.php - FR-2: login (guests are sent here by checkout.php, FR-18)
-include('../includes/session.php');
-include('../includes/config.php');
-
+// user/login.php - FR-2: Login, MP2: Block Inactive Users, MP5: No HTML5 Validation
+require_once "../includes/session.php";
+require_once "../includes/config.php";
 
 function afterLoginPage()
 {
@@ -18,50 +17,75 @@ if (isset($_SESSION['user_id'])) {
 }
 
 if (isset($_POST['submit'])) {
-
     $email  = trim($_POST['email']);
-    $sql    = "SELECT user_id, email, password_hash, role FROM users WHERE email = ? LIMIT 1";
+    
+    // Fetch user including the status column
+    $sql    = "SELECT user_id, email, password_hash, role, status FROM users WHERE email = ? LIMIT 1";
     $result = mysqli_execute_query($conn, $sql, [$email]);
 
     if ($result->num_rows === 1) {
         $row = mysqli_fetch_assoc($result);
-        if (password_verify(trim($_POST['password']), $row['password_hash'])) {
-            // new session id, but the session DATA (the cart) is kept - FR-18
+        
+        // MP2 Check: Is the account deactivated?
+        if ($row['status'] === 'inactive') {
+            $_SESSION['message'] = 'Your account has been deactivated. Please contact support.';
+        } 
+        // Normal password check
+        elseif (password_verify(trim($_POST['password']), $row['password_hash'])) {
             session_regenerate_id(true);
             $_SESSION['user_id']    = $row['user_id'];
             $_SESSION['user_email'] = $row['email'];
             $_SESSION['user_role']  = $row['role'];
             header('Location: ' . afterLoginPage());
             exit;
+        } else {
+            $_SESSION['message'] = 'Wrong email or password.';
+        }
+    } else {
+        if (empty($email) || empty($_POST['password'])) {
+            $_SESSION['message'] = 'Please enter both email and password.';
+        } else {
+            $_SESSION['message'] = 'Wrong email or password.';
         }
     }
-    $_SESSION['message'] = 'wrong email or password';
-}
+} // <--- THIS is the curly brace that was missing!
 
-include('../includes/header.php');
+require_once "../includes/header.php";
 ?>
 
-<h1 align="center" class="mb-4">Log In</h1>
+<div class="auth-wrapper">
+    <h1 class="auth-title">Welcome Back</h1>
+    <p class="auth-subtitle">Sign in to access your coffee orders and saved details</p>
 
-<div class="row col-md-4 mx-auto">
-    <?php include('../includes/alert.php'); ?>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
+    <div class="auth-card">
+        <?php require_once "../includes/alert.php"; ?>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
+        <!-- Form submitting to itself -->
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+            
+            <div class="mb-3">
+                <label for="email" class="auth-label">Email Address</label>
+                <!-- MP5: Removed required and type="email" -->
+                <input type="text" class="form-control auth-input" id="email" name="email" 
+                       placeholder="e.g. name@example.com">
+            </div>
 
-        <button type="submit" class="btn btn-dark w-100" name="submit">Log In</button>
+            <div class="mb-4">
+                <label for="password" class="auth-label">Password</label>
+                <!-- MP5: Removed required -->
+                <input type="password" class="form-control auth-input" id="password" name="password" 
+                       placeholder="••••••••">
+            </div>
 
-        <div class="text-center mt-3">
-            <p>No account yet? <a href="register.php">Register</a></p>
-        </div>
-    </form>
+            <button type="submit" class="auth-submit-btn" name="submit">
+                Log In
+            </button>
+
+            <p class="auth-switch-text">
+                No account yet? <a href="register.php" class="auth-switch-link">Register here</a>
+            </p>
+        </form>
+    </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+<?php require_once "../includes/footer.php"; ?>

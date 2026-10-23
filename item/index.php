@@ -1,7 +1,6 @@
 <?php
-// item/index.php - admin product list: the entry point to FR-8 add, FR-9 edit, FR-10 delete,
-//                  FR-13 stock badges and FR-14 restocking (via the edit page)
-require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
+// item/index.php - Admin Product List: Entry point for FR-8, FR-9, FR-10, FR-13, FR-14
+require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
 $sql = "SELECT i.item_id, i.item_name, i.category, i.origin, i.cost_price, i.sell_price, i.img_path,
@@ -12,7 +11,7 @@ $sql = "SELECT i.item_id, i.item_name, i.category, i.origin, i.cost_price, i.sel
 $result    = mysqli_query($conn, $sql);
 $itemCount = mysqli_num_rows($result);
 
-// FR-13: stock status badge (green / orange when 5 or below / red at 0)
+// FR-13: Harmonious Stock Status Badges
 function stockBadge($qty)
 {
     if ($qty <= 0) {
@@ -27,78 +26,97 @@ function stockBadge($qty)
 require_once "../includes/header.php";
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-11">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold"><i class="fa-solid fa-mug-hot me-2"></i>Products (<?= $itemCount; ?>)</h5>
-                <div>
-                    <a href="../shop.php" class="btn btn-sm btn-outline-light">Back to Shop</a>
-                    <a href="create.php" class="btn btn-sm btn-light fw-bold"><i class="fa-solid fa-plus me-1"></i>Add Product</a>
-                </div>
-            </div>
+<div class="admin-items-wrapper">
+    <h1 class="admin-items-title">Inventory Management</h1>
+    <p class="admin-items-subtitle">Manage product catalog listings, pricing, and live inventory stock levels</p>
 
-            <div class="card-body p-4">
-                <?php include('../includes/alert.php'); ?>
+    <?php require_once "../includes/alert.php"; ?>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width:80px;">Image</th>
-                                <th>Product</th>
-                                <th>Cost</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th style="width:110px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ($itemCount === 0): ?>
-                                <tr><td colspan="6" class="text-center text-muted py-4">No products yet. Add your first one.</td></tr>
-                            <?php endif; ?>
-
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                                <?php
-                                $imgSrc = "images/" . $row['img_path'];
-                                if (empty($row['img_path']) || !file_exists(__DIR__ . "/" . $imgSrc)) {
-                                    $imgSrc = "https://placehold.co/120x120/EDEAE1/743014?text=" . urlencode($row['item_name']);
-                                }
-                                ?>
-                                <tr>
-                                    <td>
-                                        <img src="<?= htmlspecialchars($imgSrc); ?>" alt="" width="60" height="60"
-                                             style="object-fit:cover;border-radius:6px;">
-                                    </td>
-                                    <td>
-                                        <div class="fw-bold"><?= htmlspecialchars($row['item_name']); ?></div>
-                                        <small class="text-muted">
-                                            <?= htmlspecialchars($row['category']); ?> &middot; <?= htmlspecialchars($row['origin']); ?>
-                                        </small>
-                                    </td>
-                                    <td>₱<?= number_format($row['cost_price'], 2); ?></td>
-                                    <td>₱<?= number_format($row['sell_price'], 2); ?></td>
-                                    <td>
-                                        <?= (int) $row['quantity']; ?>
-                                        <?= stockBadge((int) $row['quantity']); ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="edit.php?id=<?= $row['item_id']; ?>" class="btn btn-sm btn-outline-primary" title="Edit / restock">
-                                            <i class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="delete.php?id=<?= $row['item_id']; ?>" class="btn btn-sm btn-outline-danger" title="Delete"
-                                           onclick="return confirm('Delete this product and its inventory record? This cannot be undone.');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <!-- Top Action Bar -->
+    <div class="admin-items-header-bar">
+        <h3 class="admin-items-count">Products Catalog (<?= $itemCount; ?>)</h3>
+        <div class="d-flex gap-3">
+            <a href="../shop.php" class="dashboard-btn-outline" style="padding: 10px 24px; font-size: 1.15rem;">
+                &larr; View Storefront
+            </a>
+            <a href="create.php" class="admin-add-product-btn">
+                <i class="fa-solid fa-plus me-1"></i> Add New Product
+            </a>
         </div>
+    </div>
+
+    <!-- Products Table Box -->
+    <div class="admin-items-box">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th style="width:90px;" class="text-center">Image</th>
+                    <th class="text-start">Product Details</th>
+                    <th class="text-center">Cost Price</th>
+                    <th class="text-center">Selling Price</th>
+                    <th class="text-center">Stock Level</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($itemCount === 0): ?>
+                    <tr>
+                        <td colspan="6" class="text-center py-4" style="color: #78716C; font-family: 'Alinore'; font-size: 1.2rem;">
+                            No products found in catalog. Click "Add New Product" to get started.
+                        </td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php while ($row = mysqli_fetch_assoc($result)): 
+                    $imgSrc = "images/" . $row['img_path'];
+                    if (empty($row['img_path']) || !file_exists(__DIR__ . "/" . $imgSrc)) {
+                        $imgSrc = "https://placehold.co/120x120/EDEAE1/743014?text=" . urlencode($row['item_name']);
+                    }
+                ?>
+                    <tr>
+                        <!-- Thumbnail Image -->
+                        <td class="text-center">
+                            <img src="<?= htmlspecialchars($imgSrc); ?>" alt="" width="65" height="65"
+                                 style="object-fit:cover; border-radius:10px; border:1px solid rgba(116,48,20,0.15);">
+                        </td>
+
+                        <!-- Name & Meta -->
+                        <td>
+                            <div class="admin-item-title"><?= htmlspecialchars($row['item_name']); ?></div>
+                            <span class="admin-item-meta">
+                                <?= htmlspecialchars($row['category']); ?> &bull; <?= htmlspecialchars($row['origin']); ?>
+                            </span>
+                        </td>
+
+                        <!-- Cost Price -->
+                        <td class="text-center" style="font-family: 'Alinore';">₱<?= number_format($row['cost_price'], 2); ?></td>
+
+                        <!-- Selling Price -->
+                        <td class="text-center fw-bold" style="font-family: 'Alinore'; color: #4D6443;">₱<?= number_format($row['sell_price'], 2); ?></td>
+
+                        <!-- Stock & Badge -->
+                        <td class="text-center" style="font-family: 'Alinore'; font-size: 1.2rem;">
+                            <span class="fw-bold"><?= (int) $row['quantity']; ?></span>
+                            <?= stockBadge((int) $row['quantity']); ?>
+                        </td>
+
+                        <!-- Action Buttons -->
+                        <td class="text-end">
+                            <a href="edit.php?id=<?= $row['item_id']; ?>" class="admin-action-btn" title="Edit / Restock">
+                                <i class="fa-regular fa-pen-to-square"></i> Edit
+                            </a>
+                            <a href="delete.php?id=<?= $row['item_id']; ?>" class="admin-action-btn delete-btn" title="Delete Product"
+                               onclick="return confirm('Delete this product and its inventory record? This cannot be undone.');">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+
+<?php require_once "../includes/footer.php"; ?>
+<?php require_once "../includes/header.php"; // (Footer handled via shared layout) ?>

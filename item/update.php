@@ -1,112 +1,106 @@
 <?php
-// item/update.php - Handles FR-9 product update and FR-14 restocking (with server-side validation)
-require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
+// item/update.php - MP5: Strict PHP Validation for Product Edits
+require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
-require_once "../includes/product_validation.php";
-
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: ../index.php");
     exit;
 }
 
-// if the upload was bigger than the server allows, PHP drops the whole form
-if (empty($_POST) && empty($_FILES) && !empty($_SERVER['CONTENT_LENGTH'])) {
-    $_SESSION['message'] = 'The upload was too large, so nothing was changed. Use an image of 5 MB or less.';
-    header("Location: index.php");
-    exit;
+$item_id     = intval($_POST['item_id'] ?? 0);
+$item_name   = trim($_POST['item_name'] ?? '');
+$category    = trim($_POST['category'] ?? '');
+$origin      = trim($_POST['origin'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$cost_price  = trim($_POST['cost_price'] ?? '');
+$sell_price  = trim($_POST['sell_price'] ?? '');
+$quantity    = trim($_POST['quantity'] ?? '');
+
+// 1. Strict Server-Side Validation (MP5)
+$errors = [];
+
+if (empty($item_name)) $errors[] = "Product name is required.";
+if (empty($category)) $errors[] = "Please select a category.";
+if (empty($origin)) $errors[] = "Origin is required.";
+if (empty($description)) $errors[] = "Description is required.";
+
+if (!is_numeric($cost_price) || floatval($cost_price) < 0) {
+    $errors[] = "Cost price must be a valid positive number.";
+}
+if (!is_numeric($sell_price) || floatval($sell_price) <= 0) {
+    $errors[] = "Selling price must be a valid number greater than zero.";
+}
+if (!is_numeric($quantity) || intval($quantity) < 0 || strpos($quantity, '.') !== false) {
+    $errors[] = "Stock quantity must be a valid whole number (0 or higher).";
 }
 
-$item_id = filter_var($_POST['item_id'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-
-// the product must exist
-$exists = false;
-if ($item_id !== false) {
-    $chk = mysqli_prepare($conn, "SELECT item_id FROM item WHERE item_id = ?");
-    mysqli_stmt_bind_param($chk, "i", $item_id);
-    mysqli_stmt_execute($chk);
-    $exists = (bool) mysqli_fetch_assoc(mysqli_stmt_get_result($chk));
-}
-if (!$exists) {
-    $_SESSION['message'] = 'Product not found, so nothing was changed.';
-    header("Location: index.php");
-    exit;
-}
-
-$upload_dir = __DIR__ . "/images/";
-
-// ---- 1. validate everything BEFORE saving anything ----
-list($errors, $clean) = validateProductFields($_POST);
-
-// FR-9: the image is optional here; if one is chosen it must be a valid JPG/JPEG/PNG
-$image = $_FILES['product_image'] ?? ['error' => UPLOAD_ERR_NO_FILE];
-$has_new_image = ($image['error'] !== UPLOAD_ERR_NO_FILE);
-if ($has_new_image && ($err = validateImageUpload($image, 'The new product image'))) {
-    $errors[] = $err;
-}
-
-if ($errors) {
-    $_SESSION['message']   = implode('<br>', $errors);
-    $_SESSION['old_input'] = array_map('strval', array_filter($_POST, 'is_scalar'));
+// If errors exist, redirect back with error messages and old input
+if (count($errors) > 0) {
+    $_SESSION['message'] = implode('<br>', $errors);
+    $_SESSION['old_input'] = $_POST;
     header("Location: edit.php?id=" . $item_id);
     exit;
 }
 
-// ---- 2. save the new image file (if any), then the database rows together ----
-$new_path = null;
+// Formatting after passing validation
+$cost_price = floatval($cost_price);
+$sell_price = floatval($sell_price);
+$quantity   = intval($quantity);
 
-try {
-    if ($has_new_image) {
-        $new_filename = productImageName('upd', $image['name']);
-        $new_path     = $upload_dir . $new_filename;
-        if (!move_uploaded_file($image['tmp_name'], $new_path)) {
-            $new_path = null;
-            throw new RuntimeException('Could not save the new image.');
+// 2. Check if a new image was uploaded
+$new_image_uploaded = false;
+$new_filename = null;
+$allowed_exts = ['jpg', 'jpeg', 'png'];
+
+if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
+    $file_name = $_FILES['product_image']['name'];
+    $file_tmp  = $_FILES['product_image']['tmp_name'];
+    $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+    if (in_array($file_ext, $allowed_exts)) {
+        $new_filename = time() . "_primary_" . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $file_name);
+        $upload_dest  = __DIR__ . "/images/" . $new_filename;
+
+        if (move_uploaded_file($file_tmp, $upload_dest)) {
+            $new_image_uploaded = true;
         }
     }
+}
 
-    mysqli_begin_transaction($conn);
+// 3. Database Updates using Transaction
+mysqli_begin_transaction($conn);
 
-    if ($has_new_image) {
-        $stmt_item = mysqli_prepare($conn,
-            "UPDATE item SET item_name = ?, description = ?, origin = ?, category = ?, cost_price = ?, sell_price = ?, img_path = ?
-             WHERE item_id = ?");
-        mysqli_stmt_bind_param($stmt_item, "ssssddsi", $clean['item_name'], $clean['description'], $clean['origin'],
-            $clean['category'], $clean['cost_price'], $clean['sell_price'], $new_filename, $item_id);
+try {
+    if ($new_image_uploaded) {
+        $sql_item = "UPDATE item SET item_name=?, description=?, origin=?, category=?, cost_price=?, sell_price=?, img_path=? WHERE item_id=?";
+        $stmt_item = mysqli_prepare($conn, $sql_item);
+        mysqli_stmt_bind_param($stmt_item, "ssssddsi", $item_name, $description, $origin, $category, $cost_price, $sell_price, $new_filename, $item_id);
     } else {
-        $stmt_item = mysqli_prepare($conn,
-            "UPDATE item SET item_name = ?, description = ?, origin = ?, category = ?, cost_price = ?, sell_price = ?
-             WHERE item_id = ?");
-        mysqli_stmt_bind_param($stmt_item, "ssssddi", $clean['item_name'], $clean['description'], $clean['origin'],
-            $clean['category'], $clean['cost_price'], $clean['sell_price'], $item_id);
+        $sql_item = "UPDATE item SET item_name=?, description=?, origin=?, category=?, cost_price=?, sell_price=? WHERE item_id=?";
+        $stmt_item = mysqli_prepare($conn, $sql_item);
+        mysqli_stmt_bind_param($stmt_item, "ssssddi", $item_name, $description, $origin, $category, $cost_price, $sell_price, $item_id);
     }
+
     mysqli_stmt_execute($stmt_item);
     mysqli_stmt_close($stmt_item);
 
-    // FR-14 restocking; if the product has no inventory record yet, this creates it
-    $stmt_stock = mysqli_prepare($conn,
-        "INSERT INTO stock (item_id, quantity) VALUES (?, ?) ON DUPLICATE KEY UPDATE quantity = VALUES(quantity)");
-    mysqli_stmt_bind_param($stmt_stock, "ii", $item_id, $clean['quantity']);
+    // FR-14 Restocking
+    $sql_stock = "UPDATE stock SET quantity = ? WHERE item_id = ?";
+    $stmt_stock = mysqli_prepare($conn, $sql_stock);
+    mysqli_stmt_bind_param($stmt_stock, "ii", $quantity, $item_id);
     mysqli_stmt_execute($stmt_stock);
     mysqli_stmt_close($stmt_stock);
 
     mysqli_commit($conn);
-
-    // back to the admin product list, which shows the "Product updated." message
-    $_SESSION['success'] = 'Product updated.';
+    $_SESSION['success'] = "Product and stock updated successfully!";
     header("Location: index.php");
     exit;
 
-} catch (Throwable $e) {
+} catch (Exception $e) {
     mysqli_rollback($conn);
-    if ($new_path) {
-        @unlink($new_path);                  // don't keep an image for a change that wasn't saved
-    }
-    error_log('item/update.php: ' . $e->getMessage());
-
-    $_SESSION['message']   = 'The product could not be updated, so nothing was changed. Please try again.';
-    $_SESSION['old_input'] = array_map('strval', array_filter($_POST, 'is_scalar'));
+    $_SESSION['message'] = "Database error: " . $e->getMessage();
     header("Location: edit.php?id=" . $item_id);
     exit;
 }
+?>

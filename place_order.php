@@ -25,7 +25,7 @@ if (!isset($_SESSION['cart_products']) || count($_SESSION['cart_products']) == 0
     exit;
 }
 
-$allowed_payments = ['Cash on Delivery', 'GCash', 'Bank Transfer'];
+$allowed_payments = ['Cash on Delivery', 'GCash', 'Bank Transfer', 'Credit Card'];
 $payment_method   = $_POST['payment_method'] ?? '';
 if (!in_array($payment_method, $allowed_payments, true)) {
     $_SESSION['message'] = 'Please choose a payment method.';

@@ -1,17 +1,18 @@
 <?php
-// user/orders.php - FR-6: a logged-in customer views their own order history
-include('../includes/session.php');
-include('../includes/config.php');
+// user/orders.php - FR-6: Logged-in Customer Views Their Own Order History
+require_once "../includes/session.php";
+require_once "../includes/config.php";
 
-// FR-3: customer pages are for logged-in users only
+// FR-3: Customer pages are for logged-in users only
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = 'Please log in to view your orders.';
     header('Location: login.php');
     exit;
 }
+
 $user_id = (int) $_SESSION['user_id'];
 
-// only this user's orders: the id always comes from the session, never from the URL or a form
+// Secure parameterized query for this user's orders
 $sql = "SELECT o.order_id, o.order_date, o.total_amount, o.status,
                oi.item_name, oi.quantity
         FROM orders o
@@ -23,7 +24,7 @@ mysqli_stmt_bind_param($stmt, 'i', $user_id);
 mysqli_stmt_execute($stmt);
 $rows = mysqli_stmt_get_result($stmt);
 
-// one entry per order, with its items collected underneath
+// Group items under each order
 $orders = [];
 while ($r = mysqli_fetch_assoc($rows)) {
     $id = $r['order_id'];
@@ -41,59 +42,77 @@ while ($r = mysqli_fetch_assoc($rows)) {
     }
 }
 
+// Custom boutique status badges
 function orderStatusBadge($status)
 {
-    $colors = [
-        'Pending'    => 'secondary',
-        'Processing' => 'primary',
-        'Shipped'    => 'info',
-        'Delivered'  => 'success',
-        'Canceled'   => 'danger'
+    $classes = [
+        'Pending'    => 'badge-pending',
+        'Processing' => 'badge-processing',
+        'Shipped'    => 'badge-shipped',
+        'Delivered'  => 'badge-delivered',
+        'Canceled'   => 'badge-canceled'
     ];
-    $color = $colors[$status] ?? 'dark';
-    return '<span class="badge text-bg-' . $color . '">' . htmlspecialchars($status) . '</span>';
+    $cls = $classes[$status] ?? 'badge-pending';
+    return '<span class="order-badge-custom ' . $cls . '">' . htmlspecialchars($status) . '</span>';
 }
 
-include('../includes/header.php');
+require_once "../includes/header.php";
 ?>
 
-<h1 align="center" class="mb-4">My Orders</h1>
-<?php include('../includes/alert.php'); ?>
+<div class="orders-wrapper">
+    <h1 class="orders-title">My Orders</h1>
+    <p class="orders-subtitle">Track your past and ongoing specialty coffee orders</p>
 
-<div class="cart-view-table-back">
-    <?php if (count($orders) === 0): ?>
-        <div class="text-center py-4">
-            <p class="text-muted mb-3">You haven't placed any orders yet.</p>
-            <a href="../shop.php" class="btn btn-dark">Start Shopping</a>
-        </div>
-    <?php else: ?>
-        <table class="table table-striped table-bordered align-middle">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Date Ordered</th>
-                    <th>Items</th>
-                    <th>Order Total</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($orders as $o): ?>
-                    <tr>
-                        <td>#<?= $o['order_id']; ?></td>
-                        <td><?= date('F j, Y g:i A', strtotime($o['order_date'])); ?></td>
-                        <td>
-                            <?php foreach ($o['items'] as $it): ?>
-                                <div><?= htmlspecialchars($it['name']); ?> <span class="text-muted">&times; <?= (int) $it['qty']; ?></span></div>
-                            <?php endforeach; ?>
-                        </td>
-                        <td>₱<?= number_format($o['total_amount'], 2); ?></td>
-                        <td><?= orderStatusBadge($o['status']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+    <?php require_once "../includes/alert.php"; ?>
+
+    <div class="orders-card">
+        <?php if (count($orders) === 0): ?>
+            <!-- Empty Order History State -->
+            <div class="orders-empty-box">
+                <i class="fa-solid fa-mug-hot fa-3x mb-3" style="color: #FED7AA;"></i>
+                <h3 class="orders-empty-title">No Orders Yet</h3>
+                <p class="orders-empty-desc">You haven't placed any orders yet. Discover our fresh roast selection!</p>
+                <a href="../shop.php" class="orders-shop-btn">Start Shopping</a>
+            </div>
+        <?php else: ?>
+            <!-- Orders Table -->
+            <div class="orders-table-box">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Order ID</th>
+                            <th class="text-start">Date Ordered</th>
+                            <th class="text-start">Items</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-end">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orders as $o): ?>
+                            <tr>
+                                <td class="order-id-tag">#<?= $o['order_id']; ?></td>
+                                <td><?= date('M j, Y • g:i A', strtotime($o['order_date'])); ?></td>
+                                <td>
+                                    <?php foreach ($o['items'] as $it): ?>
+                                        <div class="order-item-line">
+                                            <?= htmlspecialchars($it['name']); ?>
+                                            <span class="order-item-qty">&times; <?= (int) $it['qty']; ?></span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </td>
+                                <td class="text-center order-total-price">
+                                    ₱<?= number_format($o['total_amount'], 2); ?>
+                                </td>
+                                <td class="text-end">
+                                    <?= orderStatusBadge($o['status']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+<?php require_once "../includes/footer.php"; ?>
