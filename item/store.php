@@ -1,79 +1,124 @@
 <?php
-// item/store.php - Handles FR-8 with Multiple Gallery Images
+// item/store.php - Handles FR-8 with Multiple Gallery Images (with server-side validation)
 require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
+require_once "../includes/product_validation.php";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $item_name   = trim($_POST['item_name']);
-    $category    = trim($_POST['category']);
-    $origin      = trim($_POST['origin']);
-    $description = trim($_POST['description']);
-    $cost_price  = floatval($_POST['cost_price']);
-    $sell_price  = floatval($_POST['sell_price']);
-    $quantity    = intval($_POST['quantity']);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    $allowed_exts = ['jpg', 'jpeg', 'png'];
-    $upload_dir   = __DIR__ . "/images/";
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: create.php");
+    exit;
+}
 
-   
-    $primary_img = "default_coffee.jpg";
-    if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
-        $file_ext = strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
-        if (in_array($file_ext, $allowed_exts)) {
-            $new_name = time() . "_primary_" . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $_FILES['product_image']['name']);
-            if (move_uploaded_file($_FILES['product_image']['tmp_name'], $upload_dir . $new_name)) {
-                $primary_img = $new_name;
-            }
+$upload_dir = __DIR__ . "/images/";
+
+// if the upload was bigger than the server allows, PHP drops the whole form
+if (empty($_POST) && empty($_FILES) && !empty($_SERVER['CONTENT_LENGTH'])) {
+    $_SESSION['message'] = 'The upload was too large, so nothing was saved. Use images of 5 MB or less.';
+    header("Location: create.php");
+    exit;
+}
+
+// ---- 1. validate everything BEFORE saving anything ----
+list($errors, $clean) = validateProductFields($_POST);
+
+// FR-8: the primary product image (JPG/JPEG, PNG) is required
+$primary = $_FILES['product_image'] ?? ['error' => UPLOAD_ERR_NO_FILE];
+if ($primary['error'] === UPLOAD_ERR_NO_FILE) {
+    $errors[] = 'Primary card image is required (JPG, JPEG or PNG).';
+} elseif ($err = validateImageUpload($primary, 'The primary card image')) {
+    $errors[] = $err;
+}
+
+// optional gallery photos: any file that was chosen must be a valid image
+$gallery = [];
+if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
+    foreach ($_FILES['gallery_images']['name'] as $key => $name) {
+        $file = [
+            'name'     => $name,
+            'tmp_name' => $_FILES['gallery_images']['tmp_name'][$key],
+            'error'    => $_FILES['gallery_images']['error'][$key],
+            'size'     => $_FILES['gallery_images']['size'][$key]
+        ];
+        if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+            continue;
         }
-    }
-
-  
-    mysqli_begin_transaction($conn);
-
-    try {
-  
-        $sql_item = "INSERT INTO item (item_name, description, origin, category, cost_price, sell_price, img_path) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt_item = mysqli_prepare($conn, $sql_item);
-        mysqli_stmt_bind_param($stmt_item, "ssssdds", $item_name, $description, $origin, $category, $cost_price, $sell_price, $primary_img);
-        mysqli_stmt_execute($stmt_item);
-        $item_id = mysqli_insert_id($conn);
-        mysqli_stmt_close($stmt_item);
-
-     
-        $sql_stock = "INSERT INTO stock (item_id, quantity) VALUES (?, ?)";
-        $stmt_stock = mysqli_prepare($conn, $sql_stock);
-        mysqli_stmt_bind_param($stmt_stock, "ii", $item_id, $quantity);
-        mysqli_stmt_execute($stmt_stock);
-        mysqli_stmt_close($stmt_stock);
-
-   
-        if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
-            $sql_gal = "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)";
-            $stmt_gal = mysqli_prepare($conn, $sql_gal);
-
-            foreach ($_FILES['gallery_images']['name'] as $key => $name) {
-                if ($_FILES['gallery_images']['error'][$key] === UPLOAD_ERR_OK) {
-                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-                    if (in_array($ext, $allowed_exts)) {
-                        $gal_filename = time() . "_{$key}_" . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $name);
-                        if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $upload_dir . $gal_filename)) {
-                            mysqli_stmt_bind_param($stmt_gal, "is", $item_id, $gal_filename);
-                            mysqli_stmt_execute($stmt_gal);
-                        }
-                    }
-                }
-            }
-            mysqli_stmt_close($stmt_gal);
+        if ($err = validateImageUpload($file, 'Gallery photo ' . ($key + 1))) {
+            $errors[] = $err;
+        } else {
+            $gallery[$key] = $file;
         }
-
-        mysqli_commit($conn);
-        header("Location: ../shop.php");
-        exit;
-
-    } catch (Exception $e) {
-        mysqli_rollback($conn);
-        die("Error saving product: " . $e->getMessage());
     }
 }
-?>
+
+if ($errors) {
+    $_SESSION['message']   = implode('<br>', $errors);
+    $_SESSION['old_input'] = array_map('strval', array_filter($_POST, 'is_scalar'));
+    header("Location: create.php");
+    exit;
+}
+
+// ---- 2. save the image files, then the database rows together ----
+$moved = [];   // files written so far, removed again if anything fails
+
+try {
+    $primary_img = productImageName('primary', $primary['name']);
+    if (!move_uploaded_file($primary['tmp_name'], $upload_dir . $primary_img)) {
+        throw new RuntimeException('Could not save the primary image.');
+    }
+    $moved[] = $upload_dir . $primary_img;
+
+    $gallery_names = [];
+    foreach ($gallery as $key => $file) {
+        $gal_filename = productImageName($key, $file['name']);
+        if (!move_uploaded_file($file['tmp_name'], $upload_dir . $gal_filename)) {
+            throw new RuntimeException('Could not save a gallery photo.');
+        }
+        $moved[]         = $upload_dir . $gal_filename;
+        $gallery_names[] = $gal_filename;
+    }
+
+    mysqli_begin_transaction($conn);
+
+    $sql_item = "INSERT INTO item (item_name, description, origin, category, cost_price, sell_price, img_path)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt_item = mysqli_prepare($conn, $sql_item);
+    mysqli_stmt_bind_param($stmt_item, "ssssdds", $clean['item_name'], $clean['description'], $clean['origin'],
+        $clean['category'], $clean['cost_price'], $clean['sell_price'], $primary_img);
+    mysqli_stmt_execute($stmt_item);
+    $item_id = mysqli_insert_id($conn);
+    mysqli_stmt_close($stmt_item);
+
+    $stmt_stock = mysqli_prepare($conn, "INSERT INTO stock (item_id, quantity) VALUES (?, ?)");
+    mysqli_stmt_bind_param($stmt_stock, "ii", $item_id, $clean['quantity']);
+    mysqli_stmt_execute($stmt_stock);
+    mysqli_stmt_close($stmt_stock);
+
+    if ($gallery_names) {
+        $stmt_gal = mysqli_prepare($conn, "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)");
+        foreach ($gallery_names as $gal_filename) {
+            mysqli_stmt_bind_param($stmt_gal, "is", $item_id, $gal_filename);
+            mysqli_stmt_execute($stmt_gal);
+        }
+        mysqli_stmt_close($stmt_gal);
+    }
+
+    mysqli_commit($conn);
+
+    $_SESSION['success'] = 'Product added.';
+    header("Location: ../shop.php");
+    exit;
+
+} catch (Throwable $e) {
+    mysqli_rollback($conn);
+    foreach ($moved as $path) {
+        @unlink($path);                      // no leftover image files for a product that wasn't saved
+    }
+    error_log('item/store.php: ' . $e->getMessage());
+
+    $_SESSION['message']   = 'The product could not be saved, so nothing was added. Please try again.';
+    $_SESSION['old_input'] = array_map('strval', array_filter($_POST, 'is_scalar'));
+    header("Location: create.php");
+    exit;
+}

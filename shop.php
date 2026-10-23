@@ -54,6 +54,18 @@ if (!empty($params)) {
 
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+
+// FR-13: stock status badge - In Stock (green), Low Stock (orange, 5 or below), Out of Stock (red, 0)
+function stockBadge($qty, $extraStyle = '')
+{
+    if ($qty <= 0) {
+        return '<span class="badge text-bg-danger" style="' . $extraStyle . '">Out of Stock</span>';
+    }
+    if ($qty <= 5) {
+        return '<span class="badge" style="background-color:#fd7e14;color:#fff;' . $extraStyle . '">Low Stock</span>';
+    }
+    return '<span class="badge text-bg-success" style="' . $extraStyle . '">In Stock</span>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +89,10 @@ $result = mysqli_stmt_get_result($stmt);
          
         <div class="store-center-nav">
             <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-                <a href="item/index.php" class="store-nav-link store-nav-left">Manage Products</a>
+                <div class="store-nav-left" style="display:flex; gap:clamp(30px, 5vw, 90px);">
+                    <a href="admin/dashboard.php" class="store-nav-link">Dashboard</a>
+                    <a href="item/index.php" class="store-nav-link">Manage Products</a>
+                </div>
             <?php else: ?>
                 <span></span><!-- keeps the logo centered in the 3-column nav grid -->
             <?php endif; ?>
@@ -85,6 +100,7 @@ $result = mysqli_stmt_get_result($stmt);
  
             <div class="store-nav-right">
                 <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="user/orders.php" class="store-nav-link">My Orders</a>
                     <a href="user/profile.php" class="store-nav-link">My Profile</a>
                     <a href="user/logout.php" class="store-nav-link">Logout</a>
                 <?php else: ?>
@@ -173,6 +189,7 @@ $result = mysqli_stmt_get_result($stmt);
                
                     <div class="shop-card-pure">
                         <img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($item['item_name']); ?>" class="shop-pure-img">
+                        <?= stockBadge((int) $item['qty'], 'position:absolute;top:12px;left:12px;z-index:2;font-size:.9rem;'); ?>
                         <button type="button" 
                                 class="shop-view-btn" 
                                 data-bs-toggle="offcanvas" 
@@ -261,8 +278,9 @@ $result = mysqli_stmt_get_result($stmt);
                                     <span class="drawer-price-value">₱<?= number_format($item['sell_price'], 2); ?></span>
                                 </div>
                                 <div class="drawer-stock-line">
-                                    <span>in stock</span>
-                                    <span class="ms-1 fw-bold"><?= $item['qty']; ?></span>
+                                    <?= stockBadge((int) $item['qty']); ?>
+                                    <span class="ms-2 fw-bold"><?= (int) $item['qty']; ?></span>
+                                    <span class="ms-1">available</span>
                                 </div>
                             </div>
 
