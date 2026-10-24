@@ -12,19 +12,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-// Secure parameterized query for this user's orders
-$sql = "SELECT o.order_id, o.order_date, o.total_amount, o.status,
-               oi.item_name, oi.quantity
-        FROM orders o
-        LEFT JOIN order_items oi ON oi.order_id = o.order_id
-        WHERE o.user_id = ?
-        ORDER BY o.order_date DESC, o.order_id DESC, oi.order_item_id ASC";
+// Secure parameterized query on the MySQL VIEW (one row per order line)
+$sql = "SELECT order_id, order_date, order_status, item_name, unit_price, quantity
+        FROM view_order_transaction_details
+        WHERE user_id = ?
+        ORDER BY order_date DESC, order_id DESC, order_item_id ASC";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $user_id);
 mysqli_stmt_execute($stmt);
 $rows = mysqli_stmt_get_result($stmt);
 
-// Group items under each order
+// Group items under each order and add up each order's total in PHP
 $orders = [];
 while ($r = mysqli_fetch_assoc($rows)) {
     $id = $r['order_id'];
@@ -32,14 +30,13 @@ while ($r = mysqli_fetch_assoc($rows)) {
         $orders[$id] = [
             'order_id'     => $id,
             'order_date'   => $r['order_date'],
-            'total_amount' => $r['total_amount'],
-            'status'       => $r['status'],
+            'total'        => 0,
+            'status'       => $r['order_status'],
             'items'        => []
         ];
     }
-    if ($r['item_name'] !== null) {
-        $orders[$id]['items'][] = ['name' => $r['item_name'], 'qty' => $r['quantity']];
-    }
+    $orders[$id]['items'][] = ['name' => $r['item_name'], 'qty' => $r['quantity']];
+    $orders[$id]['total'] += $r['unit_price'] * $r['quantity'];
 }
 
 // Custom boutique status badges
@@ -101,7 +98,7 @@ require_once "../includes/header.php";
                                     <?php endforeach; ?>
                                 </td>
                                 <td class="text-center order-total-price">
-                                    ₱<?= number_format($o['total_amount'], 2); ?>
+                                    ₱<?= number_format($o['total'], 2); ?>
                                 </td>
                                 <td class="text-end">
                                     <?= orderStatusBadge($o['status']); ?>

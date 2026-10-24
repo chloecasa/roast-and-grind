@@ -1,6 +1,7 @@
 <?php
 // place_order.php - FR-18 (save order + items + payment method + stock deduction as ONE transaction)
 //                   FR-15 (automatic stock decrement on successful order placement)
+//                   Totals are computed in PHP from order_items, never stored in orders
 include('./includes/session.php');
 include('./includes/config.php');
 
@@ -46,7 +47,6 @@ try {
     mysqli_stmt_bind_param($sel, 'i', $item_id);
 
     $lines = [];
-    $total = 0;
 
     foreach ($_SESSION['cart_products'] as $cart_itm) {
         $item_id = (int) $cart_itm['item_id'];
@@ -72,12 +72,12 @@ try {
             'cost'    => $row['cost_price'],
             'qty'     => $qty
         ];
-        $total += $row['sell_price'] * $qty;
     }
 
-  
-    $ins_order = mysqli_prepare($conn, "INSERT INTO orders (user_id, total_amount, payment_method) VALUES (?, ?, ?)");
-    mysqli_stmt_bind_param($ins_order, 'ids', $user_id, $total, $payment_method);
+    // The order total is NOT stored. Prices are saved per line in order_items
+    // (unit_price), and every page adds them up in PHP when it needs a total.
+    $ins_order = mysqli_prepare($conn, "INSERT INTO orders (user_id, payment_method) VALUES (?, ?)");
+    mysqli_stmt_bind_param($ins_order, 'is', $user_id, $payment_method);
     mysqli_stmt_execute($ins_order);
     $order_id = mysqli_insert_id($conn);
 

@@ -35,16 +35,21 @@ class PDF_Receipt extends FPDF {
 }
 
 function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name, $new_status) {
-    // 1. Fetch order & items
-    $stmt = mysqli_prepare($conn, "SELECT order_date, total_amount, payment_method FROM orders WHERE order_id = ?");
+    // 1. Fetch order & items from the MySQL VIEW (one row per order line)
+    $stmt = mysqli_prepare($conn,
+        "SELECT * FROM view_order_transaction_details WHERE order_id = ? ORDER BY order_item_id");
     mysqli_stmt_bind_param($stmt, 'i', $order_id);
     mysqli_stmt_execute($stmt);
-    $order = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    $rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    if (!$rows) return;
 
-    $item_stmt = mysqli_prepare($conn, "SELECT item_name, unit_price, quantity FROM order_items WHERE order_id = ?");
-    mysqli_stmt_bind_param($item_stmt, 'i', $order_id);
-    mysqli_stmt_execute($item_stmt);
-    $items_res = mysqli_stmt_get_result($item_stmt);
+    $order = $rows[0]; // order_date, payment_method
+
+    // Total is computed here in PHP, not stored in or calculated by the database
+    $grand_total = 0;
+    foreach ($rows as $line) {
+        $grand_total += $line['unit_price'] * $line['quantity'];
+    }
 
     // 2. Generate PDF
     $pdf = new PDF_Receipt();
@@ -74,7 +79,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     
     $html_items_list = "";
     
-    while ($item = mysqli_fetch_assoc($items_res)) {
+    foreach ($rows as $item) {
         $subtotal = $item['unit_price'] * $item['quantity'];
         
         $pdf->SetFillColor(245, 243, 236);
@@ -90,7 +95,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     $pdf->SetFont('Arial', 'B', 12);
     $pdf->SetTextColor(84, 34, 14);
     $pdf->Cell(150, 12, 'Grand Total: ', 0, 0, 'R');
-    $pdf->Cell(40, 12, 'Php ' . number_format($order['total_amount'], 2) . '  ', 0, 1, 'R');
+    $pdf->Cell(40, 12, 'Php ' . number_format($grand_total, 2) . '  ', 0, 1, 'R');
 
     $pdf_filename = __DIR__ . '/../temp_receipt.pdf'; 
     $pdf->Output('F', $pdf_filename);
@@ -136,7 +141,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
                             </ul>
                             <div style='border-top: 1px dashed #D6D3D1; padding-top: 12px;'>
                                 <strong style='color: #743014; font-size: 15px;'>Grand Total: </strong>
-                                <strong style='color: #4D6443; font-size: 16px;'>Php " . number_format($order['total_amount'], 2) . "</strong>
+                                <strong style='color: #4D6443; font-size: 16px;'>Php " . number_format($grand_total, 2) . "</strong>
                             </div>
                         </div>
                         

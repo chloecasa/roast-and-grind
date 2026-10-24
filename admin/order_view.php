@@ -5,31 +5,33 @@ require_once "../includes/config.php";
 
 $order_id = (int) ($_GET['id'] ?? 0);
 
+// Read the order from the MySQL VIEW (one row per order line)
 $stmt = mysqli_prepare($conn,
-    "SELECT o.order_id, o.order_date, o.total_amount, o.payment_method, o.status, u.email,
-            c.first_name, c.last_name, c.address, c.town, c.postal_code, c.phone
-     FROM orders o
-     LEFT JOIN users u ON u.user_id = o.user_id
-     LEFT JOIN customers c ON c.user_id = o.user_id
-     WHERE o.order_id = ?");
+    "SELECT * FROM view_order_transaction_details WHERE order_id = ? ORDER BY order_item_id");
 mysqli_stmt_bind_param($stmt, 'i', $order_id);
 mysqli_stmt_execute($stmt);
-$order = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+$rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
 
-if (!$order) {
+if (!$rows) {
     $_SESSION['message'] = 'Order not found.';
     header('Location: orders.php');
     exit;
 }
 
-$stmt = mysqli_prepare($conn, "SELECT item_name, unit_price, quantity FROM order_items WHERE order_id = ?");
-mysqli_stmt_bind_param($stmt, 'i', $order_id);
-mysqli_stmt_execute($stmt);
-$items = mysqli_stmt_get_result($stmt);
+// First row carries the order + customer header; every row is an item line
+$order = $rows[0];
+$order['status'] = $order['order_status'];
+$order['email']  = $order['customer_email'];
+
+// Total is computed here in PHP, not stored in or calculated by the database
+$grand_total = 0;
+foreach ($rows as $line) {
+    $grand_total += $line['unit_price'] * $line['quantity'];
+}
 
 $is_canceled = ($order['status'] === 'Canceled');
 
-$customer_name = trim(($order['first_name'] ?? '') . ' ' . ($order['last_name'] ?? ''));
+$customer_name = trim($order['customer_name'] ?? '');
 $address_parts = array_filter([$order['address'] ?? '', $order['town'] ?? '', $order['postal_code'] ?? ''], 'strlen');
 $full_address  = implode(', ', $address_parts);
 $phone         = $order['phone'] ?? '';
@@ -98,21 +100,21 @@ require_once "../includes/header.php";
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($it = mysqli_fetch_assoc($items)): ?>
+                    <?php foreach ($rows as $it): ?>
                         <tr>
                             <td class="profit-item-title"><?= htmlspecialchars($it['item_name']); ?></td>
                             <td class="text-center">₱<?= number_format($it['unit_price'], 2); ?></td>
                             <td class="text-center"><?= $it['quantity']; ?></td>
                             <td class="text-end fw-bold">₱<?= number_format($it['unit_price'] * $it['quantity'], 2); ?></td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 
             <!-- Total Line -->
             <div class="confirm-total-box">
                 <span class="confirm-total-label">Order Total:</span>
-                <span class="confirm-total-amount">₱<?= number_format($order['total_amount'], 2); ?></span>
+                <span class="confirm-total-amount">₱<?= number_format($grand_total, 2); ?></span>
             </div>
         </div>
 
@@ -151,4 +153,4 @@ require_once "../includes/header.php";
     </div>
 </div>
 
-<?php require_once "../includes/header.php"; // (Footer included via layout pattern) ?>
+<?php require_once "../includes/footer.php"; ?>

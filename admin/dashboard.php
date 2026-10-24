@@ -16,18 +16,23 @@ while ($r = mysqli_fetch_assoc($res)) {
 }
 $total_orders = array_sum($per_status);
 
-// FR-20: Total revenue excluding Canceled orders
-$row = mysqli_fetch_assoc(mysqli_query($conn,
-    "SELECT COALESCE(SUM(total_amount), 0) AS revenue FROM orders WHERE status <> 'Canceled'"));
-$total_revenue = (float) $row['revenue'];
+// FR-20 / FR-21: Revenue and profit across non-canceled orders.
+// Totals are computed here in PHP from the saved order lines, not by SQL SUM()
+// and not from a stored total column.
+$sales = mysqli_query($conn,
+    "SELECT o.status, oi.unit_price, oi.unit_cost, oi.quantity
+     FROM orders o
+     JOIN order_items oi ON oi.order_id = o.order_id");
 
-// FR-21: Total profit across non-canceled orders
-$row = mysqli_fetch_assoc(mysqli_query($conn,
-    "SELECT COALESCE(SUM((oi.unit_price - oi.unit_cost) * oi.quantity), 0) AS profit
-     FROM order_items oi
-     JOIN orders o ON o.order_id = oi.order_id
-     WHERE o.status <> 'Canceled'"));
-$total_profit = (float) $row['profit'];
+$total_revenue = 0.0;
+$total_profit  = 0.0;
+while ($r = mysqli_fetch_assoc($sales)) {
+    if ($r['status'] === 'Canceled') {
+        continue;
+    }
+    $total_revenue += $r['unit_price'] * $r['quantity'];
+    $total_profit  += ($r['unit_price'] - $r['unit_cost']) * $r['quantity'];
+}
 
 // FR-20: Products at Low Stock (5 or below) or Out of Stock
 $low_stock = mysqli_query($conn,

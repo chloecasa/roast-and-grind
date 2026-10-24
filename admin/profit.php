@@ -8,25 +8,48 @@ function peso($n)
     return ($n < 0 ? '-' : '') . '₱' . number_format(abs($n), 2);
 }
 
-// FR-21: Profit per product = selling price - cost price
-$products = mysqli_query($conn,
-    "SELECT item_name, category, cost_price, sell_price, (sell_price - cost_price) AS profit
-     FROM item
-     ORDER BY profit DESC, item_name ASC");
+// FR-21: Profit per product = selling price - cost price (computed in PHP)
+$result   = mysqli_query($conn, "SELECT item_name, category, cost_price, sell_price FROM item");
+$products = [];
+while ($p = mysqli_fetch_assoc($result)) {
+    $p['profit'] = $p['sell_price'] - $p['cost_price'];
+    $products[]  = $p;
+}
+// Highest margin first, then by name
+usort($products, function ($a, $b) {
+    return [$b['profit'], $a['item_name']] <=> [$a['profit'], $b['item_name']];
+});
 
-// FR-21: Profit per order = sum of (selling price - cost price) * quantity
-$orders = mysqli_query($conn,
-    "SELECT o.order_id, o.order_date, o.status, o.total_amount,
-            COALESCE(SUM((oi.unit_price - oi.unit_cost) * oi.quantity), 0) AS profit
+// FR-21: Profit per order = sum of (selling price - cost price) * quantity.
+// Order totals and profits are computed in PHP from order_items, never stored.
+$result = mysqli_query($conn,
+    "SELECT o.order_id, o.order_date, o.status,
+            oi.unit_price, oi.unit_cost, oi.quantity
      FROM orders o
      LEFT JOIN order_items oi ON oi.order_id = o.order_id
-     GROUP BY o.order_id, o.order_date, o.status, o.total_amount
-     ORDER BY o.order_date DESC, o.order_id DESC");
+     ORDER BY o.order_date DESC, o.order_id DESC, oi.order_item_id ASC");
 
-$rows = [];
+$by_order = [];
+while ($r = mysqli_fetch_assoc($result)) {
+    $id = $r['order_id'];
+    if (!isset($by_order[$id])) {
+        $by_order[$id] = [
+            'order_id'     => $id,
+            'order_date'   => $r['order_date'],
+            'status'       => $r['status'],
+            'total'        => 0,
+            'profit'       => 0
+        ];
+    }
+    if ($r['quantity'] !== null) {
+        $by_order[$id]['total'] += $r['unit_price'] * $r['quantity'];
+        $by_order[$id]['profit']       += ($r['unit_price'] - $r['unit_cost']) * $r['quantity'];
+    }
+}
+
+$rows = array_values($by_order);
 $total_profit = 0;
-while ($o = mysqli_fetch_assoc($orders)) {
-    $rows[] = $o;
+foreach ($rows as $o) {
     if ($o['status'] !== 'Canceled') {
         $total_profit += (float) $o['profit'];
     }
@@ -64,13 +87,13 @@ require_once "../includes/header.php";
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($products) === 0): ?>
+                <?php if (count($products) === 0): ?>
                     <tr>
                         <td colspan="5" class="text-center py-4" style="color: #78716C;">No products found in catalog.</td>
                     </tr>
                 <?php endif; ?>
 
-                <?php while ($p = mysqli_fetch_assoc($products)): ?>
+                <?php foreach ($products as $p): ?>
                     <tr>
                         <td class="profit-item-title"><?= htmlspecialchars($p['item_name']); ?></td>
                         <td><?= htmlspecialchars($p['category']); ?></td>
@@ -80,7 +103,7 @@ require_once "../includes/header.php";
                             <?= peso($p['profit']); ?>
                         </td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
@@ -118,7 +141,7 @@ require_once "../includes/header.php";
                         <td class="text-center">
                             <?= statusBadge($o['status']); ?>
                         </td>
-                        <td class="text-center"><?= peso($o['total_amount']); ?></td>
+                        <td class="text-center"><?= peso($o['total']); ?></td>
                         <td class="text-end <?= (!$canceled && $o['profit'] < 0) ? 'profit-val-negative' : 'profit-val-positive'; ?>">
                             <?= peso($o['profit']); ?>
                             <?php if ($canceled): ?>

@@ -3,13 +3,29 @@
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
-// Customer name comes from the customer profile (FR-5); email is fallback
-$sql = "SELECT o.order_id, u.email, c.first_name, c.last_name, o.order_date, o.total_amount, o.status
-        FROM orders o
-        LEFT JOIN users u ON u.user_id = o.user_id
-        LEFT JOIN customers c ON c.user_id = o.user_id
-        ORDER BY o.order_date DESC, o.order_id DESC";
-$orders = mysqli_query($conn, $sql);
+// Read from the MySQL VIEW (one row per order line), then group by order in PHP
+$sql = "SELECT order_id, order_date, order_status, customer_email, customer_name,
+               unit_price, quantity
+        FROM view_order_transaction_details
+        ORDER BY order_date DESC, order_id DESC, order_item_id ASC";
+$result = mysqli_query($conn, $sql);
+
+// Each order's total is computed here in PHP, not stored in or calculated by the database
+$orders = [];
+while ($r = mysqli_fetch_assoc($result)) {
+    $id = $r['order_id'];
+    if (!isset($orders[$id])) {
+        $orders[$id] = [
+            'order_id'   => $id,
+            'order_date' => $r['order_date'],
+            'status'     => $r['order_status'],
+            'email'      => $r['customer_email'],
+            'name'       => trim($r['customer_name'] ?? ''),
+            'total'      => 0
+        ];
+    }
+    $orders[$id]['total'] += $r['unit_price'] * $r['quantity'];
+}
 
 require_once "../includes/header.php";
 ?>
@@ -34,7 +50,7 @@ require_once "../includes/header.php";
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($orders) === 0): ?>
+                <?php if (count($orders) === 0): ?>
                     <tr>
                         <td colspan="6" class="text-center py-4" style="color: #78716C; font-family: 'Alinore'; font-size: 1.2rem;">
                             No customer orders placed yet.
@@ -42,7 +58,7 @@ require_once "../includes/header.php";
                     </tr>
                 <?php endif; ?>
 
-                <?php while ($o = mysqli_fetch_assoc($orders)): ?>
+                <?php foreach ($orders as $o): ?>
                     <tr>
                         <!-- Order ID -->
                         <td>
@@ -50,7 +66,7 @@ require_once "../includes/header.php";
                         </td>
 
                         <!-- Customer Name & Email Fallback -->
-                        <?php $name = trim(($o['first_name'] ?? '') . ' ' . ($o['last_name'] ?? '')); ?>
+                        <?php $name = $o['name']; ?>
                         <td>
                             <div class="admin-customer-name">
                                 <?= htmlspecialchars($name !== '' ? $name : ($o['email'] ?? 'Unknown Customer')); ?>
@@ -65,7 +81,7 @@ require_once "../includes/header.php";
 
                         <!-- Total Amount -->
                         <td class="text-center" style="font-family: 'Alinore', sans-serif; font-size: 1.3rem; font-weight: bold; color: #4D6443;">
-                            ₱<?= number_format($o['total_amount'], 2); ?>
+                            ₱<?= number_format($o['total'], 2); ?>
                         </td>
 
                         <!-- Harmonious Status Badge -->
@@ -80,7 +96,7 @@ require_once "../includes/header.php";
                             </a>
                         </td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>

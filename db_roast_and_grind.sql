@@ -2,11 +2,12 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Oct 24, 2026 at 02:45 AM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Oct 24, 2026 at 02:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -27,6 +28,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `customers`
 --
 
+DROP TABLE IF EXISTS `customers`;
 CREATE TABLE `customers` (
   `customer_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -46,7 +48,8 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`customer_id`, `user_id`, `profile_photo`, `first_name`, `last_name`, `address`, `town`, `postal_code`, `phone`) VALUES
 (1, 1, 'default_avatar.png', 'Chloe', 'Casanoba', 'Gracely Store Purok 2 Roldan Street New Lowe Bicutan', 'TAGUIG CITY', '1636', '09984800690'),
 (5, 2, 'default_avatar.png', 'Chloe', 'Casanoba', 'GATE 2 AGUINALDO COMPOUND CADENA DE AMOR ST.', 'TAGUIG CITY', '1636', '09984800690'),
-(6, 3, 'default_avatar.png', '', '', '', '', '', '');
+(6, 3, 'default_avatar.png', '', '', '', '', '', ''),
+(7, 4, 'default_avatar.png', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -54,6 +57,7 @@ INSERT INTO `customers` (`customer_id`, `user_id`, `profile_photo`, `first_name`
 -- Table structure for table `item`
 --
 
+DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
   `item_id` int(11) NOT NULL,
   `item_name` varchar(150) NOT NULL,
@@ -83,6 +87,7 @@ INSERT INTO `item` (`item_id`, `item_name`, `description`, `origin`, `category`,
 -- Table structure for table `item_images`
 --
 
+DROP TABLE IF EXISTS `item_images`;
 CREATE TABLE `item_images` (
   `image_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
@@ -111,11 +116,11 @@ INSERT INTO `item_images` (`image_id`, `item_id`, `img_path`) VALUES
 -- Table structure for table `orders`
 --
 
+DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `total_amount` decimal(10,2) NOT NULL,
   `payment_method` varchar(30) NOT NULL,
   `status` enum('Pending','Processing','Shipped','Delivered','Canceled') NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -124,12 +129,12 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `total_amount`, `payment_method`, `status`) VALUES
-(1, 2, '2026-10-23 12:03:45', 300.00, 'Cash on Delivery', 'Canceled'),
-(2, 2, '2026-10-23 12:14:23', 350.00, 'GCash', 'Canceled'),
-(3, 2, '2026-10-23 12:14:52', 230.00, 'Bank Transfer', 'Canceled'),
-(4, 2, '2026-10-23 12:26:38', 300.00, 'Credit Card', 'Delivered'),
-(5, 2, '2026-10-24 00:19:42', 900.00, 'Cash on Delivery', 'Processing');
+INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `payment_method`, `status`) VALUES
+(1, 2, '2026-10-23 12:03:45', 'Cash on Delivery', 'Canceled'),
+(2, 2, '2026-10-23 12:14:23', 'GCash', 'Canceled'),
+(3, 2, '2026-10-23 12:14:52', 'Bank Transfer', 'Canceled'),
+(4, 2, '2026-10-23 12:26:38', 'Credit Card', 'Delivered'),
+(5, 2, '2026-10-24 00:19:42', 'Cash on Delivery', 'Processing');
 
 -- --------------------------------------------------------
 
@@ -137,6 +142,7 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `total_amount`, `paym
 -- Table structure for table `order_items`
 --
 
+DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `order_item_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -165,6 +171,7 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `item_id`, `item_name`, 
 -- Table structure for table `reviews`
 --
 
+DROP TABLE IF EXISTS `reviews`;
 CREATE TABLE `reviews` (
   `review_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
@@ -186,6 +193,7 @@ INSERT INTO `reviews` (`review_id`, `item_id`, `user_id`, `review_text`, `create
 -- Table structure for table `stock`
 --
 
+DROP TABLE IF EXISTS `stock`;
 CREATE TABLE `stock` (
   `item_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 0
@@ -209,6 +217,7 @@ INSERT INTO `stock` (`item_id`, `quantity`) VALUES
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -225,7 +234,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `status`, `created_at`) VALUES
 (1, 'admin@roastandgrind.com', '$2y$10$efDvenHYJ5Fu/xxt1ANbXuRx5/TuzNs/s4k6keUiiFvr2ueE0GmrG', 'admin', 'active', '2026-10-23 11:21:06'),
 (2, 'chloecasanoba@gmail.com', '$2y$10$sdbeGPMLATw7lw23KGM52OPhzt5UsOY6ZbrTf9NGgrl/.zRUGb4qm', 'user', 'active', '2026-10-23 11:41:36'),
-(3, 'chloecasanoba1@gmail.com', '$2y$10$/VabRfJMzGdL6uZdA/rkAeCtWJFOgha3lErif8lVb0V471cJqZgzu', 'user', 'active', '2026-10-23 14:52:28');
+(3, 'chloecasanoba1@gmail.com', '$2y$10$/VabRfJMzGdL6uZdA/rkAeCtWJFOgha3lErif8lVb0V471cJqZgzu', 'user', 'active', '2026-10-23 14:52:28'),
+(4, 'jazz@gmail.com', '$2y$10$TvIr3SQcOac0vA2CI9kXK.2UKyR1EIZtxOQqc48LKWHmqM2i3FNTm', 'admin', 'active', '2026-10-24 07:25:31');
 
 -- --------------------------------------------------------
 
@@ -233,12 +243,12 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `status`, `cre
 -- Stand-in structure for view `view_order_transaction_details`
 -- (See below for the actual view)
 --
+DROP VIEW IF EXISTS `view_order_transaction_details`;
 CREATE TABLE `view_order_transaction_details` (
 `order_id` int(11)
 ,`order_date` timestamp
 ,`order_status` enum('Pending','Processing','Shipped','Delivered','Canceled')
 ,`payment_method` varchar(30)
-,`grand_total` decimal(10,2)
 ,`customer_email` varchar(255)
 ,`customer_name` varchar(101)
 ,`phone` varchar(20)
@@ -248,7 +258,6 @@ CREATE TABLE `view_order_transaction_details` (
 ,`item_name` varchar(150)
 ,`unit_price` decimal(10,2)
 ,`quantity` int(11)
-,`line_subtotal` decimal(20,2)
 );
 
 -- --------------------------------------------------------
@@ -258,7 +267,8 @@ CREATE TABLE `view_order_transaction_details` (
 --
 DROP TABLE IF EXISTS `view_order_transaction_details`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_order_transaction_details`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`order_date` AS `order_date`, `o`.`status` AS `order_status`, `o`.`payment_method` AS `payment_method`, `o`.`total_amount` AS `grand_total`, `u`.`email` AS `customer_email`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `c`.`phone` AS `phone`, `c`.`address` AS `address`, `c`.`town` AS `town`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`item_name` AS `item_name`, `oi`.`unit_price` AS `unit_price`, `oi`.`quantity` AS `quantity`, `oi`.`unit_price`* `oi`.`quantity` AS `line_subtotal` FROM (((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `customers` `c` on(`u`.`user_id` = `c`.`user_id`)) join `order_items` `oi` on(`o`.`order_id` = `oi`.`order_id`)) ;
+DROP VIEW IF EXISTS `view_order_transaction_details`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_order_transaction_details`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`order_date` AS `order_date`, `o`.`status` AS `order_status`, `o`.`payment_method` AS `payment_method`, `u`.`email` AS `customer_email`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `c`.`phone` AS `phone`, `c`.`address` AS `address`, `c`.`town` AS `town`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`item_name` AS `item_name`, `oi`.`unit_price` AS `unit_price`, `oi`.`quantity` AS `quantity` FROM (((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `customers` `c` on(`u`.`user_id` = `c`.`user_id`)) join `order_items` `oi` on(`o`.`order_id` = `oi`.`order_id`)) ;
 
 --
 -- Indexes for dumped tables
@@ -296,7 +306,8 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `order_items`
   ADD PRIMARY KEY (`order_item_id`),
-  ADD KEY `order_id` (`order_id`);
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `item_id` (`item_id`);
 
 --
 -- Indexes for table `reviews`
@@ -327,7 +338,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `item`
@@ -363,7 +374,7 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -391,7 +402,8 @@ ALTER TABLE `orders`
 -- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
-  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `reviews`
@@ -405,6 +417,7 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `stock`
   ADD CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE CASCADE;
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
