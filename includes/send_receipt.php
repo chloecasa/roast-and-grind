@@ -2,7 +2,7 @@
 // includes/send_receipt.php - Generates PDF and sends via PHPMailer + Mailtrap
 require_once __DIR__ . '/fpdf/fpdf.php';
 
-// Manually load PHPMailer classes (No Composer)
+// Manually load PHPMailer classes
 require_once __DIR__ . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/SMTP.php';
@@ -14,14 +14,18 @@ class PDF_Receipt extends FPDF {
     function Header() {
         $this->SetFillColor(116, 48, 20); // Terracotta Brown
         $this->Rect(0, 0, 210, 40, 'F');
-        $this->SetFont('Arial', 'B', 22);
+        
+        // Built-in elegant serif font
+        $this->SetFont('Times', 'B', 24);
         $this->SetTextColor(254, 215, 170); // Warm Cream
         $this->Cell(0, 20, 'ROAST & GRIND', 0, 1, 'C');
+        
         $this->SetFont('Arial', '', 10);
         $this->SetTextColor(255, 245, 234);
         $this->Cell(0, -5, 'Specialty Coffee - Official Transaction Receipt', 0, 1, 'C');
         $this->Ln(25);
     }
+    
     function Footer() {
         $this->SetY(-20);
         $this->SetFont('Arial', 'I', 9);
@@ -45,10 +49,12 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     // 2. Generate PDF
     $pdf = new PDF_Receipt();
     $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 12);
+
+    $pdf->SetFont('Times', 'B', 14);
     $pdf->SetTextColor(84, 34, 14);
     $pdf->Cell(100, 8, 'Order Receipt #' . $order_id, 0, 0);
-    $pdf->SetFont('Arial', '', 11);
+    
+    $pdf->SetFont('Arial', '', 10);
     $pdf->Cell(90, 8, 'Date: ' . date('M j, Y g:i A', strtotime($order['order_date'])), 0, 1, 'R');
     $pdf->Cell(100, 6, 'Billed To: ' . $customer_name, 0, 0);
     $pdf->Cell(90, 6, 'Payment: ' . $order['payment_method'], 0, 1, 'R');
@@ -56,23 +62,21 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
 
     $pdf->SetFillColor(77, 100, 67); // Moss Green
     $pdf->SetTextColor(255, 255, 255);
-    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->SetFont('Arial', 'B', 10);
     $pdf->Cell(95, 10, '  Item Description', 1, 0, 'L', true);
     $pdf->Cell(30, 10, 'Price', 1, 0, 'C', true);
     $pdf->Cell(25, 10, 'Qty', 1, 0, 'C', true);
     $pdf->Cell(40, 10, 'Subtotal', 1, 1, 'R', true);
 
-    $pdf->SetFont('Arial', '', 11);
+    $pdf->SetFont('Arial', '', 10);
     $pdf->SetTextColor(68, 64, 60);
     $fill = false;
     
-    // Build HTML email list simultaneously
     $html_items_list = "";
     
     while ($item = mysqli_fetch_assoc($items_res)) {
         $subtotal = $item['unit_price'] * $item['quantity'];
         
-        // Add to PDF
         $pdf->SetFillColor(245, 243, 236);
         $pdf->Cell(95, 9, '  ' . $item['item_name'], 1, 0, 'L', $fill);
         $pdf->Cell(30, 9, 'Php ' . number_format($item['unit_price'], 2), 1, 0, 'C', $fill);
@@ -80,7 +84,6 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         $pdf->Cell(40, 9, 'Php ' . number_format($subtotal, 2) . '  ', 1, 1, 'R', $fill);
         $fill = !$fill;
         
-        // Add to Email HTML
         $html_items_list .= "<li>{$item['quantity']}x {$item['item_name']} - Php " . number_format($subtotal, 2) . "</li>";
     }
 
@@ -89,43 +92,77 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     $pdf->Cell(150, 12, 'Grand Total: ', 0, 0, 'R');
     $pdf->Cell(40, 12, 'Php ' . number_format($order['total_amount'], 2) . '  ', 0, 1, 'R');
 
-    $pdf_filename = sys_get_temp_dir() . '/Receipt_Order_' . $order_id . '.pdf';
+    $pdf_filename = __DIR__ . '/../temp_receipt.pdf'; 
     $pdf->Output('F', $pdf_filename);
 
     // 3. Send Email via PHPMailer + Mailtrap
     $mail = new PHPMailer(true);
     try {
-        // Mailtrap SMTP Settings (Update Username and Password with your Mailtrap credentials)
         $mail->isSMTP();
         $mail->Host       = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'YOUR_MAILTRAP_USERNAME'; // <--- REPLACE THIS
-        $mail->Password   = 'YOUR_MAILTRAP_PASSWORD'; // <--- REPLACE THIS
+        $mail->Username   = '5e8c883b1cd6cd'; 
+        $mail->Password   = '85f40699177030'; 
         $mail->Port       = 2525;
 
-        // Email setup
         $mail->setFrom('orders@roastandgrind.com', 'Roast & Grind');
         $mail->addAddress($customer_email, $customer_name);
         $mail->isHTML(true);
         $mail->Subject = "Order Update: Your transaction is now {$new_status}";
         
-        // Boutique HTML Email Body
+        // Custom fonts still work inside the HTML email!
         $mail->Body = "
-            <h2 style='color:#743014;'>Hello {$customer_name},</h2>
-            <p>Your Roast & Grind order <strong>#{$order_id}</strong> has been updated to: <strong>{$new_status}</strong>.</p>
-            <h3>Order Details:</h3>
-            <ul>{$html_items_list}</ul>
-            <h3 style='color:#4D6443;'>Grand Total: Php " . number_format($order['total_amount'], 2) . "</h3>
-            <p>We have attached your official PDF receipt to this email.</p>
-            <p>Warm regards,<br><strong>The Roast & Grind Team</strong></p>
-        ";
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                @font-face {
+                    font-family: 'Aqila';
+                    src: url('http://localhost/roast-and-grind/assets/fonts/Aqila.ttf') format('truetype');
+                }
+                @font-face {
+                    font-family: 'Alinore';
+                    src: url('http://localhost/roast-and-grind/assets/fonts/Alinore.ttf') format('truetype');
+                }
+            </style>
+        </head>
+        <body style='margin: 0; padding: 0;'>
+            <div style='background-color: #F5F3EC; padding: 40px 20px; font-family: \"Alinore\", sans-serif;'>
+                <table style='max-width: 600px; margin: auto; background: #FFF; border-radius: 20px; overflow: hidden; border: 1px solid #E2DCD5; width: 100%; border-collapse: collapse;'>
+                    <tr>
+                        <td style='background-color: #743014; padding: 30px; text-align: center;'>
+                            <h1 style='color: #FED7AA; margin: 0; font-family: \"Aqila\", serif; font-size: 32px; letter-spacing: 2px;'>ROAST & GRIND</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 40px;'>
+                            <h2 style='color: #743014; font-family: \"Aqila\", serif;'>Hello " . htmlspecialchars($customer_name) . ",</h2>
+                            <p style='color: #44403C; font-size: 16px;'>Your Roast & Grind order <strong>#{$order_id}</strong> has been updated to: <strong>{$new_status}</strong>.</p>
+                            
+                            <div style='background: #F5F3EC; padding: 20px; border-radius: 12px; margin: 20px 0;'>
+                                <h3 style='color: #743014; margin-top: 0; font-family: \"Aqila\", serif;'>Order Details:</h3>
+                                <ul style='color: #44403C; padding-left: 20px; line-height: 1.6;'>{$html_items_list}</ul>
+                                <h3 style='color: #4D6443; border-top: 1px solid #D6D3D1; padding-top: 10px; font-family: \"Aqila\", serif;'>Grand Total: Php " . number_format($order['total_amount'], 2) . "</h3>
+                            </div>
+                            
+                            <p style='color: #44403C;'>We have attached your official PDF receipt to this email.</p>
+                            <p style='color: #44403C; margin-bottom: 0;'>Warm regards,<br><strong style='color: #743014;'>The Roast & Grind Team</strong></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='background-color: #743014; padding: 20px; text-align: center; color: #FED7AA; font-size: 12px;'>
+                            &copy; " . date('Y') . " Roast & Grind. Specialty Coffee & Gear.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </body>
+        </html>";
 
-        // Attach the PDF
         $mail->addAttachment($pdf_filename, "Receipt_Order_{$order_id}.pdf");
-        
         $mail->send();
     } catch (Exception $e) {
-        // Silently fail or log if email doesn't send, so it doesn't crash the app
+        // Silently continue if email fails
     }
 
     if (file_exists($pdf_filename)) unlink($pdf_filename);

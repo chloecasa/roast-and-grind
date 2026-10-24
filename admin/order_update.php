@@ -84,14 +84,14 @@ try {
 
     $_SESSION['success'] = ($new_status === 'Canceled')
         ? "Order #$order_id canceled. The items were returned to stock."
-        : "Order #$order_id is now $new_status. A notification email with a PDF receipt was sent via Mailtrap.";
+        : "Order #$order_id is now $new_status. A notification email confirming the update was sent.";
 } catch (Throwable $e) {
     mysqli_rollback($conn);
 
     if ($e instanceof RuntimeException) {
         $_SESSION['message'] = $e->getMessage();
-    } else {
-        $_SESSION['message'] = 'Something went wrong, so nothing was changed. Please try again.';
+   } else {
+        $_SESSION['message'] = 'Error: ' . $e->getMessage();
     }
 }
 
