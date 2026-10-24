@@ -110,54 +110,53 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         $mail->isHTML(true);
         $mail->Subject = "Order Update: Your transaction is now {$new_status}";
         
-        // Custom fonts still work inside the HTML email!
+       // Clean, Professional Boutique Email (Web-Safe & 100% Client Compatible)
         $mail->Body = "
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                @font-face {
-                    font-family: 'Aqila';
-                    src: url('http://localhost/roast-and-grind/assets/fonts/Aqila.ttf') format('truetype');
-                }
-                @font-face {
-                    font-family: 'Alinore';
-                    src: url('http://localhost/roast-and-grind/assets/fonts/Alinore.ttf') format('truetype');
-                }
-            </style>
-        </head>
-        <body style='margin: 0; padding: 0;'>
-            <div style='background-color: #F5F3EC; padding: 40px 20px; font-family: \"Alinore\", sans-serif;'>
-                <table style='max-width: 600px; margin: auto; background: #FFF; border-radius: 20px; overflow: hidden; border: 1px solid #E2DCD5; width: 100%; border-collapse: collapse;'>
-                    <tr>
-                        <td style='background-color: #743014; padding: 30px; text-align: center;'>
-                            <h1 style='color: #FED7AA; margin: 0; font-family: \"Aqila\", serif; font-size: 32px; letter-spacing: 2px;'>ROAST & GRIND</h1>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style='padding: 40px;'>
-                            <h2 style='color: #743014; font-family: \"Aqila\", serif;'>Hello " . htmlspecialchars($customer_name) . ",</h2>
-                            <p style='color: #44403C; font-size: 16px;'>Your Roast & Grind order <strong>#{$order_id}</strong> has been updated to: <strong>{$new_status}</strong>.</p>
-                            
-                            <div style='background: #F5F3EC; padding: 20px; border-radius: 12px; margin: 20px 0;'>
-                                <h3 style='color: #743014; margin-top: 0; font-family: \"Aqila\", serif;'>Order Details:</h3>
-                                <ul style='color: #44403C; padding-left: 20px; line-height: 1.6;'>{$html_items_list}</ul>
-                                <h3 style='color: #4D6443; border-top: 1px solid #D6D3D1; padding-top: 10px; font-family: \"Aqila\", serif;'>Grand Total: Php " . number_format($order['total_amount'], 2) . "</h3>
+        <div style='background-color: #F5F3EC; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>
+            <table style='max-width: 600px; width: 100%; margin: 0 auto; background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #E2DCD5; border-collapse: separate;'>
+                <!-- Header -->
+                <tr>
+                    <td style='background-color: #743014; padding: 30px; text-align: center;'>
+                        <h1 style='color: #FED7AA; margin: 0; font-family: Georgia, \"Times New Roman\", serif; font-size: 28px; letter-spacing: 2px;'>ROAST &amp; GRIND</h1>
+                        <p style='color: #FDE8D0; margin: 6px 0 0; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;'>Specialty Coffee &amp; Brewing Gear</p>
+                    </td>
+                </tr>
+                <!-- Content -->
+                <tr>
+                    <td style='padding: 35px 30px;'>
+                        <h2 style='color: #743014; font-family: Georgia, \"Times New Roman\", serif; font-size: 20px; margin-top: 0;'>Hello " . htmlspecialchars($customer_name) . ",</h2>
+                        <p style='color: #44403C; font-size: 15px; line-height: 1.6; margin-bottom: 25px;'>
+                            Your Roast &amp; Grind order <strong>#{$order_id}</strong> has been updated to: <span style='display: inline-block; padding: 3px 10px; background-color: #E7EFE5; color: #2B4E26; border-radius: 20px; font-weight: bold;'>{$new_status}</span>
+                        </p>
+                        
+                        <div style='background-color: #FBF9F5; border: 1px solid #EFECE6; padding: 20px; border-radius: 12px; margin: 25px 0;'>
+                            <h3 style='color: #743014; font-family: Georgia, \"Times New Roman\", serif; font-size: 16px; margin: 0 0 12px;'>Order Summary:</h3>
+                            <ul style='color: #57534E; padding-left: 20px; margin: 0 0 15px; font-size: 14px; line-height: 1.8;'>
+                                {$html_items_list}
+                            </ul>
+                            <div style='border-top: 1px dashed #D6D3D1; padding-top: 12px;'>
+                                <strong style='color: #743014; font-size: 15px;'>Grand Total: </strong>
+                                <strong style='color: #4D6443; font-size: 16px;'>Php " . number_format($order['total_amount'], 2) . "</strong>
                             </div>
-                            
-                            <p style='color: #44403C;'>We have attached your official PDF receipt to this email.</p>
-                            <p style='color: #44403C; margin-bottom: 0;'>Warm regards,<br><strong style='color: #743014;'>The Roast & Grind Team</strong></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style='background-color: #743014; padding: 20px; text-align: center; color: #FED7AA; font-size: 12px;'>
-                            &copy; " . date('Y') . " Roast & Grind. Specialty Coffee & Gear.
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </body>
-        </html>";
+                        </div>
+                        
+                        <p style='color: #57534E; font-size: 14px; line-height: 1.6;'>
+                            We have attached your official <strong>PDF transaction receipt</strong> to this email for your records.
+                        </p>
+                        <p style='color: #57534E; font-size: 14px; line-height: 1.6; margin-bottom: 0;'>
+                            Warm regards,<br>
+                            <strong style='color: #743014;'>The Roast &amp; Grind Team</strong>
+                        </p>
+                    </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                    <td style='background-color: #743014; padding: 18px; text-align: center; color: #FED7AA; font-size: 11px;'>
+                        &copy; " . date('Y') . " Roast &amp; Grind. Specialty Coffee &amp; Gear.
+                    </td>
+                </tr>
+            </table>
+        </div>";
 
         $mail->addAttachment($pdf_filename, "Receipt_Order_{$order_id}.pdf");
         $mail->send();
