@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 24, 2026 at 02:27 PM
+-- Generation Time: Oct 24, 2026 at 02:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -246,6 +246,7 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `status`, `cre
 DROP VIEW IF EXISTS `view_order_transaction_details`;
 CREATE TABLE `view_order_transaction_details` (
 `order_id` int(11)
+,`user_id` int(11)
 ,`order_date` timestamp
 ,`order_status` enum('Pending','Processing','Shipped','Delivered','Canceled')
 ,`payment_method` varchar(30)
@@ -254,6 +255,7 @@ CREATE TABLE `view_order_transaction_details` (
 ,`phone` varchar(20)
 ,`address` varchar(150)
 ,`town` varchar(50)
+,`postal_code` varchar(10)
 ,`order_item_id` int(11)
 ,`item_name` varchar(150)
 ,`unit_price` decimal(10,2)
@@ -268,7 +270,7 @@ CREATE TABLE `view_order_transaction_details` (
 DROP TABLE IF EXISTS `view_order_transaction_details`;
 
 DROP VIEW IF EXISTS `view_order_transaction_details`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_order_transaction_details`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`order_date` AS `order_date`, `o`.`status` AS `order_status`, `o`.`payment_method` AS `payment_method`, `u`.`email` AS `customer_email`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `c`.`phone` AS `phone`, `c`.`address` AS `address`, `c`.`town` AS `town`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`item_name` AS `item_name`, `oi`.`unit_price` AS `unit_price`, `oi`.`quantity` AS `quantity` FROM (((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `customers` `c` on(`u`.`user_id` = `c`.`user_id`)) join `order_items` `oi` on(`o`.`order_id` = `oi`.`order_id`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_order_transaction_details`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`user_id` AS `user_id`, `o`.`order_date` AS `order_date`, `o`.`status` AS `order_status`, `o`.`payment_method` AS `payment_method`, `u`.`email` AS `customer_email`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `c`.`phone` AS `phone`, `c`.`address` AS `address`, `c`.`town` AS `town`, `c`.`postal_code` AS `postal_code`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`item_name` AS `item_name`, `oi`.`unit_price` AS `unit_price`, `oi`.`quantity` AS `quantity` FROM (((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `customers` `c` on(`u`.`user_id` = `c`.`user_id`)) join `order_items` `oi` on(`o`.`order_id` = `oi`.`order_id`)) ;
 
 --
 -- Indexes for dumped tables
