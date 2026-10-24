@@ -54,23 +54,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // MP2: Validate the optional profile photo (no more silent failures)
+    $photo_filename = null;
+    $upload     = $_FILES['profile_photo'] ?? null;
+    $has_upload = $upload && $upload['error'] !== UPLOAD_ERR_NO_FILE;
+    $photo_ext  = '';
+
+    if ($has_upload) {
+        $photo_ext = strtolower(pathinfo($upload['name'], PATHINFO_EXTENSION));
+        if ($upload['error'] === UPLOAD_ERR_INI_SIZE || $upload['error'] === UPLOAD_ERR_FORM_SIZE) {
+            $errors[] = 'The profile photo is too large. Please choose a smaller image.';
+        } elseif ($upload['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = 'The profile photo could not be uploaded. Please try again.';
+        } elseif (!in_array($photo_ext, ['jpg', 'jpeg', 'png'], true)) {
+            $errors[] = 'Profile photo must be a JPG or PNG image.';
+        }
+    }
+
+    // Save the file only when everything else is valid
+    if (!$errors && $has_upload) {
+        $photo_dir = __DIR__ . '/images/';
+        if (!is_dir($photo_dir)) {
+            mkdir($photo_dir, 0755, true);   // the folder is missing on a fresh clone
+        }
+        $new_name = time() . "_prof_" . $user_id . "." . $photo_ext;
+        if (move_uploaded_file($upload['tmp_name'], $photo_dir . $new_name)) {
+            $photo_filename = $new_name;
+        } else {
+            $errors[] = 'The profile photo could not be saved on the server. Please try again.';
+        }
+    }
+
     if ($errors) {
         $_SESSION['message'] = implode('<br>', $errors);
     } else {
-        // Handle optional photo update
-        $photo_query_part = "";
-        $photo_filename = null;
-        if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
-            $ext = strtolower(pathinfo($_FILES['profile_photo']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
-                $new_name = time() . "_prof_" . $user_id . ".$ext";
-                if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], __DIR__ . '/images/' . $new_name)) {
-                    $photo_filename = $new_name;
-                    $photo_query_part = ", profile_photo = ?";
-                }
-            }
-        }
-
         if ($profile) {
             if ($photo_filename) {
                 $sql = "UPDATE customers SET first_name=?, last_name=?, address=?, town=?, postal_code=?, phone=?, profile_photo=? WHERE user_id=?";

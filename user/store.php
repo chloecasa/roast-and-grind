@@ -37,18 +37,36 @@ if (count($errors) > 0) {
     exit;
 }
 
-// MP2: Handle Profile Photo Upload
+// MP2: Handle Profile Photo Upload (report problems instead of failing silently)
 $photo_filename = 'default_avatar.png';
-if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
-    $file_name = $_FILES['profile_photo']['name'];
-    $file_tmp  = $_FILES['profile_photo']['tmp_name'];
-    $ext       = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-    
-    if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
-        $new_name = time() . "_" . preg_replace('/[^a-zA-Z0-9]/', '', basename($file_name, ".$ext")) . ".$ext";
-        if (move_uploaded_file($file_tmp, __DIR__ . '/images/' . $new_name)) {
-            $photo_filename = $new_name;
+if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $up  = $_FILES['profile_photo'];
+    $ext = strtolower(pathinfo($up['name'], PATHINFO_EXTENSION));
+    $photo_error = '';
+
+    if ($up['error'] === UPLOAD_ERR_INI_SIZE || $up['error'] === UPLOAD_ERR_FORM_SIZE) {
+        $photo_error = 'The profile photo is too large. Please choose a smaller image.';
+    } elseif ($up['error'] !== UPLOAD_ERR_OK) {
+        $photo_error = 'The profile photo could not be uploaded. Please try again.';
+    } elseif (!in_array($ext, ['jpg', 'jpeg', 'png'], true)) {
+        $photo_error = 'Profile photo must be a JPG or PNG image.';
+    } else {
+        $photo_dir = __DIR__ . '/images/';
+        if (!is_dir($photo_dir)) {
+            mkdir($photo_dir, 0755, true);   // the folder is missing on a fresh clone
         }
+        $new_name = time() . "_" . preg_replace('/[^a-zA-Z0-9]/', '', basename($up['name'], ".$ext")) . ".$ext";
+        if (move_uploaded_file($up['tmp_name'], $photo_dir . $new_name)) {
+            $photo_filename = $new_name;
+        } else {
+            $photo_error = 'The profile photo could not be saved on the server. Please try again.';
+        }
+    }
+
+    if ($photo_error !== '') {
+        $_SESSION['message'] = $photo_error;
+        header('Location: register.php');
+        exit;
     }
 }
 
