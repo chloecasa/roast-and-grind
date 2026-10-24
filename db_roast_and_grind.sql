@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 24, 2026 at 02:32 AM
+-- Generation Time: Oct 24, 2026 at 02:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -226,6 +226,39 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `status`, `cre
 (1, 'admin@roastandgrind.com', '$2y$10$efDvenHYJ5Fu/xxt1ANbXuRx5/TuzNs/s4k6keUiiFvr2ueE0GmrG', 'admin', 'active', '2026-10-23 11:21:06'),
 (2, 'chloecasanoba@gmail.com', '$2y$10$sdbeGPMLATw7lw23KGM52OPhzt5UsOY6ZbrTf9NGgrl/.zRUGb4qm', 'user', 'active', '2026-10-23 11:41:36'),
 (3, 'chloecasanoba1@gmail.com', '$2y$10$/VabRfJMzGdL6uZdA/rkAeCtWJFOgha3lErif8lVb0V471cJqZgzu', 'user', 'active', '2026-10-23 14:52:28');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_order_transaction_details`
+-- (See below for the actual view)
+--
+CREATE TABLE `view_order_transaction_details` (
+`order_id` int(11)
+,`order_date` timestamp
+,`order_status` enum('Pending','Processing','Shipped','Delivered','Canceled')
+,`payment_method` varchar(30)
+,`grand_total` decimal(10,2)
+,`customer_email` varchar(255)
+,`customer_name` varchar(101)
+,`phone` varchar(20)
+,`address` varchar(150)
+,`town` varchar(50)
+,`order_item_id` int(11)
+,`item_name` varchar(150)
+,`unit_price` decimal(10,2)
+,`quantity` int(11)
+,`line_subtotal` decimal(20,2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_order_transaction_details`
+--
+DROP TABLE IF EXISTS `view_order_transaction_details`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_order_transaction_details`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`order_date` AS `order_date`, `o`.`status` AS `order_status`, `o`.`payment_method` AS `payment_method`, `o`.`total_amount` AS `grand_total`, `u`.`email` AS `customer_email`, concat(`c`.`first_name`,' ',`c`.`last_name`) AS `customer_name`, `c`.`phone` AS `phone`, `c`.`address` AS `address`, `c`.`town` AS `town`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`item_name` AS `item_name`, `oi`.`unit_price` AS `unit_price`, `oi`.`quantity` AS `quantity`, `oi`.`unit_price`* `oi`.`quantity` AS `line_subtotal` FROM (((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) left join `customers` `c` on(`u`.`user_id` = `c`.`user_id`)) join `order_items` `oi` on(`o`.`order_id` = `oi`.`order_id`)) ;
 
 --
 -- Indexes for dumped tables
