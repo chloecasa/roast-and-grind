@@ -68,7 +68,13 @@ if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPL
     }
 }
 
+$upload_dir = __DIR__ . "/images/";
+
 // 3. Database Updates using Transaction
+$new_gallery_files = [];   // files saved in this request (deleted again if the transaction fails)
+$files_to_delete   = [];   // removed gallery files (deleted from disk only after a successful commit)
+$skipped_files     = 0;
+
 mysqli_begin_transaction($conn);
 
 try {
@@ -92,13 +98,87 @@ try {
     mysqli_stmt_execute($stmt_stock);
     mysqli_stmt_close($stmt_stock);
 
+    // MP1: Remove selected gallery photos (only rows that belong to THIS product)
+    if (!empty($_POST['remove_images']) && is_array($_POST['remove_images'])) {
+        $stmt_find = mysqli_prepare($conn, "SELECT img_path FROM item_images WHERE image_id = ? AND item_id = ?");
+        $stmt_del  = mysqli_prepare($conn, "DELETE FROM item_images WHERE image_id = ? AND item_id = ?");
+
+        foreach ($_POST['remove_images'] as $raw_id) {
+            $image_id = intval($raw_id);
+            if ($image_id <= 0) continue;
+
+            mysqli_stmt_bind_param($stmt_find, "ii", $image_id, $item_id);
+            mysqli_stmt_execute($stmt_find);
+            $found = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_find));
+            if (!$found) continue;
+
+            mysqli_stmt_bind_param($stmt_del, "ii", $image_id, $item_id);
+            mysqli_stmt_execute($stmt_del);
+            $files_to_delete[] = $found['img_path'];
+        }
+        mysqli_stmt_close($stmt_find);
+        mysqli_stmt_close($stmt_del);
+    }
+
+    // MP1: Add new gallery photos
+    if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
+        $stmt_gal = mysqli_prepare($conn, "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)");
+
+        foreach ($_FILES['gallery_images']['name'] as $key => $name) {
+            $err = $_FILES['gallery_images']['error'][$key];
+            if ($err === UPLOAD_ERR_NO_FILE) continue;
+
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if ($err !== UPLOAD_ERR_OK || !in_array($ext, $allowed_exts)) {
+                $skipped_files++;
+                continue;
+            }
+
+            $gal_filename = time() . "_g{$key}_" . bin2hex(random_bytes(2)) . "_" . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $name);
+            if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $upload_dir . $gal_filename)) {
+                $new_gallery_files[] = $gal_filename;
+                mysqli_stmt_bind_param($stmt_gal, "is", $item_id, $gal_filename);
+                mysqli_stmt_execute($stmt_gal);
+            } else {
+                $skipped_files++;
+            }
+        }
+        mysqli_stmt_close($stmt_gal);
+    }
+
     mysqli_commit($conn);
-    $_SESSION['success'] = "Product and stock updated successfully!";
+
+    // Delete removed photo files from disk, unless another record still uses the same file
+    foreach ($files_to_delete as $file) {
+        $stmt_use = mysqli_prepare($conn,
+            "SELECT (SELECT COUNT(*) FROM item_images WHERE img_path = ?) +
+                    (SELECT COUNT(*) FROM item WHERE img_path = ?) AS uses_count");
+        mysqli_stmt_bind_param($stmt_use, "ss", $file, $file);
+        mysqli_stmt_execute($stmt_use);
+        $use = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_use));
+        mysqli_stmt_close($stmt_use);
+
+        $path = $upload_dir . basename($file);
+        if ((int) $use['uses_count'] === 0 && is_file($path)) {
+            unlink($path);
+        }
+    }
+
+    $msg = "Product and stock updated successfully!";
+    if ($skipped_files > 0) {
+        $msg .= " ({$skipped_files} gallery file(s) skipped: only JPG and PNG uploads are accepted.)";
+    }
+    $_SESSION['success'] = $msg;
     header("Location: index.php");
     exit;
 
 } catch (Exception $e) {
     mysqli_rollback($conn);
+    // Remove any gallery files saved during this failed request
+    foreach ($new_gallery_files as $file) {
+        $path = $upload_dir . basename($file);
+        if (is_file($path)) unlink($path);
+    }
     $_SESSION['message'] = "Database error: " . $e->getMessage();
     header("Location: edit.php?id=" . $item_id);
     exit;

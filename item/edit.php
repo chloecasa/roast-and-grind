@@ -28,6 +28,13 @@ if (!$product) {
     die("Product not found.");
 }
 
+// Gallery photos already saved for this product (MP1: view/add/remove multiple photos)
+$stmt_gal = mysqli_prepare($conn, "SELECT image_id, img_path FROM item_images WHERE item_id = ? ORDER BY image_id");
+mysqli_stmt_bind_param($stmt_gal, "i", $item_id);
+mysqli_stmt_execute($stmt_gal);
+$gallery = mysqli_fetch_all(mysqli_stmt_get_result($stmt_gal), MYSQLI_ASSOC);
+mysqli_stmt_close($stmt_gal);
+
 $old = $_SESSION['old_input'] ?? [];
 unset($_SESSION['old_input']);
 if ((int) ($old['item_id'] ?? 0) !== $item_id) {
@@ -111,6 +118,33 @@ require_once "../includes/header.php";
                 <label class="admin-form-label">Replace Product Image (Optional)</label>
                 <input type="file" name="product_image" class="form-control admin-form-input" accept=".jpg,.jpeg,.png">
                 <small class="text-muted" style="font-family: 'Alinore';">Current image: <code><?= htmlspecialchars($product['img_path']); ?></code></small>
+            </div>
+
+            <!-- MP1: Gallery photos (view, remove, add) -->
+            <div class="mb-4">
+                <label class="admin-form-label">Gallery Photos</label>
+
+                <?php if (count($gallery) === 0): ?>
+                    <p class="text-muted mb-2" style="font-family: 'Alinore';">No gallery photos yet.</p>
+                <?php else: ?>
+                    <div class="d-flex flex-wrap gap-3 mb-3">
+                        <?php foreach ($gallery as $g): ?>
+                            <div class="text-center" style="width: 110px;">
+                                <img src="images/<?= htmlspecialchars($g['img_path']); ?>"
+                                     alt="Gallery photo"
+                                     style="width: 110px; height: 110px; object-fit: cover; border-radius: 12px; border: 1px solid #E2DCD5;"
+                                     onerror="this.src='https://placehold.co/110x110/743014/FFF5EA?text=No+Image'">
+                                <label style="font-family: 'Alinore'; font-size: 0.95rem; color: #9B1C1C; display: block; margin-top: 6px; cursor: pointer;">
+                                    <input type="checkbox" name="remove_images[]" value="<?= (int) $g['image_id']; ?>"> Remove
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <small class="text-muted d-block mb-3" style="font-family: 'Alinore';">Tick "Remove" on any photo you want to delete, then press Update.</small>
+                <?php endif; ?>
+
+                <label class="admin-form-label">Add More Gallery Photos (Multiple allowed)</label>
+                <input type="file" name="gallery_images[]" class="form-control admin-form-input" accept=".jpg,.jpeg,.png" multiple>
             </div>
 
             <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
