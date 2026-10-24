@@ -3534,3 +3534,78 @@ html, body.store-wrapper {
     color: #FFFFFF;
     transform: scale(1.02);
 }
+
+/* ===== Search box (from Anima/Figma) ===== */
+.hero-top-bar .search-box {
+    position: absolute;
+    left: calc(50% + 450px);      /* was 90px: moves it right */
+    top: calc(50% + 14px);        /* was 50%: moves it slightly down */
+    transform: translateY(-50%);
+    z-index: 60;
+
+    width: 300px;
+    height: 34px;                 /* a bit taller to fit the larger font */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px 0 14px;
+    background-color: #f1e6d0;
+    border: 1px solid #54220e;
+    border-radius: 20px;
+}
+
+.search-box .text-wrapper {
+    flex: 1;
+    min-width: 0;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-family: 'Alinore', sans-serif !important;   /* same as MENU */
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: #54220e;
+}
+
+.search-box .text-wrapper::placeholder {
+    font-family: 'Alinore', sans-serif !important;
+    letter-spacing: 1px;
+    color: #54220e;
+    opacity: 0.55;
+}
+
+.search-box .search {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.search-box .search img {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.search-box:focus-within {
+    background-color: #ffffff;
+    border-color: #3f5e38;
+}
+
+@media (max-width: 992px) {
+    .hero-top-bar .search-box {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 260px;
+        margin-left: auto;
+    }
+}

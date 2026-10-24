@@ -33,10 +33,28 @@ $is_logged_in = isset($_SESSION['user_id']);
             <button type="button" class="menu-trigger-btn" data-bs-toggle="offcanvas" data-bs-target="#leftMenuDrawer" aria-controls="leftMenuDrawer">
                 <i class="fa-solid fa-bars me-1"></i> MENU
             </button>
+
+            <?php if (!$is_logged_in): ?>
+            <a href="user/login.php" class="menu-trigger-btn login-trigger-btn">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> LOG IN
+            </a>
+            <?php endif; ?>
         </div>
 
         <a href="index.php" class="store-brand" style="position: absolute; left: 50%; transform: translateX(-50%); font-family: 'Aqila', serif; color: var(--text-brown);">R&G</a>
 
+        <form class="search-box" role="search" action="shop.php" method="get">
+            <input class="text-wrapper"
+            type="text"
+            name="search"
+            placeholder="Search coffee..."
+            aria-label="Search coffee"
+            autocomplete="off"
+            maxlength="100">
+            <button class="search" type="submit" aria-label="Submit coffee search">
+            <img src="assets/img/search.svg" alt="">
+            </button>
+        </form>
         
            
             <i class="fa-solid fa-star store-star"></i>
