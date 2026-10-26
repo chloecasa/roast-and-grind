@@ -1,5 +1,5 @@
 <?php
-// user/store.php - MP5: Strict PHP Validation / MP2: Upload Photo
+// user/store.php - MP5: PHP Validation / MP2: Upload Photo
 include('../includes/session.php');
 include('../includes/config.php');
 
@@ -12,7 +12,7 @@ $email       = trim($_POST['email'] ?? '');
 $password    = $_POST['password'] ?? '';
 $confirmPass = $_POST['confirmPass'] ?? '';
 
-// MP5: Strict Server-Side Validation (Since we removed HTML5 browser validation)
+
 $errors = [];
 
 if (empty($email)) {
@@ -37,7 +37,6 @@ if (count($errors) > 0) {
     exit;
 }
 
-// MP2: Handle Profile Photo Upload (report problems instead of failing silently)
 $photo_filename = 'default_avatar.png';
 if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] !== UPLOAD_ERR_NO_FILE) {
     $up  = $_FILES['profile_photo'];
@@ -53,7 +52,7 @@ if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] !== UPL
     } else {
         $photo_dir = __DIR__ . '/images/';
         if (!is_dir($photo_dir)) {
-            mkdir($photo_dir, 0755, true);   // the folder is missing on a fresh clone
+            mkdir($photo_dir, 0755, true);   
         }
         $new_name = time() . "_" . preg_replace('/[^a-zA-Z0-9]/', '', basename($up['name'], ".$ext")) . ".$ext";
         if (move_uploaded_file($up['tmp_name'], $photo_dir . $new_name)) {
@@ -81,7 +80,7 @@ try {
     mysqli_stmt_execute($stmt1);
     $new_id = mysqli_insert_id($conn);
 
-    // Save the uploaded profile photo to the customers table
+
     $stmt2 = mysqli_prepare($conn, "INSERT INTO customers (user_id, profile_photo) VALUES (?, ?)");
     mysqli_stmt_bind_param($stmt2, 'is', $new_id, $photo_filename);
     mysqli_stmt_execute($stmt2);
@@ -96,7 +95,7 @@ try {
     exit;
 }
 
-// Auto-login
+
 session_regenerate_id(true);
 $_SESSION['user_id']    = $new_id;
 $_SESSION['user_email'] = $email;

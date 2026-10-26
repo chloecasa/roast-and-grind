@@ -8,11 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_role       = $_POST['role'];
     $new_status     = $_POST['status'];
 
-    // Security: Prevent an admin from accidentally deactivating or demoting themselves
+  
     if ($target_user_id === (int)$_SESSION['user_id']) {
         $_SESSION['message'] = "Action denied: You cannot change your own role or status.";
     } else {
-        // Update the user
+       
         $stmt = mysqli_prepare($conn, "UPDATE users SET role = ?, status = ? WHERE user_id = ?");
         mysqli_stmt_bind_param($stmt, "ssi", $new_role, $new_status, $target_user_id);
         

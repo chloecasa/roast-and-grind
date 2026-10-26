@@ -1,16 +1,16 @@
 <?php
-// admin/orders.php - FR-19: Admin Views All Customer Orders
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
-// Read from the MySQL VIEW (one row per order line), then group by order in PHP
+
 $sql = "SELECT order_id, order_date, order_status, customer_email, customer_name,
                unit_price, quantity
         FROM view_order_transaction_details
         ORDER BY order_date DESC, order_id DESC, order_item_id ASC";
 $result = mysqli_query($conn, $sql);
 
-// Each order's total is computed here in PHP, not stored in or calculated by the database
+
 $orders = [];
 while ($r = mysqli_fetch_assoc($result)) {
     $id = $r['order_id'];
@@ -36,7 +36,7 @@ require_once "../includes/header.php";
 
     <?php require_once "../includes/alert.php"; ?>
 
-    <!-- Orders Table Container -->
+    
     <div class="admin-orders-box">
         <table class="dashboard-table">
             <thead>
@@ -60,12 +60,12 @@ require_once "../includes/header.php";
 
                 <?php foreach ($orders as $o): ?>
                     <tr>
-                        <!-- Order ID -->
+               
                         <td>
                             <span class="order-id-tag">#<?= $o['order_id']; ?></span>
                         </td>
 
-                        <!-- Customer Name & Email Fallback -->
+                     
                         <?php $name = $o['name']; ?>
                         <td>
                             <div class="admin-customer-name">
@@ -76,20 +76,20 @@ require_once "../includes/header.php";
                             <?php endif; ?>
                         </td>
 
-                        <!-- Date Ordered -->
+                   
                         <td><?= date('M j, Y • g:i A', strtotime($o['order_date'])); ?></td>
 
-                        <!-- Total Amount -->
+                     
                         <td class="text-center" style="font-family: 'Alinore', sans-serif; font-size: 1.3rem; font-weight: bold; color: #4D6443;">
                             ₱<?= number_format($o['total'], 2); ?>
                         </td>
 
-                        <!-- Harmonious Status Badge -->
+           
                         <td class="text-center">
                             <?= statusBadge($o['status']); ?>
                         </td>
 
-                        <!-- Action Link -->
+                
                         <td class="text-end">
                             <a href="order_view.php?id=<?= $o['order_id']; ?>" class="admin-order-view-btn">
                                 View Details &rarr;
@@ -101,7 +101,7 @@ require_once "../includes/header.php";
         </table>
     </div>
 
-    <!-- Navigation Buttons -->
+   
     <div class="dashboard-actions-bar">
         <a href="dashboard.php" class="dashboard-btn-outline">
             &larr; Back to Dashboard

@@ -10,8 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $order_id = (int) ($_GET['id'] ?? 0);
 
-// Read the order from the MySQL VIEW (one row per order line).
-// user_id check keeps customers from opening other people's orders.
+
 $stmt = mysqli_prepare($conn,
     "SELECT * FROM view_order_transaction_details
      WHERE order_id = ? AND user_id = ?
@@ -29,7 +28,7 @@ if (!$rows) {
 $order = $rows[0];
 $order['status'] = $order['order_status'];
 
-// Total is computed here in PHP, not stored in or calculated by the database
+
 $grand_total = 0;
 foreach ($rows as $line) {
     $grand_total += $line['unit_price'] * $line['quantity'];
@@ -40,7 +39,7 @@ include('includes/header.php');
 
 <div class="confirm-wrapper">
     <div class="confirm-card">
-        <!-- Success Icon -->
+        
         <div class="confirm-icon-box">
             <i class="fa-solid fa-circle-check confirm-icon"></i>
         </div>
@@ -50,7 +49,7 @@ include('includes/header.php');
 
         <?php include('includes/alert.php'); ?>
 
-        <!-- Order Metadata Grid -->
+        
         <div class="confirm-meta-grid">
             <div>
                 <span class="confirm-meta-label">Order Number</span>
@@ -72,7 +71,7 @@ include('includes/header.php');
             </div>
         </div>
 
-        <!-- Itemized Order Table -->
+       
         <div class="confirm-table-box">
             <table class="confirm-table">
                 <thead>
@@ -102,7 +101,7 @@ include('includes/header.php');
             </div>
         </div>
 
-        <!-- Action Navigation Buttons -->
+      
         <div class="confirm-actions">
             <a href="shop.php" class="confirm-btn-primary">
                 Continue Shopping

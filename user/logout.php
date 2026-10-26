@@ -1,5 +1,5 @@
 <?php
-// user/logout.php - FR-4: destroy the session and go back to the storefront
+
 include('../includes/session.php');
 
 $_SESSION = [];

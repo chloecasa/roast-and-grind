@@ -2,7 +2,7 @@
 // includes/send_receipt.php - Generates PDF and sends via PHPMailer + Mailtrap
 require_once __DIR__ . '/fpdf/fpdf.php';
 
-// Manually load PHPMailer classes
+
 require_once __DIR__ . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/SMTP.php';
@@ -12,12 +12,12 @@ use PHPMailer\PHPMailer\Exception;
 
 class PDF_Receipt extends FPDF {
     function Header() {
-        $this->SetFillColor(116, 48, 20); // Terracotta Brown
+        $this->SetFillColor(116, 48, 20); 
         $this->Rect(0, 0, 210, 40, 'F');
         
-        // Built-in elegant serif font
+      
         $this->SetFont('Times', 'B', 24);
-        $this->SetTextColor(254, 215, 170); // Warm Cream
+        $this->SetTextColor(254, 215, 170); 
         $this->Cell(0, 20, 'ROAST & GRIND', 0, 1, 'C');
         
         $this->SetFont('Arial', '', 10);
@@ -34,13 +34,9 @@ class PDF_Receipt extends FPDF {
     }
 }
 
-/**
- * Builds the PDF receipt and emails it through PHPMailer + Mailtrap.
- * Returns ['ok' => bool, 'error' => string] so the caller can tell the admin
- * whether the email was really sent.
- */
+
 function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name, $new_status) {
-    // 1. Fetch order & items from the MySQL VIEW (one row per order line)
+    
     $stmt = mysqli_prepare($conn,
         "SELECT * FROM view_order_transaction_details WHERE order_id = ? ORDER BY order_item_id");
     mysqli_stmt_bind_param($stmt, 'i', $order_id);
@@ -50,15 +46,15 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         return ['ok' => false, 'error' => 'Order details could not be loaded for the receipt.'];
     }
 
-    $order = $rows[0]; // order_date, payment_method
+    $order = $rows[0]; 
 
-    // Total is computed here in PHP, not stored in or calculated by the database
+  
     $grand_total = 0;
     foreach ($rows as $line) {
         $grand_total += $line['unit_price'] * $line['quantity'];
     }
 
-    // 2. Generate PDF
+   
     $pdf = new PDF_Receipt();
     $pdf->AddPage();
 
@@ -72,7 +68,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     $pdf->Cell(90, 6, 'Payment: ' . $order['payment_method'], 0, 1, 'R');
     $pdf->Ln(8);
 
-    $pdf->SetFillColor(77, 100, 67); // Moss Green
+    $pdf->SetFillColor(77, 100, 67); 
     $pdf->SetTextColor(255, 255, 255);
     $pdf->SetFont('Arial', 'B', 10);
     $pdf->Cell(95, 10, '  Item Description', 1, 0, 'L', true);
@@ -104,22 +100,21 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     $pdf->Cell(150, 12, 'Grand Total: ', 0, 0, 'R');
     $pdf->Cell(40, 12, 'Php ' . number_format($grand_total, 2) . '  ', 0, 1, 'R');
 
-    // Unique temp name so two status updates at the same time cannot overwrite each other
+    
     $pdf_filename = __DIR__ . '/../temp_receipt_' . $order_id . '_' . uniqid() . '.pdf';
     $pdf->Output('F', $pdf_filename);
 
-    // 3. Send Email via PHPMailer + Mailtrap
     $mail = new PHPMailer(true);
     $result = ['ok' => true, 'error' => ''];
     try {
-        // Server settings (same setup as the itim211-2b-shop sample send.php)
+        
         $mail->isSMTP();
         $mail->Host = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth = true;
         $mail->Port = 2525;
-        $mail->Username = '';   // paste your own Mailtrap username here (do not commit it)
-        $mail->Password = '';   // paste your own Mailtrap password here (do not commit it)
-        $mail->Timeout  = 10;   // do not hang the admin page if Mailtrap is unreachable
+        $mail->Username = '';   
+        $mail->Password = ''; 
+        $mail->Timeout  = 10;   
 
         if ($mail->Username === '' || $mail->Password === '') {
             throw new Exception('Mailtrap credentials are not set in includes/send_receipt.php.');
@@ -130,7 +125,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         $mail->isHTML(true);
         $mail->Subject = "Order Update: Your transaction is now {$new_status}";
         
-       // Clean, Professional Boutique Email (Web-Safe & 100% Client Compatible)
+     
         $mail->Body = "
         <div style='background-color: #F5F3EC; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>
             <table style='max-width: 600px; width: 100%; margin: 0 auto; background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #E2DCD5; border-collapse: separate;'>
@@ -181,7 +176,7 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         $mail->addAttachment($pdf_filename, "Receipt_Order_{$order_id}.pdf");
         $mail->send();
     } catch (Throwable $e) {
-        // Report the failure instead of hiding it
+        
         $detail = !empty($mail->ErrorInfo) ? $mail->ErrorInfo : $e->getMessage();
         $result = ['ok' => false, 'error' => $detail];
     }

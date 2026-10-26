@@ -1,5 +1,5 @@
 <?php
-// admin/profit.php - FR-21: Profit Reporting (Admin Only)
+// admin/profit.php - FR-21: Profit Reporting 
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
@@ -8,7 +8,7 @@ function peso($n)
     return ($n < 0 ? '-' : '') . '₱' . number_format(abs($n), 2);
 }
 
-// FR-21: Profit per product = selling price - cost price (computed in PHP)
+
 $result   = mysqli_query($conn, "SELECT item_name, category, cost_price, sell_price FROM item");
 $products = [];
 while ($p = mysqli_fetch_assoc($result)) {
@@ -20,8 +20,8 @@ usort($products, function ($a, $b) {
     return [$b['profit'], $a['item_name']] <=> [$a['profit'], $b['item_name']];
 });
 
-// FR-21: Profit per order = sum of (selling price - cost price) * quantity.
-// Order totals and profits are computed in PHP from order_items, never stored.
+
+
 $result = mysqli_query($conn,
     "SELECT o.order_id, o.order_date, o.status,
             oi.unit_price, oi.unit_cost, oi.quantity
@@ -64,7 +64,7 @@ require_once "../includes/header.php";
 
     <?php require_once "../includes/alert.php"; ?>
 
-    <!-- Total Net Profit Card -->
+  
     <div class="profit-kpi-card">
         <div class="profit-kpi-label">Total Realized Profit</div>
         <div class="profit-kpi-val <?= $total_profit < 0 ? 'negative' : ''; ?>">
@@ -73,7 +73,7 @@ require_once "../includes/header.php";
         <div class="profit-kpi-note">Calculated across all non-canceled customer orders</div>
     </div>
 
-    <!-- 1. Profit per Product Table -->
+   
     <h3 class="profit-section-header">Profit Margin per Product (Current Catalog)</h3>
     <div class="profit-table-box">
         <table class="profit-table">
@@ -108,7 +108,7 @@ require_once "../includes/header.php";
         </table>
     </div>
 
-    <!-- 2. Profit per Order Table -->
+   
     <h3 class="profit-section-header">Profit Realized per Order</h3>
     <div class="profit-table-box">
         <table class="profit-table">
@@ -154,7 +154,7 @@ require_once "../includes/header.php";
         </table>
     </div>
 
-    <!-- Bottom Actions -->
+
     <div>
         <a href="dashboard.php" class="dashboard-btn-outline">
             &larr; Back to Dashboard

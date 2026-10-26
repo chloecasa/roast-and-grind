@@ -1,11 +1,11 @@
 <?php
-// admin/order_view.php - FR-19: Order Details + Status Update Form (Admin Only)
+// admin/order_view.php - FR-19: Order Details + Status Update Form
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
 $order_id = (int) ($_GET['id'] ?? 0);
 
-// Read the order from the MySQL VIEW (one row per order line)
+
 $stmt = mysqli_prepare($conn,
     "SELECT * FROM view_order_transaction_details WHERE order_id = ? ORDER BY order_item_id");
 mysqli_stmt_bind_param($stmt, 'i', $order_id);
@@ -18,12 +18,12 @@ if (!$rows) {
     exit;
 }
 
-// First row carries the order + customer header; every row is an item line
+
 $order = $rows[0];
 $order['status'] = $order['order_status'];
 $order['email']  = $order['customer_email'];
 
-// Total is computed here in PHP, not stored in or calculated by the database
+
 $grand_total = 0;
 foreach ($rows as $line) {
     $grand_total += $line['unit_price'] * $line['quantity'];
@@ -46,7 +46,7 @@ require_once "../includes/header.php";
     <?php require_once "../includes/alert.php"; ?>
 
     <div class="order-view-card">
-        <!-- Customer & Order Metadata Grid -->
+       
         <div class="order-info-grid">
             <div class="order-info-group">
                 <span class="order-info-label">Customer Name</span>
@@ -88,7 +88,7 @@ require_once "../includes/header.php";
             </div>
         </div>
 
-        <!-- Itemized Order Table -->
+     
         <div class="profit-table-box mb-0">
             <table class="profit-table">
                 <thead>
@@ -111,14 +111,14 @@ require_once "../includes/header.php";
                 </tbody>
             </table>
 
-            <!-- Total Line -->
+         
             <div class="confirm-total-box">
                 <span class="confirm-total-label">Order Total:</span>
                 <span class="confirm-total-amount">₱<?= number_format($grand_total, 2); ?></span>
             </div>
         </div>
 
-        <!-- Status Update Form Box -->
+       
         <form method="POST" action="order_update.php"
               onsubmit="return this.status.value !== 'Canceled' || confirm('Cancel this order? The items will be returned to stock and this cannot be undone.');">
             <input type="hidden" name="order_id" value="<?= $order['order_id']; ?>">

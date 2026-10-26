@@ -19,7 +19,7 @@ if (empty($raw_review)) {
     exit;
 }
 
-// 1. Verify that the user ACTUALLY BOUGHT this item (MP4 Requirement)
+
 $check_purchase_sql = "
     SELECT 1 FROM orders o 
     JOIN order_items oi ON o.order_id = oi.order_id 
@@ -38,18 +38,15 @@ if (!$has_purchased) {
     exit;
 }
 
-// 2. REGEX FOUL WORD FILTER (MP4 Requirement)
-// Array of words to filter out (You can add more if needed)
+
 $bad_words = ['crap', 'damn', 'shit', 'fuck', 'bitch', 'asshole', 'stupid', 'idiot', 'scam'];
 
-// Build the regex pattern dynamically: /\b(crap|damn|shit|...)\b/i
 $pattern = '/\b(' . implode('|', $bad_words) . ')\b/i';
 
-// Replace matches with asterisks
+
 $clean_review = preg_replace($pattern, '****', $raw_review);
 
-// 3. Insert or Update the Review
-// Uses ON DUPLICATE KEY UPDATE to allow the user to UPDATE their review (MP4 Requirement)
+
 $sql = "INSERT INTO reviews (item_id, user_id, review_text) 
         VALUES (?, ?, ?) 
         ON DUPLICATE KEY UPDATE review_text = ?";

@@ -1,5 +1,5 @@
 <?php
-// cart_update.php - FR-17: add to cart, change quantity, remove item (guests and customers)
+// cart_update.php - FR-17
 include('./includes/session.php'); 
 include('./includes/config.php');
 
@@ -40,14 +40,14 @@ if (isset($_POST['type']) && $_POST['type'] == 'add') {
     } elseif (!$row) {
         $errors[] = 'Product not found.';
     } elseif ($row['qty'] <= 0) {
-        // FR-17: Out of Stock items cannot be added
+        
         $errors[] = htmlspecialchars($row['item_name']) . ' is out of stock.';
     } else {
         
         $in_cart = isset($_SESSION['cart_products'][$item_id]) ? $_SESSION['cart_products'][$item_id]['item_qty'] : 0;
 
         if ($in_cart + $item_qty > $row['qty']) {
-            // FR-17: cannot go over available stock
+            
             $errors[] = 'Cannot add ' . $item_qty . ' x ' . htmlspecialchars($row['item_name'])
                 . '. Only ' . $row['qty'] . ' in stock (' . $in_cart . ' already in your cart).';
         } else {
@@ -74,7 +74,7 @@ if (isset($_POST['remove_code']) && is_array($_POST['remove_code'])) {
     }
 }
 
-// UPDATE QUANTITIES 
+// UPDATE  
 if (isset($_POST['product_qty']) && is_array($_POST['product_qty'])) {
     foreach ($_POST['product_qty'] as $key => $value) {
         $item_id = (int) $key;
@@ -111,7 +111,7 @@ if (isset($_SESSION['cart_products']) && count($_SESSION['cart_products']) == 0)
     unset($_SESSION['cart_products']);
 }
 
-// FR-17: display a message whenever a cart action is rejected
+
 if (count($errors) > 0) {
     $_SESSION['message'] = implode('<br>', $errors);
 }

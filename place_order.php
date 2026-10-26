@@ -55,7 +55,7 @@ try {
         mysqli_stmt_execute($sel);
         $row = mysqli_fetch_assoc(mysqli_stmt_get_result($sel));
 
-        // FR-18: re-verify stock for every item, block the whole order if one is short
+    
         if (!$row) {
             throw new RuntimeException(htmlspecialchars($cart_itm['item_name']) . ' is no longer available.');
         }
@@ -74,8 +74,7 @@ try {
         ];
     }
 
-    // The order total is NOT stored. Prices are saved per line in order_items
-    // (unit_price), and every page adds them up in PHP when it needs a total.
+   
     $ins_order = mysqli_prepare($conn, "INSERT INTO orders (user_id, payment_method) VALUES (?, ?)");
     mysqli_stmt_bind_param($ins_order, 'is', $user_id, $payment_method);
     mysqli_stmt_execute($ins_order);

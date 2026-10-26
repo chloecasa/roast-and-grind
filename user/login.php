@@ -19,18 +19,18 @@ if (isset($_SESSION['user_id'])) {
 if (isset($_POST['submit'])) {
     $email  = trim($_POST['email']);
     
-    // Fetch user including the status column
+    
     $sql    = "SELECT user_id, email, password_hash, role, status FROM users WHERE email = ? LIMIT 1";
     $result = mysqli_execute_query($conn, $sql, [$email]);
 
     if ($result->num_rows === 1) {
         $row = mysqli_fetch_assoc($result);
         
-        // MP2 Check: Is the account deactivated?
+        
         if ($row['status'] === 'inactive') {
             $_SESSION['message'] = 'Your account has been deactivated. Please contact support.';
         } 
-        // Normal password check
+        
         elseif (password_verify(trim($_POST['password']), $row['password_hash'])) {
             session_regenerate_id(true);
             $_SESSION['user_id']    = $row['user_id'];
@@ -48,7 +48,7 @@ if (isset($_POST['submit'])) {
             $_SESSION['message'] = 'Wrong email or password.';
         }
     }
-} // <--- THIS is the curly brace that was missing!
+}
 
 require_once "../includes/header.php";
 ?>
@@ -60,19 +60,19 @@ require_once "../includes/header.php";
     <div class="auth-card">
         <?php require_once "../includes/alert.php"; ?>
 
-        <!-- Form submitting to itself -->
+        
         <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
             
             <div class="mb-3">
                 <label for="email" class="auth-label">Email Address</label>
-                <!-- MP5: Removed required and type="email" -->
+                
                 <input type="text" class="form-control auth-input" id="email" name="email" 
                        placeholder="e.g. name@example.com">
             </div>
 
             <div class="mb-4">
                 <label for="password" class="auth-label">Password</label>
-                <!-- MP5: Removed required -->
+                
                 <input type="password" class="form-control auth-input" id="password" name="password" 
                        placeholder="••••••••">
             </div>

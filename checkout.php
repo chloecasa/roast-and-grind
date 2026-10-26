@@ -1,16 +1,16 @@
 <?php
-// checkout.php - FR-18: Luxury Checkout with Dynamic Payment & Auth Modals
+
 require_once "includes/session.php";
 require_once "includes/config.php";
 
-// Cart check
+
 if (!isset($_SESSION['cart_products']) || count($_SESSION['cart_products']) == 0) {
     $_SESSION['message'] = 'Your cart is empty.';
     header('Location: shop.php');
     exit;
 }
 
-// FR-18: Re-verify live stock of EVERY cart item
+
 $sql = "SELECT i.item_name, i.sell_price, i.img_path, s.quantity AS qty
         FROM item i INNER JOIN stock s USING (item_id)
         WHERE i.item_id = ?";
@@ -51,7 +51,7 @@ if ($problems) {
     exit;
 }
 
-// Fetch Customer Shipping Details if logged in
+
 $customer = null;
 $isLoggedIn = isset($_SESSION['user_id']);
 if ($isLoggedIn) {
@@ -70,7 +70,7 @@ include('includes/header.php');
     <?php include('includes/alert.php'); ?>
 
     <div class="row g-4">
-        <!-- LEFT COLUMN: Cart Items Review -->
+       
         <div class="col-lg-7">
             <div class="checkout-card">
                 <div class="checkout-card-header d-flex justify-content-between align-items-center">
@@ -80,7 +80,7 @@ include('includes/header.php');
                     </a>
                 </div>
 
-                <!-- Products List -->
+                
                 <?php foreach ($lines as $l): 
                     $imgSrc = "item/images/" . $l['img'];
                     if (!file_exists($imgSrc) || empty($l['img'])) {
@@ -101,7 +101,7 @@ include('includes/header.php');
                     </div>
                 <?php endforeach; ?>
 
-                <!-- Total Amount Line -->
+               
                 <div class="d-flex justify-content-between align-items-center border-top border-2 border-secondary pt-3 mt-4">
                     <span style="font-family: 'Alinore', sans-serif; font-size: 1.5rem; text-transform: uppercase; color: var(--text-brown);">Amount Payable:</span>
                     <span style="font-family: 'Alinore', sans-serif; font-size: 2.2rem; font-weight: bold; color: #4D6443;">
@@ -111,12 +111,12 @@ include('includes/header.php');
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: Customer Details & Payment Choice -->
+        
         <div class="col-lg-5">
             <div class="checkout-card">
                 <div class="checkout-card-header">Delivery & Payment</div>
 
-                <!-- Delivery Address Box -->
+            
                 <div class="bg-white rounded-3 p-3 mb-4 border">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span style="font-family: 'Alinore', sans-serif; font-size: 1.1rem; color: #78716C; text-transform: uppercase;">
@@ -141,7 +141,7 @@ include('includes/header.php');
                             Add Shipping Address
                         </a>
                     <?php else: ?>
-                        <!-- Guest notice -->
+                       
                         <div style="color: #78716C; font-size: 0.95rem;">
                             <span class="badge bg-warning text-dark mb-1">Guest Customer</span><br>
                             An account is required to dispatch your order.
@@ -149,7 +149,7 @@ include('includes/header.php');
                     <?php endif; ?>
                 </div>
 
-               <!-- Form Submitting to Partner's place_order.php -->
+             
                 <form method="POST" action="place_order.php" id="orderForm">
                     <input type="hidden" name="payment_method" id="paymentMethodInput" value="Cash on Delivery">
 
@@ -157,7 +157,7 @@ include('includes/header.php');
                         Select Payment Method
                     </label>
 
-                    <!-- Choice 1: Cash on Delivery -->
+               
                     <div class="payment-option-card active" id="cardCOD" onclick="selectPayment('Cash on Delivery')">
                         <div>
                             <h5 class="payment-opt-title"><i class="fa-solid fa-money-bill-wave me-2 text-success"></i>Cash on Delivery</h5>
@@ -166,7 +166,7 @@ include('includes/header.php');
                         <i class="fa-solid fa-check-circle fs-4 text-success" id="checkCOD"></i>
                     </div>
 
-                    <!-- Choice 2: GCash -->
+                
                     <div class="payment-option-card" id="cardGCash" onclick="openPaymentModal('gcashModal')">
                         <div>
                             <h5 class="payment-opt-title"><i class="fa-solid fa-mobile-screen me-2 text-primary"></i>GCash</h5>
@@ -175,7 +175,7 @@ include('includes/header.php');
                         <i class="fa-solid fa-circle text-muted fs-4" id="checkGCash"></i>
                     </div>
 
-                    <!-- Choice 3: Bank Transfer -->
+                
                     <div class="payment-option-card" id="cardBank" onclick="openPaymentModal('bankModal')">
                         <div>
                             <h5 class="payment-opt-title"><i class="fa-solid fa-building-columns me-2 text-warning"></i>Bank Transfer</h5>
@@ -184,7 +184,7 @@ include('includes/header.php');
                         <i class="fa-solid fa-circle text-muted fs-4" id="checkBank"></i>
                     </div>
 
-                    <!-- Choice 4: Credit / Debit Card -->
+                 
                     <div class="payment-option-card" id="cardCredit" onclick="openPaymentModal('cardModal')">
                         <div>
                             <h5 class="payment-opt-title"><i class="fa-regular fa-credit-card me-2 text-info"></i>Credit / Debit Card</h5>
@@ -193,7 +193,7 @@ include('includes/header.php');
                         <i class="fa-solid fa-circle text-muted fs-4" id="checkCredit"></i>
                     </div>
 
-                    <!-- Submit / Place Order Button -->
+                
                     <?php if ($isLoggedIn): ?>
                         <button type="submit" class="checkout-submit-btn">
                             Place Order • ₱<?= number_format($total, 2); ?>
@@ -209,9 +209,7 @@ include('includes/header.php');
     </div>
 </div>
 
-<!-- =========================================================
-     MODAL 1: ACCOUNT REQUIRED (For Guests)
-========================================================= -->
+
 <div class="modal fade custom-checkout-modal" id="authRequiredModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
@@ -232,9 +230,7 @@ include('includes/header.php');
     </div>
 </div>
 
-<!-- =========================================================
-     MODAL 2: GCASH PAYMENT (Clear Labels & Realistic Details)
-========================================================= -->
+
 <div class="modal fade custom-checkout-modal" id="gcashModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -275,9 +271,7 @@ include('includes/header.php');
     </div>
 </div>
 
-<!-- =========================================================
-     MODAL 3: BANK TRANSFER (Clear Labels & Realistic Banks)
-========================================================= -->
+
 <div class="modal fade custom-checkout-modal" id="bankModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -286,7 +280,7 @@ include('includes/header.php');
                 <button type="button" class="modal-close-btn" data-bs-dismiss="modal">[CLOSE]</button>
             </div>
 
-            <!-- Clear High-Contrast Amount Box -->
+           
             <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);">
                 <div style="color: #FED7AA; font-family: 'Alinore', sans-serif; font-size: 1.05rem; letter-spacing: 0.5px;">
                     TRANSFER AMOUNT:
@@ -325,9 +319,7 @@ include('includes/header.php');
     </div>
 </div>
 
-<!-- =========================================================
-     MODAL 4: CREDIT / DEBIT CARD POP-UP
-========================================================= -->
+
 <div class="modal fade custom-checkout-modal" id="cardModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -336,7 +328,7 @@ include('includes/header.php');
                 <button type="button" class="modal-close-btn" data-bs-dismiss="modal">[CLOSE]</button>
             </div>
 
-            <!-- Clear High-Contrast Amount Box -->
+           
             <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);">
                 <div style="color: #FED7AA; font-family: 'Alinore', sans-serif; font-size: 1.05rem; letter-spacing: 0.5px;">
                     CHARGE AMOUNT:
@@ -385,7 +377,7 @@ function clearChecks() {
 }
 
 function selectPayment(method) {
-    paymentInput.value = method; // Submits exact string 'Cash on Delivery'
+    paymentInput.value = method; 
     clearChecks();
     document.getElementById('cardCOD').classList.add('active');
     document.getElementById('checkCOD').className = 'fa-solid fa-check-circle fs-4 text-success';
@@ -405,7 +397,7 @@ function saveGCashDetails() {
         return;
     }
 
-    // Sends the exact string 'GCash' so place_order.php accepts it!
+   
     paymentInput.value = "GCash";
     
     clearChecks();
@@ -430,13 +422,12 @@ function saveCardDetails() {
 
     const lastFour = num.slice(-4);
 
-    // 1. Sets exact string 'Credit Card' so place_order.php accepts it
+  
     paymentInput.value = "Credit Card";
 
-    // 2. Clear other checkmarks
     clearChecks();
 
-    // 3. Highlight the Credit Card choice
+  
     const cardEl = document.getElementById('cardCredit');
     if (cardEl) cardEl.classList.add('active');
 
@@ -446,7 +437,7 @@ function saveCardDetails() {
     const checkEl = document.getElementById('checkCredit');
     if (checkEl) checkEl.className = 'fa-solid fa-check-circle fs-4 text-success';
 
-    // 4. Safely close the modal
+    
     const modalEl = document.getElementById('cardModal');
     if (modalEl) {
         const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
@@ -454,7 +445,7 @@ function saveCardDetails() {
     }
 }
 
-// Automatically pop up the Account Required modal if a guest lands here
+
 <?php if (!$isLoggedIn): ?>
 window.addEventListener('DOMContentLoaded', () => {
     const authModal = new bootstrap.Modal(document.getElementById('authRequiredModal'));

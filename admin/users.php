@@ -3,7 +3,7 @@
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
-// Fetch all users and their associated customer profile (if they have one)
+
 $sql = "SELECT u.user_id, u.email, u.role, u.status, u.created_at, c.first_name, c.last_name 
         FROM users u 
         LEFT JOIN customers c ON u.user_id = c.user_id 
@@ -59,7 +59,7 @@ require_once "../includes/header.php";
                         </td>
                         <td class="text-end">
                             <?php if ((int)$row['user_id'] !== (int)$_SESSION['user_id']): ?>
-                                <!-- Button triggers a modal for updating this specific user -->
+                                
                                 <button type="button" class="admin-action-btn" data-bs-toggle="modal" data-bs-target="#editUserModal<?= $row['user_id']; ?>">
                                     <i class="fa-solid fa-user-pen"></i> Edit
                                 </button>
@@ -69,7 +69,7 @@ require_once "../includes/header.php";
                         </td>
                     </tr>
 
-                    <!-- Edit User Modal -->
+                   
                     <div class="modal fade custom-checkout-modal" id="editUserModal<?= $row['user_id']; ?>" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -112,7 +112,7 @@ require_once "../includes/header.php";
         </table>
     </div>
 
-    <!-- Back Button -->
+   
     <div class="dashboard-actions-bar">
         <a href="dashboard.php" class="dashboard-btn-outline">
             &larr; Back to Dashboard

@@ -1,5 +1,5 @@
 <?php
-// shop.php - Boutique Catalog Page
+
 require_once "includes/session.php";
 require_once "includes/config.php";
 
@@ -84,9 +84,7 @@ function stockBadge($qty, $extraStyle = '')
 </head>
 <body class="store-wrapper">
 
-   <!-- Top Navigation Bar for Shop -->
     <header class="store-top-bar">
-        <!-- Left Group: Star + Menu Button -->
         <div class="store-left-menu-group">
             <i class="fa-solid fa-star store-star"></i>
             <button type="button" class="menu-trigger-btn" data-bs-toggle="offcanvas" data-bs-target="#leftMenuDrawer" aria-controls="leftMenuDrawer">
@@ -94,12 +92,10 @@ function stockBadge($qty, $extraStyle = '')
             </button>
         </div>
 
-        <!-- Center: R&G Logo -->
         <div class="store-center-nav">
             <a href="index.php" class="store-brand">R&G</a>
         </div>
 
-        <!-- Right Side: See Cart Items Button + Star -->
         <div class="store-right-cart-group">
             <a href="view_cart.php" class="figma-cart-btn" title="View Cart"
                data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer">
@@ -295,11 +291,9 @@ function stockBadge($qty, $extraStyle = '')
                                 <?php endif; ?>
                             </form>
                         </div>
-<!-- =======================================================
-                             MP4: REVIEWS SECTION
-                        ======================================================== -->
+                        <!-- Reviews Section -->
                         <?php
-                        // Fetch existing reviews for this item
+                        
                         $rev_q = mysqli_query($conn, "SELECT r.*, c.first_name, c.last_name FROM reviews r JOIN customers c ON r.user_id = c.user_id WHERE r.item_id = " . intval($item['item_id']) . " ORDER BY r.created_at DESC");
                         
                         $has_bought = false;
@@ -309,11 +303,11 @@ function stockBadge($qty, $extraStyle = '')
                             $uid = (int)$_SESSION['user_id'];
                             $iid = (int)$item['item_id'];
                             
-                            // Check if they bought it
+                            
                             $chk_p = mysqli_query($conn, "SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.user_id = $uid AND oi.item_id = $iid AND o.status != 'Canceled' LIMIT 1");
                             if (mysqli_num_rows($chk_p) > 0) $has_bought = true;
                             
-                            // Get their existing review if any
+                            
                             $chk_r = mysqli_query($conn, "SELECT review_text FROM reviews WHERE user_id = $uid AND item_id = $iid");
                             if ($r_row = mysqli_fetch_assoc($chk_r)) {
                                 $my_review = $r_row['review_text'];
@@ -324,7 +318,7 @@ function stockBadge($qty, $extraStyle = '')
                         <div class="mt-4 pt-4 border-top border-secondary">
                             <h4 style="font-family: 'Aqila', serif; color: #FED7AA; font-size: 1.5rem; margin-bottom: 16px;">Customer Reviews</h4>
                             
-                            <!-- Review Form (Only if they bought the product) -->
+                            
                             <?php if ($has_bought): ?>
                                 <form action="review_store.php" method="POST" class="mb-4 p-3 rounded" style="background: rgba(0,0,0,0.15);">
                                     <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
@@ -343,7 +337,7 @@ function stockBadge($qty, $extraStyle = '')
                                 <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">Please <a href="user/login.php" style="color: #FED7AA;">log in</a> to leave a review.</p>
                             <?php endif; ?>
 
-                            <!-- List of Reviews -->
+                            <
                             <div>
                                 <?php if (mysqli_num_rows($rev_q) > 0): ?>
                                     <?php while($rev = mysqli_fetch_assoc($rev_q)): ?>
@@ -361,7 +355,7 @@ function stockBadge($qty, $extraStyle = '')
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <!-- End of Reviews Section -->
+                        
                         <button type="button" class="drawer-close-link" data-bs-dismiss="offcanvas" aria-label="Close">
                             [close]
                         </button>

@@ -3,7 +3,6 @@
 require_once "../includes/session.php";
 require_once "../includes/config.php";
 
-// FR-3: Customer pages are for logged-in users only
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = 'Please log in to view your orders.';
     header('Location: login.php');
@@ -12,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-// Secure parameterized query on the MySQL VIEW (one row per order line)
+
 $sql = "SELECT order_id, order_date, order_status, item_name, unit_price, quantity
         FROM view_order_transaction_details
         WHERE user_id = ?
@@ -22,7 +21,7 @@ mysqli_stmt_bind_param($stmt, 'i', $user_id);
 mysqli_stmt_execute($stmt);
 $rows = mysqli_stmt_get_result($stmt);
 
-// Group items under each order and add up each order's total in PHP
+
 $orders = [];
 while ($r = mysqli_fetch_assoc($rows)) {
     $id = $r['order_id'];
@@ -39,7 +38,7 @@ while ($r = mysqli_fetch_assoc($rows)) {
     $orders[$id]['total'] += $r['unit_price'] * $r['quantity'];
 }
 
-// Custom boutique status badges
+
 function orderStatusBadge($status)
 {
     $classes = [
@@ -64,7 +63,7 @@ require_once "../includes/header.php";
 
     <div class="orders-card">
         <?php if (count($orders) === 0): ?>
-            <!-- Empty Order History State -->
+           
             <div class="orders-empty-box">
                 <i class="fa-solid fa-mug-hot fa-3x mb-3" style="color: #FED7AA;"></i>
                 <h3 class="orders-empty-title">No Orders Yet</h3>
@@ -72,7 +71,7 @@ require_once "../includes/header.php";
                 <a href="../shop.php" class="orders-shop-btn">Start Shopping</a>
             </div>
         <?php else: ?>
-            <!-- Orders Table -->
+           
             <div class="orders-table-box">
                 <table class="orders-table">
                     <thead>

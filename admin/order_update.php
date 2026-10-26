@@ -59,9 +59,7 @@ try {
 
     mysqli_commit($conn);
 
-    // ========================================================
-    // TERM TEST LAB: Trigger Email Notification & PDF Receipt
-    // ========================================================
+  
     $cust_q = mysqli_prepare($conn, "
         SELECT u.email, c.first_name, c.last_name 
         FROM orders o 
@@ -78,10 +76,10 @@ try {
         $cust_name = trim($cust_data['first_name'] . ' ' . $cust_data['last_name']);
         if (empty($cust_name)) $cust_name = "Valued Customer";
 
-        // Dispatches the PHPMailer + PDF attachment function; returns ['ok' => bool, 'error' => string]
+        
         $mail_result = sendOrderReceiptEmail($conn, $order_id, $cust_data['email'], $cust_name, $new_status);
     }
-    // ========================================================
+    
 
     $status_msg = ($new_status === 'Canceled')
         ? "Order #$order_id canceled. The items were returned to stock."
@@ -91,7 +89,7 @@ try {
         $_SESSION['success'] = $status_msg . " A notification email with the PDF receipt was sent to "
             . htmlspecialchars($cust_data['email']) . ".";
     } else {
-        // The order was updated, but tell the admin the email did not go out
+     
         $_SESSION['success'] = $status_msg;
         $_SESSION['message'] = "The order was updated, but the notification email could not be sent: "
             . htmlspecialchars($mail_result['error']);

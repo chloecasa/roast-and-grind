@@ -1,5 +1,5 @@
 <?php
-// view_cart.php - FR-17: Detailed Shopping Cart Management
+// view_cart.php - FR-17
 include('./includes/session.php');
 include('./includes/header.php');
 include('./includes/config.php');
@@ -66,7 +66,7 @@ include('./includes/config.php');
                         </tbody>
                     </table>
 
-                    <!-- Amount Payable Row -->
+                
                     <div class="d-flex justify-content-between align-items-center border-top border-2 border-secondary pt-3 mt-3">
                         <span class="cart-payable-row">Amount Payable:</span>
                         <span class="cart-payable-amount">₱<?= number_format($total, 2); ?></span>

@@ -1,5 +1,5 @@
 <?php
-// admin/dashboard.php - FR-20: Sales Dashboard (Admin Only)
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
@@ -17,8 +17,6 @@ while ($r = mysqli_fetch_assoc($res)) {
 $total_orders = array_sum($per_status);
 
 // FR-20 / FR-21: Revenue and profit across non-canceled orders.
-// Totals are computed here in PHP from the saved order lines, not by SQL SUM()
-// and not from a stored total column.
 $sales = mysqli_query($conn,
     "SELECT o.status, oi.unit_price, oi.unit_cost, oi.quantity
      FROM orders o
@@ -51,9 +49,9 @@ require_once "../includes/header.php";
 
     <?php require_once "../includes/alert.php"; ?>
 
-    <!-- 1. Top KPI Summary Cards -->
+  
     <div class="dashboard-kpi-grid">
-        <!-- Card 1: Total Orders -->
+      
         <div class="dashboard-kpi-card">
             <div>
                 <div class="kpi-label">Total Orders</div>
@@ -62,7 +60,7 @@ require_once "../includes/header.php";
             <div class="kpi-hint">All customer orders recorded</div>
         </div>
 
-        <!-- Card 2: Sales Revenue -->
+       
         <div class="dashboard-kpi-card">
             <div>
                 <div class="kpi-label">Total Sales Revenue</div>
@@ -71,7 +69,7 @@ require_once "../includes/header.php";
             <div class="kpi-hint">Excludes canceled orders</div>
         </div>
 
-        <!-- Card 3: Net Profit -->
+      
         <div class="dashboard-kpi-card">
             <div>
                 <div class="kpi-label">Total Estimated Profit</div>
@@ -85,7 +83,7 @@ require_once "../includes/header.php";
         </div>
     </div>
 
-    <!-- 2. Order Status Pipeline -->
+    
     <h3 class="dashboard-section-header">Order Pipeline</h3>
     <div class="dashboard-status-grid">
         <?php foreach ($per_status as $status => $count): ?>
@@ -96,7 +94,7 @@ require_once "../includes/header.php";
         <?php endforeach; ?>
     </div>
 
-    <!-- 3. Low Stock / Out of Stock Alert Table -->
+   
     <h3 class="dashboard-section-header">Inventory Watchlist (Stock &le; 5)</h3>
     <div class="dashboard-table-box">
         <table class="dashboard-table">
@@ -143,7 +141,7 @@ require_once "../includes/header.php";
         </table>
     </div>
 
-    <!-- 4. Action Buttons Bar -->
+  
     <div class="dashboard-actions-bar">
         <a href="orders.php" class="dashboard-btn-outline">
             &larr; Manage Orders

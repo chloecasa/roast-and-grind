@@ -1,10 +1,8 @@
 <?php
-// item/edit.php - MP5: No HTML5 Validation (Edit Product & Restock Form)
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 require_once "../includes/csrf.php";
 
-// Fallback if PRODUCT_CATEGORIES isn't defined globally
 if (!defined('PRODUCT_CATEGORIES')) {
     define('PRODUCT_CATEGORIES', ['Coffee Beans', 'Drip Bags', 'Brewing Gear']);
 }
@@ -29,7 +27,6 @@ if (!$product) {
     die("Product not found.");
 }
 
-// Gallery photos already saved for this product (MP1: view/add/remove multiple photos)
 $stmt_gal = mysqli_prepare($conn, "SELECT image_id, img_path FROM item_images WHERE item_id = ? ORDER BY image_id");
 mysqli_stmt_bind_param($stmt_gal, "i", $item_id);
 mysqli_stmt_execute($stmt_gal);

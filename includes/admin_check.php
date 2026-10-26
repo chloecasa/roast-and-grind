@@ -1,5 +1,5 @@
 <?php
-// includes/admin_check.php - FR-19: only users with the admin role may open order management pages.
+
 require_once __DIR__ . '/session.php';
 
 if (!isset($_SESSION['user_id'])) {

@@ -1,5 +1,5 @@
 <?php
-// user/profile.php - MP5: No HTML5 Validation / MP2: Upload/Update Photo
+
 require_once "../includes/session.php";
 require_once "../includes/config.php";
 
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $form[$f] = trim($_POST[$f] ?? '');
     }
 
-    // MP5: Strict PHP Validation (Browser validation removed)
+  
     $errors = [];
     if ($form['first_name'] === '' || mb_strlen($form['first_name']) > 50) {
         $errors[] = 'First name is required and cannot exceed 50 characters.';
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // MP2: Validate the optional profile photo (no more silent failures)
+   
     $photo_filename = null;
     $upload     = $_FILES['profile_photo'] ?? null;
     $has_upload = $upload && $upload['error'] !== UPLOAD_ERR_NO_FILE;
@@ -71,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Save the file only when everything else is valid
+  
     if (!$errors && $has_upload) {
         $photo_dir = __DIR__ . '/images/';
         if (!is_dir($photo_dir)) {
-            mkdir($photo_dir, 0755, true);   // the folder is missing on a fresh clone
+            mkdir($photo_dir, 0755, true);  
         }
         $new_name = time() . "_prof_" . $user_id . "." . $photo_ext;
         if (move_uploaded_file($upload['tmp_name'], $photo_dir . $new_name)) {
@@ -137,7 +137,7 @@ require_once "../includes/header.php";
             </div>
         <?php endif; ?>
 
-        <!-- ENCTYPE added for photo upload -->
+    
         <form action="profile.php" method="POST" enctype="multipart/form-data">
 
             <!-- Profile Picture Display & Upload -->
@@ -150,7 +150,7 @@ require_once "../includes/header.php";
                 </div>
             </div>
 
-            <!-- Account Info -->
+           
             <div class="row mb-3">
                 <div class="col-md-4 mb-3 mb-md-0">
                     <label class="profile-label">Customer ID</label>
@@ -164,7 +164,7 @@ require_once "../includes/header.php";
                 </div>
             </div>
 
-            <!-- MP5: NO HTML5 REQUIRED/MAXLENGTH ATTRIBUTES BELOW -->
+           
             <div class="row mb-3">
                 <div class="col-md-6 mb-3 mb-md-0">
                     <label for="first_name" class="profile-label">First Name</label>

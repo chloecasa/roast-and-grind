@@ -12,7 +12,7 @@ $sql = "SELECT i.item_id, i.item_name, i.category, i.origin, i.cost_price, i.sel
 $result    = mysqli_query($conn, $sql);
 $itemCount = mysqli_num_rows($result);
 
-// FR-13: Harmonious Stock Status Badges
+
 function stockBadge($qty)
 {
     if ($qty <= 0) {
@@ -46,7 +46,7 @@ require_once "../includes/header.php";
         </div>
     </div>
 
-    <!-- Products Table Box -->
+    
     <div class="admin-items-box">
         <table class="dashboard-table">
             <thead>
@@ -75,13 +75,13 @@ require_once "../includes/header.php";
                     }
                 ?>
                     <tr>
-                        <!-- Thumbnail Image -->
+                        
                         <td class="text-center">
                             <img src="<?= htmlspecialchars($imgSrc); ?>" alt="" width="65" height="65"
                                  style="object-fit:cover; border-radius:10px; border:1px solid rgba(116,48,20,0.15);">
                         </td>
 
-                        <!-- Name & Meta -->
+                        
                         <td>
                             <div class="admin-item-title"><?= htmlspecialchars($row['item_name']); ?></div>
                             <span class="admin-item-meta">
@@ -89,19 +89,19 @@ require_once "../includes/header.php";
                             </span>
                         </td>
 
-                        <!-- Cost Price -->
+                        
                         <td class="text-center" style="font-family: 'Alinore';">₱<?= number_format($row['cost_price'], 2); ?></td>
 
-                        <!-- Selling Price -->
+                        
                         <td class="text-center fw-bold" style="font-family: 'Alinore'; color: #4D6443;">₱<?= number_format($row['sell_price'], 2); ?></td>
 
-                        <!-- Stock & Badge -->
+                        
                         <td class="text-center" style="font-family: 'Alinore'; font-size: 1.2rem;">
                             <span class="fw-bold"><?= (int) $row['quantity']; ?></span>
                             <?= stockBadge((int) $row['quantity']); ?>
                         </td>
 
-                        <!-- Action Buttons -->
+                        
                         <td class="text-end">
                             <a href="edit.php?id=<?= $row['item_id']; ?>" class="admin-action-btn" title="Edit / Restock">
                                 <i class="fa-regular fa-pen-to-square"></i> Edit
@@ -124,4 +124,4 @@ require_once "../includes/header.php";
 
 
 <?php require_once "../includes/footer.php"; ?>
-<?php require_once "../includes/header.php"; // (Footer handled via shared layout) ?>
+<?php require_once "../includes/header.php";  ?>
