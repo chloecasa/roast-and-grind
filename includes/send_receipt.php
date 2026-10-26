@@ -34,6 +34,11 @@ class PDF_Receipt extends FPDF {
     }
 }
 
+/**
+ * Builds the PDF receipt and emails it through PHPMailer + Mailtrap.
+ * Returns ['ok' => bool, 'error' => string] so the caller can tell the admin
+ * whether the email was really sent.
+ */
 function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name, $new_status) {
     // 1. Fetch order & items from the MySQL VIEW (one row per order line)
     $stmt = mysqli_prepare($conn,
@@ -41,7 +46,9 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     mysqli_stmt_bind_param($stmt, 'i', $order_id);
     mysqli_stmt_execute($stmt);
     $rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
-    if (!$rows) return;
+    if (!$rows) {
+        return ['ok' => false, 'error' => 'Order details could not be loaded for the receipt.'];
+    }
 
     $order = $rows[0]; // order_date, payment_method
 
@@ -97,18 +104,26 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
     $pdf->Cell(150, 12, 'Grand Total: ', 0, 0, 'R');
     $pdf->Cell(40, 12, 'Php ' . number_format($grand_total, 2) . '  ', 0, 1, 'R');
 
-    $pdf_filename = __DIR__ . '/../temp_receipt.pdf'; 
+    // Unique temp name so two status updates at the same time cannot overwrite each other
+    $pdf_filename = __DIR__ . '/../temp_receipt_' . $order_id . '_' . uniqid() . '.pdf';
     $pdf->Output('F', $pdf_filename);
 
     // 3. Send Email via PHPMailer + Mailtrap
     $mail = new PHPMailer(true);
+    $result = ['ok' => true, 'error' => ''];
     try {
+        // Server settings (same setup as the itim211-2b-shop sample send.php)
         $mail->isSMTP();
-        $mail->Host       = 'sandbox.smtp.mailtrap.io';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = '5e8c883b1cd6cd'; 
-        $mail->Password   = '85f40699177030'; 
-        $mail->Port       = 2525;
+        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->SMTPAuth = true;
+        $mail->Port = 2525;
+        $mail->Username = '';   // paste your own Mailtrap username here (do not commit it)
+        $mail->Password = '';   // paste your own Mailtrap password here (do not commit it)
+        $mail->Timeout  = 10;   // do not hang the admin page if Mailtrap is unreachable
+
+        if ($mail->Username === '' || $mail->Password === '') {
+            throw new Exception('Mailtrap credentials are not set in includes/send_receipt.php.');
+        }
 
         $mail->setFrom('orders@roastandgrind.com', 'Roast & Grind');
         $mail->addAddress($customer_email, $customer_name);
@@ -165,9 +180,13 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
 
         $mail->addAttachment($pdf_filename, "Receipt_Order_{$order_id}.pdf");
         $mail->send();
-    } catch (Exception $e) {
-        // Silently continue if email fails
+    } catch (Throwable $e) {
+        // Report the failure instead of hiding it
+        $detail = !empty($mail->ErrorInfo) ? $mail->ErrorInfo : $e->getMessage();
+        $result = ['ok' => false, 'error' => $detail];
     }
 
     if (file_exists($pdf_filename)) unlink($pdf_filename);
+
+    return $result;
 }

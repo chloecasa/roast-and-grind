@@ -73,18 +73,29 @@ try {
     mysqli_stmt_execute($cust_q);
     $cust_data = mysqli_fetch_assoc(mysqli_stmt_get_result($cust_q));
     
+    $mail_result = ['ok' => false, 'error' => 'Customer email was not found.'];
     if ($cust_data) {
         $cust_name = trim($cust_data['first_name'] . ' ' . $cust_data['last_name']);
         if (empty($cust_name)) $cust_name = "Valued Customer";
-        
-        // Dispatches the PHPMailer + PDF attachment function
-        sendOrderReceiptEmail($conn, $order_id, $cust_data['email'], $cust_name, $new_status);
+
+        // Dispatches the PHPMailer + PDF attachment function; returns ['ok' => bool, 'error' => string]
+        $mail_result = sendOrderReceiptEmail($conn, $order_id, $cust_data['email'], $cust_name, $new_status);
     }
     // ========================================================
 
-    $_SESSION['success'] = ($new_status === 'Canceled')
+    $status_msg = ($new_status === 'Canceled')
         ? "Order #$order_id canceled. The items were returned to stock."
-        : "Order #$order_id is now $new_status. A notification email confirming the update was sent.";
+        : "Order #$order_id is now $new_status.";
+
+    if ($mail_result['ok']) {
+        $_SESSION['success'] = $status_msg . " A notification email with the PDF receipt was sent to "
+            . htmlspecialchars($cust_data['email']) . ".";
+    } else {
+        // The order was updated, but tell the admin the email did not go out
+        $_SESSION['success'] = $status_msg;
+        $_SESSION['message'] = "The order was updated, but the notification email could not be sent: "
+            . htmlspecialchars($mail_result['error']);
+    }
 } catch (Throwable $e) {
     mysqli_rollback($conn);
 
