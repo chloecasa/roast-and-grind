@@ -2,6 +2,7 @@
 // item/index.php - Admin Product List: Entry point for FR-8, FR-9, FR-10, FR-13, FR-14
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
+require_once "../includes/csrf.php";
 
 $sql = "SELECT i.item_id, i.item_name, i.category, i.origin, i.cost_price, i.sell_price, i.img_path,
                COALESCE(s.quantity, 0) AS quantity
@@ -105,10 +106,14 @@ require_once "../includes/header.php";
                             <a href="edit.php?id=<?= $row['item_id']; ?>" class="admin-action-btn" title="Edit / Restock">
                                 <i class="fa-regular fa-pen-to-square"></i> Edit
                             </a>
-                            <a href="delete.php?id=<?= $row['item_id']; ?>" class="admin-action-btn delete-btn" title="Delete Product"
-                               onclick="return confirm('Delete this product and its inventory record? This cannot be undone.');">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </a>
+                            <form action="delete.php" method="POST" class="d-inline">
+                                <input type="hidden" name="item_id" value="<?= (int) $row['item_id']; ?>">
+                                <?= csrf_field(); ?>
+                                <button type="submit" class="admin-action-btn delete-btn" title="Delete Product"
+                                        onclick="return confirm('Delete this product and its inventory record? This cannot be undone.');">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 <?php endwhile; ?>

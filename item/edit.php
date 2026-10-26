@@ -2,6 +2,7 @@
 // item/edit.php - MP5: No HTML5 Validation (Edit Product & Restock Form)
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
+require_once "../includes/csrf.php";
 
 // Fallback if PRODUCT_CATEGORIES isn't defined globally
 if (!defined('PRODUCT_CATEGORIES')) {
@@ -152,13 +153,18 @@ require_once "../includes/header.php";
                     <i class="fa-solid fa-check me-2"></i> Update Product & Stock
                 </button>
                 
-                <a href="delete.php?id=<?= $product['item_id']; ?>" 
-                   class="admin-edit-delete-btn" 
-                   onclick="return confirm('Are you sure you want to delete \'<?= addslashes(htmlspecialchars($product['item_name'])); ?>\'?');">
+                <!-- Delete uses its own POST form (below, outside this form) - forms cannot be nested -->
+                <button type="submit" form="deleteProductForm" class="admin-edit-delete-btn"
+                        onclick="return confirm('Are you sure you want to delete \'<?= addslashes(htmlspecialchars($product['item_name'])); ?>\'?');">
                     <i class="fa-solid fa-trash me-2"></i> Delete Product
-                </a>
+                </button>
             </div>
 
+        </form>
+
+        <form id="deleteProductForm" action="delete.php" method="POST" class="d-none">
+            <input type="hidden" name="item_id" value="<?= (int) $product['item_id']; ?>">
+            <?= csrf_field(); ?>
         </form>
     </div>
 </div>
