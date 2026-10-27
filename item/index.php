@@ -33,7 +33,7 @@ require_once "../includes/header.php";
 
     <?php require_once "../includes/alert.php"; ?>
 
-    <!-- Top Action Bar -->
+  
     <div class="admin-items-header-bar">
         <h3 class="admin-items-count">Products Catalog (<?= $itemCount; ?>)</h3>
         <div class="d-flex gap-3">

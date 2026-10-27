@@ -3,9 +3,7 @@
 $user_role = $_SESSION['user_role'] ?? '';
 $is_logged_in = isset($_SESSION['user_id']);
 ?>
-<!-- =========================================================
-     LEFT SLIDE-OUT NAVIGATION MENU DRAWER
-========================================================= -->
+
 <div class="offcanvas offcanvas-start left-menu-drawer" tabindex="-1" id="leftMenuDrawer" aria-labelledby="leftMenuTitle">
     <div class="left-menu-header">
         <h3 class="left-menu-title" id="leftMenuTitle">Navigation</h3>

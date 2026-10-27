@@ -15,18 +15,18 @@ $is_logged_in = isset($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roast & Grind | Specialty Coffee & Gear</title>
-    <!-- Font Awesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Bootstrap 5 CSS (Required for offcanvas drawer) -->
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom Stylesheet -->
+    
     <link rel="stylesheet" href="includes/style/style.css?v=<?= time(); ?>">
 </head>
 <body class="hero-body">
 
 <div class="hero-wrapper" id="heroWrapper">
     
-    <!-- Hero Top Bar matching shop.php (Star + Menu Button + Centered R&G + Cart Button + Right Star) -->
+    
     <header class="hero-top-bar">
         <div class="store-left-menu-group">
             <i class="fa-solid fa-star store-star"></i>
@@ -61,17 +61,17 @@ $is_logged_in = isset($_SESSION['user_id']);
        
     </header>
 
-    <!-- Main Slogan -->
+  
     <h1 class="hero-title">
         WHERE THE PERFECT ROAST MEETS<br>YOUR DAILY GRIND
     </h1>
 
-    <!-- Right-side Description -->
+    
     <div class="hero-subtext">
         Ethically sourced single-origin beans and precision drip gear designed to elevate your morning ritual, one cup at a time.
     </div>
 
-    <!-- Orbit Stage -->
+   
     <div class="infinite-stage" id="carouselStage">
         <a href="shop.php?category=Brewing+Gear" class="orbit-item" data-index="0" title="Explore Brewing Gear">
             <img src="assets/hero/moka_pot.png" alt="Brewing Gear" onerror="this.src='https://placehold.co/400x500/743014/FFF5EA?text=Brewing+Gear'">
@@ -99,7 +99,7 @@ $is_logged_in = isset($_SESSION['user_id']);
         </a>
     </div>
 
-    <!-- Arch -->
+   
     <div class="hero-arch-container">
         <div class="hero-arch-shape">
             <svg class="hero-curved-svg" viewBox="0 0 800 500">
@@ -118,9 +118,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     </a>
 </div>
 
-<!-- =========================================================
-     LEFT SLIDE-OUT NAVIGATION MENU DRAWER (Included on Index)
-========================================================= -->
+
 <div class="offcanvas offcanvas-start left-menu-drawer" tabindex="-1" id="leftMenuDrawer" aria-labelledby="leftMenuTitle">
     <div class="left-menu-header">
         <h3 class="left-menu-title" id="leftMenuTitle">Navigation</h3>
@@ -155,7 +153,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     </div>
 </div>
 
-<!-- Orbit Scroll Engine Script -->
+
 <script>
     const items = document.querySelectorAll('.orbit-item');
     const totalItems = items.length;
@@ -212,7 +210,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     render();
 </script>
 
-<!-- Bootstrap 5 JS Bundle (Mandatory for offcanvas slide-out) -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

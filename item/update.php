@@ -174,7 +174,7 @@ try {
 
 } catch (Exception $e) {
     mysqli_rollback($conn);
-    // Remove any gallery files saved during this failed request
+ 
     foreach ($new_gallery_files as $file) {
         $path = $upload_dir . basename($file);
         if (is_file($path)) unlink($path);

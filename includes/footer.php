@@ -1,11 +1,9 @@
 <?php
 // includes/footer.php - Boutique Full-Width Footer
 ?>
-</div> <!-- Closes .container opened in header.php -->
+</div> 
 
-<!-- =========================================================
-     BOUTIQUE STORE FOOTER
-========================================================= -->
+
 <footer class="boutique-footer">
     <div class="footer-top-row">
         <div class="footer-slogan">

@@ -55,7 +55,7 @@ if (!empty($params)) {
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
-// FR-13: stock status badge - In Stock (green), Low Stock (orange, 5 or below), Out of Stock (red, 0)
+
 function stockBadge($qty, $extraStyle = '')
 {
     if ($qty <= 0) {
@@ -418,7 +418,7 @@ function stepQty(id, delta, maxStock = 999) {
 }
 </script>
 
-<!-- Bootstrap 5 JS Bundle -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 

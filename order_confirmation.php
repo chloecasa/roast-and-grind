@@ -94,7 +94,7 @@ include('includes/header.php');
                 </tbody>
             </table>
 
-            <!-- Total Line -->
+           
             <div class="confirm-total-box">
                 <span class="confirm-total-label">Total Amount:</span>
                 <span class="confirm-total-amount">₱<?= number_format($grand_total, 2); ?></span>

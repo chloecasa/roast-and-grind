@@ -15,7 +15,7 @@ while ($p = mysqli_fetch_assoc($result)) {
     $p['profit'] = $p['sell_price'] - $p['cost_price'];
     $products[]  = $p;
 }
-// Highest margin first, then by name
+
 usort($products, function ($a, $b) {
     return [$b['profit'], $a['item_name']] <=> [$a['profit'], $b['item_name']];
 });
