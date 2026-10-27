@@ -34,6 +34,19 @@ foreach ($rows as $line) {
     $grand_total += $line['unit_price'] * $line['quantity'];
 }
 
+function statusBadge($status)
+{
+    $classes = [
+        'Pending'    => 'bg-secondary',
+        'Processing' => 'bg-primary',
+        'Shipped'    => 'bg-info',
+        'Delivered'  => 'bg-success',
+        'Canceled'   => 'bg-danger'
+    ];
+    $cls = $classes[$status] ?? 'bg-dark';
+    return '<span class="badge ' . $cls . '" style="font-family: \'Alinore\'; font-size: 1rem; letter-spacing: 1px;">' . htmlspecialchars($status) . '</span>';
+}
+
 include('includes/header.php');
 ?>
 
