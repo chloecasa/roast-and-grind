@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 24, 2026 at 02:52 PM
+-- Generation Time: Oct 27, 2026 at 02:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,9 @@ INSERT INTO `customers` (`customer_id`, `user_id`, `profile_photo`, `first_name`
 (1, 1, 'default_avatar.png', 'Chloe', 'Casanoba', 'Gracely Store Purok 2 Roldan Street New Lowe Bicutan', 'TAGUIG CITY', '1636', '09984800690'),
 (5, 2, 'default_avatar.png', 'Chloe', 'Casanoba', 'GATE 2 AGUINALDO COMPOUND CADENA DE AMOR ST.', 'TAGUIG CITY', '1636', '09984800690'),
 (6, 3, 'default_avatar.png', '', '', '', '', '', ''),
-(7, 4, 'default_avatar.png', '', '', '', '', '', '');
+(7, 4, 'default_avatar.png', '', '', '', '', '', ''),
+(8, 5, '1792847946_prof_5.jpg', 'Jazz', 'Ray', 'Block 5 Emerald Street, Central Village', 'Taguig City', '2600', '093748298374'),
+(9, 6, 'default_avatar.png', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -134,7 +136,11 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `payment_method`, `st
 (2, 2, '2026-10-23 12:14:23', 'GCash', 'Canceled'),
 (3, 2, '2026-10-23 12:14:52', 'Bank Transfer', 'Canceled'),
 (4, 2, '2026-10-23 12:26:38', 'Credit Card', 'Delivered'),
-(5, 2, '2026-10-24 00:19:42', 'Cash on Delivery', 'Processing');
+(5, 2, '2026-10-24 00:19:42', 'Cash on Delivery', 'Processing'),
+(6, 4, '2026-10-26 16:12:32', 'Cash on Delivery', 'Pending'),
+(7, 4, '2026-10-26 16:43:58', 'Cash on Delivery', 'Processing'),
+(8, 6, '2026-10-26 17:17:26', 'Cash on Delivery', 'Shipped'),
+(9, 4, '2026-10-27 01:13:18', 'Cash on Delivery', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -163,7 +169,11 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `item_id`, `item_name`, 
 (3, 3, 6, 'Drip Coffee', 230.00, 150.00, 1),
 (4, 4, 7, 'Sample Coffee 3', 300.00, 200.00, 1),
 (5, 5, 7, 'Sample Coffee 3', 300.00, 200.00, 1),
-(6, 5, 8, 'Sample Coffee 4', 300.00, 200.00, 2);
+(6, 5, 8, 'Sample Coffee 4', 300.00, 200.00, 2),
+(7, 6, 6, 'Drip Coffee', 230.00, 150.00, 1),
+(8, 7, 7, 'Sample Coffee 3', 300.00, 200.00, 1),
+(9, 8, 6, 'Drip Coffee', 230.00, 150.00, 1),
+(10, 9, 6, 'Drip Coffee', 230.00, 150.00, 1);
 
 -- --------------------------------------------------------
 
@@ -205,8 +215,8 @@ CREATE TABLE `stock` (
 
 INSERT INTO `stock` (`item_id`, `quantity`) VALUES
 (5, 5),
-(6, 3),
-(7, 6),
+(6, 0),
+(7, 5),
 (8, 8),
 (9, 10),
 (10, 10);
@@ -235,7 +245,9 @@ INSERT INTO `users` (`user_id`, `email`, `password_hash`, `role`, `status`, `cre
 (1, 'admin@roastandgrind.com', '$2y$10$efDvenHYJ5Fu/xxt1ANbXuRx5/TuzNs/s4k6keUiiFvr2ueE0GmrG', 'admin', 'active', '2026-10-23 11:21:06'),
 (2, 'chloecasanoba@gmail.com', '$2y$10$sdbeGPMLATw7lw23KGM52OPhzt5UsOY6ZbrTf9NGgrl/.zRUGb4qm', 'user', 'active', '2026-10-23 11:41:36'),
 (3, 'chloecasanoba1@gmail.com', '$2y$10$/VabRfJMzGdL6uZdA/rkAeCtWJFOgha3lErif8lVb0V471cJqZgzu', 'user', 'active', '2026-10-23 14:52:28'),
-(4, 'jazz@gmail.com', '$2y$10$TvIr3SQcOac0vA2CI9kXK.2UKyR1EIZtxOQqc48LKWHmqM2i3FNTm', 'admin', 'active', '2026-10-24 07:25:31');
+(4, 'jazz@gmail.com', '$2y$10$TvIr3SQcOac0vA2CI9kXK.2UKyR1EIZtxOQqc48LKWHmqM2i3FNTm', 'admin', 'active', '2026-10-24 07:25:31'),
+(5, 'JAZZRAY@GMAIL.COM', '$2y$10$K2uvUg/6JUw5fGWvFQhRb.gGfRNr5ClRPThwRfmDNroFv5BHTzuYO', 'user', 'active', '2026-10-24 13:07:46'),
+(6, 'oncleejazzz@gmail.com', '$2y$10$IsfY3GCGmi/VsZE4ZwFHGuKpzGWL1yx4Ps6rjLkdQ5Ow3TEZ5gbxG', 'user', 'active', '2026-10-26 17:17:18');
 
 -- --------------------------------------------------------
 
@@ -340,7 +352,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `item`
@@ -358,13 +370,13 @@ ALTER TABLE `item_images`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -376,7 +388,7 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
