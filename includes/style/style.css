@@ -1436,7 +1436,7 @@ html, body.store-wrapper {
     margin-bottom: 14px;
 }
 .confirm-icon {
-    color: #4D6443; /* Moss green */
+    color: #4D6443; 
     font-size: 3.2rem;
 }
 
@@ -1458,7 +1458,7 @@ html, body.store-wrapper {
     letter-spacing: 0.5px;
 }
 
-/* Order Meta Grid (Order ID, Date, Payment, Status) */
+
 .confirm-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1486,7 +1486,7 @@ html, body.store-wrapper {
     font-weight: normal;
 }
 
-/* Items Table */
+
 .confirm-table-box {
     background: #FFFFFF;
     border-radius: 14px;
@@ -1531,7 +1531,6 @@ html, body.store-wrapper {
     border-bottom: none;
 }
 
-/* Total Box */
 .confirm-total-box {
     display: flex;
     justify-content: space-between;
@@ -1555,7 +1554,7 @@ html, body.store-wrapper {
     font-weight: bold;
 }
 
-/* Action Buttons */
+
 .confirm-actions {
     display: flex;
     gap: 16px;
@@ -1565,7 +1564,7 @@ html, body.store-wrapper {
 }
 
 .confirm-btn-primary {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     color: #F5F5F4;
     font-family: 'Alinore', sans-serif;
     font-size: 1.4rem;
@@ -1603,9 +1602,7 @@ html, body.store-wrapper {
     color: var(--arch-brown);
 }
 
-/* =========================================================
-   15. CUSTOMER ORDER HISTORY (user/orders.php)
-========================================================= */
+
 .orders-wrapper {
     max-width: 1100px;
     margin: 20px auto 60px auto;
@@ -1703,7 +1700,7 @@ html, body.store-wrapper {
     font-weight: bold;
 }
 
-/* Custom Status Badges */
+
 .order-badge-custom {
     font-family: 'Alinore', sans-serif;
     font-size: 0.95rem;
@@ -1735,7 +1732,7 @@ html, body.store-wrapper {
     color: #991B1B;
 }
 
-/* Empty State */
+
 .orders-empty-box {
     text-align: center;
     padding: 50px 20px;
@@ -1753,7 +1750,7 @@ html, body.store-wrapper {
     margin-bottom: 24px;
 }
 .orders-shop-btn {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443;
     color: #F5F5F4;
     font-family: 'Alinore', sans-serif;
     font-size: 1.35rem;
@@ -1772,9 +1769,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* =========================================================
-   16. CUSTOMER PROFILE (user/profile.php)
-========================================================= */
+
 .profile-wrapper {
     max-width: 820px;
     margin: 20px auto 60px auto;
@@ -1856,11 +1851,11 @@ html, body.store-wrapper {
     cursor: not-allowed;
 }
 
-/* Save Button */
+
 .profile-submit-btn {
     width: 100%;
     height: 58px;
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     border: 1px solid #F5F5F4;
     border-radius: 30px;
     color: #F5F5F4;
@@ -1878,9 +1873,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* =========================================================
-   17. AUTHENTICATION PAGES (user/login.php & register.php)
-========================================================= */
+
 .auth-wrapper {
     max-width: 520px;
     margin: 30px auto 70px auto;
@@ -1945,7 +1938,7 @@ html, body.store-wrapper {
 .auth-submit-btn {
     width: 100%;
     height: 56px;
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     border: 1px solid #F5F5F4;
     border-radius: 30px;
     color: #F5F5F4;
@@ -1982,14 +1975,12 @@ html, body.store-wrapper {
     color: #54220E;
 }
 
-/* =========================================================
-   18. ADMIN SALES DASHBOARD (admin/dashboard.php)
-========================================================= */
+
 .dashboard-wrapper {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto 60px auto;
-    padding: 0 var(--shop-spacing); /* Matches your exact shop grid side padding */
+    padding: 0 var(--shop-spacing); 
     box-sizing: border-box;
 }
 
@@ -2011,7 +2002,7 @@ html, body.store-wrapper {
     letter-spacing: 0.5px;
 }
 
-/* 1. Main KPI Metric Cards Grid */
+
 .dashboard-kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2047,10 +2038,10 @@ html, body.store-wrapper {
     color: var(--text-brown);
 }
 .kpi-number.kpi-revenue {
-    color: #4D6443; /* Moss green */
+    color: #4D6443;
 }
 .kpi-number.kpi-profit {
-    color: var(--arch-brown); /* Terracotta */
+    color: var(--arch-brown); 
 }
 
 .kpi-hint {
@@ -2069,7 +2060,7 @@ html, body.store-wrapper {
     color: #54220E;
 }
 
-/* 2. Section Subheadings */
+
 .dashboard-section-header {
     font-family: 'Aqila', serif;
     color: var(--text-brown);
@@ -2081,7 +2072,7 @@ html, body.store-wrapper {
     align-items: center;
 }
 
-/* 3. Orders per Status Cards */
+
 .dashboard-status-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -2106,7 +2097,7 @@ html, body.store-wrapper {
     line-height: 1;
 }
 
-/* 4. Low Stock Alert Table */
+
 .dashboard-table-box {
     background: #FFFFFF;
     border-radius: 18px;
@@ -2153,7 +2144,7 @@ html, body.store-wrapper {
     text-transform: uppercase;
 }
 
-/* Restock Pill Button */
+
 .dashboard-restock-btn {
     background-color: transparent;
     color: var(--arch-brown);
@@ -2173,7 +2164,7 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* 5. Bottom Navigation Buttons */
+
 .dashboard-actions-bar {
     display: flex;
     justify-content: space-between;
@@ -2203,7 +2194,7 @@ html, body.store-wrapper {
 }
 
 .dashboard-btn-primary {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     color: #F5F5F4;
     font-family: 'Alinore', sans-serif;
     font-size: 1.4rem;
@@ -2222,9 +2213,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* =========================================================
-   HARMONIOUS BOUTIQUE STATUS BADGES (Replaces Harsh Colors)
-========================================================= */
+
 .dashboard-status-card .badge {
     font-family: 'Alinore', sans-serif !important;
     font-size: 0.95rem !important;
@@ -2238,7 +2227,7 @@ html, body.store-wrapper {
     border: 1px solid transparent !important;
 }
 
-/* 1. Pending - Warm Oat / Latte Cream */
+
 .dashboard-status-card .badge.bg-secondary,
 .dashboard-status-card .badge.text-bg-secondary {
     background-color: #F5ECE3 !important;
@@ -2246,7 +2235,7 @@ html, body.store-wrapper {
     border-color: rgba(140, 83, 43, 0.25) !important;
 }
 
-/* 2. Processing - Warm Roast Cream & Espresso */
+
 .dashboard-status-card .badge.bg-primary,
 .dashboard-status-card .badge.text-bg-primary {
     background-color: #EFE4D6 !important;
@@ -2254,7 +2243,7 @@ html, body.store-wrapper {
     border-color: rgba(99, 51, 20, 0.25) !important;
 }
 
-/* 3. Shipped - Soft Pale Sage */
+
 .dashboard-status-card .badge.bg-info,
 .dashboard-status-card .badge.text-bg-info {
     background-color: #E2ECE0 !important;
@@ -2262,7 +2251,7 @@ html, body.store-wrapper {
     border-color: rgba(56, 85, 50, 0.25) !important;
 }
 
-/* 4. Delivered - Signature Moss Green */
+
 .dashboard-status-card .badge.bg-success,
 .dashboard-status-card .badge.text-bg-success {
     background-color: #4D6443 !important;
@@ -2270,7 +2259,7 @@ html, body.store-wrapper {
     border-color: transparent !important;
 }
 
-/* 5. Canceled - Muted Dusty Rose */
+
 .dashboard-status-card .badge.bg-danger,
 .dashboard-status-card .badge.text-bg-danger {
     background-color: #F9E3E3 !important;
@@ -2278,14 +2267,12 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   19. ADMIN PROFIT REPORT (admin/profit.php)
-========================================================= */
+
 .profit-wrapper {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto 60px auto;
-    padding: 0 var(--shop-spacing); /* 32px padding matching the shop and dashboard */
+    padding: 0 var(--shop-spacing); 
     box-sizing: border-box;
 }
 
@@ -2307,7 +2294,7 @@ html, body.store-wrapper {
     letter-spacing: 0.5px;
 }
 
-/* Total Profit KPI Card */
+
 .profit-kpi-card {
     background: #EDEAE1;
     border-radius: 18px;
@@ -2331,7 +2318,7 @@ html, body.store-wrapper {
     font-family: 'Aqila', serif;
     font-size: clamp(2.8rem, 3.8vw, 4.2rem);
     line-height: 1.1;
-    color: #4D6443; /* Signature moss green */
+    color: #4D6443; 
     margin-bottom: 6px;
 }
 .profit-kpi-val.negative {
@@ -2344,7 +2331,7 @@ html, body.store-wrapper {
     font-size: 1rem;
 }
 
-/* Section Subheadings */
+
 .profit-section-header {
     font-family: 'Aqila', serif;
     color: var(--text-brown);
@@ -2419,13 +2406,13 @@ html, body.store-wrapper {
     color: #54220E;
 }
 
-/* Row dimming for canceled orders */
+
 .profit-table tr.row-canceled td {
     opacity: 0.55;
     background-color: #FAF9F6;
 }
 
-/* Harmonious Status Badges inside Profit & Orders Tables */
+
 .profit-table .badge,
 .orders-table .badge {
     font-family: 'Alinore', sans-serif !important;
@@ -2473,14 +2460,12 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   20. ADMIN MASTER ORDERS LEDGER (admin/orders.php)
-========================================================= */
+
 .admin-orders-wrapper {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto 60px auto;
-    padding: 0 var(--shop-spacing); /* 32px padding matching the shop and dashboard */
+    padding: 0 var(--shop-spacing); 
     box-sizing: border-box;
 }
 
@@ -2527,7 +2512,7 @@ html, body.store-wrapper {
     margin-top: 2px;
 }
 
-/* Action View Details Pill Button */
+
 .admin-order-view-btn {
     background-color: transparent;
     color: var(--arch-brown);
@@ -2549,7 +2534,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* Harmonious Status Badges inside Admin Orders Table */
+
 .admin-orders-box .badge {
     font-family: 'Alinore', sans-serif !important;
     font-size: 0.95rem !important;
@@ -2592,14 +2577,12 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   21. ADMIN ORDER DETAILS INSPECTION (admin/order_view.php)
-========================================================= */
+
 .order-view-wrapper {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto 60px auto;
-    padding: 0 var(--shop-spacing); /* 32px padding matching the shop and dashboard */
+    padding: 0 var(--shop-spacing); 
     box-sizing: border-box;
 }
 
@@ -2629,7 +2612,7 @@ html, body.store-wrapper {
     box-shadow: 0 15px 35px rgba(84, 34, 14, 0.05);
 }
 
-/* Metadata Grid Box */
+
 .order-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2666,7 +2649,7 @@ html, body.store-wrapper {
     font-size: 1.05rem;
 }
 
-/* Status Update Section Box */
+
 .order-update-box {
     background: #FFFFFF;
     border-radius: 14px;
@@ -2699,7 +2682,7 @@ html, body.store-wrapper {
     cursor: not-allowed;
 }
 
-/* Harmonious Status Badges inside Order View */
+
 .order-view-card .badge {
     font-family: 'Alinore', sans-serif !important;
     font-size: 0.95rem !important;
@@ -2742,14 +2725,12 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   22. ADMIN PRODUCT CATALOG MANAGEMENT (item/index.php)
-========================================================= */
+
 .admin-items-wrapper {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto 60px auto;
-    padding: 0 var(--shop-spacing); /* 32px padding matching the shop and dashboard */
+    padding: 0 var(--shop-spacing); 
     box-sizing: border-box;
 }
 
@@ -2771,7 +2752,6 @@ html, body.store-wrapper {
     letter-spacing: 0.5px;
 }
 
-/* Top Bar Controls (Add Product Button) */
 .admin-items-header-bar {
     display: flex;
     justify-content: space-between;
@@ -2790,7 +2770,7 @@ html, body.store-wrapper {
 }
 
 .admin-add-product-btn {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     color: #F5F5F4;
     font-family: 'Alinore', sans-serif;
     font-size: 1.25rem;
@@ -2809,7 +2789,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* Table Card Box */
+
 .admin-items-box {
     background: #FFFFFF;
     border-radius: 18px;
@@ -2834,7 +2814,7 @@ html, body.store-wrapper {
     margin-top: 2px;
 }
 
-/* Action Icons / Pill Buttons */
+
 .admin-action-btn {
     background-color: transparent;
     color: var(--arch-brown);
@@ -2861,7 +2841,7 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* Harmonious Stock Badges inside item/index.php */
+
 .admin-items-box .badge {
     font-family: 'Alinore', sans-serif !important;
     font-size: 0.9rem !important;
@@ -2876,23 +2856,20 @@ html, body.store-wrapper {
     margin-left: 6px;
 }
 .admin-items-box .badge.text-bg-success {
-    background-color: #4D6443 !important; /* Moss green (In Stock) */
+    background-color: #4D6443 !important; 
     color: #FFFFFF !important;
 }
 .admin-items-box .badge.text-bg-danger {
-    background-color: #F9E3E3 !important; /* Dusty rose (Out of Stock) */
+    background-color: #F9E3E3 !important; 
     color: #943A3A !important;
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 .admin-items-box .badge[style*="background-color:#fd7e14"] {
-    background-color: #FEEED8 !important; /* Warm amber/latte (Low Stock) */
+    background-color: #FEEED8 !important; 
     color: #B45309 !important;
     border-color: rgba(180, 83, 9, 0.25) !important;
 }
 
-/* =========================================================
-   23. ADMIN CREATE PRODUCT FORM (item/create.php)
-========================================================= */
 .admin-form-wrapper {
     width: 100%;
     max-width: 900px;
@@ -2969,7 +2946,7 @@ html, body.store-wrapper {
     background-color: #FFFFFF !important;
 }
 
-/* File Inputs styling */
+
 .admin-form-input[type="file"] {
     padding: 10px 16px !important;
     height: auto;
@@ -2978,7 +2955,7 @@ html, body.store-wrapper {
 .admin-form-submit-btn {
     width: 100%;
     height: 58px;
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     border: 1px solid #F5F5F4;
     border-radius: 30px;
     color: #F5F5F4;
@@ -2996,11 +2973,9 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* =========================================================
-   24. ADMIN EDIT PRODUCT & RESTOCK FORM (item/edit.php)
-========================================================= */
+
 .admin-edit-submit-btn {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     border: 1px solid #F5F5F4;
     border-radius: 30px;
     color: #F5F5F4;
@@ -3022,7 +2997,7 @@ html, body.store-wrapper {
 
 .admin-edit-delete-btn {
     background-color: transparent;
-    color: #991B1B; /* Dusty Red/Burgundy */
+    color: #991B1B;
     border: 1px solid rgba(153, 27, 27, 0.4);
     border-radius: 30px;
     font-family: 'Alinore', sans-serif;
@@ -3040,15 +3015,13 @@ html, body.store-wrapper {
     color: #FFFFFF;
 }
 
-/* Highlighted Restock Field Border override */
+
 .admin-form-input.restock-highlight {
     border-color: var(--arch-brown) !important;
     background-color: #FAF7F2 !important;
 }
 
-/* =========================================================
-   GLOBAL HARMONIOUS STATUS BADGES (For user/orders.php and tables)
-========================================================= */
+
 .cart-view-table-back .badge,
 .table .badge {
     font-family: 'Alinore', sans-serif !important;
@@ -3062,7 +3035,7 @@ html, body.store-wrapper {
     border: 1px solid transparent !important;
 }
 
-/* 1. Pending - Warm Oat / Latte Cream */
+
 .cart-view-table-back .badge.text-bg-secondary,
 .table .badge.text-bg-secondary,
 .badge.bg-secondary {
@@ -3071,7 +3044,7 @@ html, body.store-wrapper {
     border-color: rgba(140, 83, 43, 0.25) !important;
 }
 
-/* 2. Processing - Warm Roast Cream & Espresso */
+
 .cart-view-table-back .badge.text-bg-primary,
 .table .badge.text-bg-primary,
 .badge.bg-primary {
@@ -3080,7 +3053,7 @@ html, body.store-wrapper {
     border-color: rgba(99, 51, 20, 0.25) !important;
 }
 
-/* 3. Shipped - Soft Pale Sage */
+
 .cart-view-table-back .badge.text-bg-info,
 .table .badge.text-bg-info,
 .badge.bg-info {
@@ -3089,7 +3062,7 @@ html, body.store-wrapper {
     border-color: rgba(56, 85, 50, 0.25) !important;
 }
 
-/* 4. Delivered - Signature Moss Green */
+
 .cart-view-table-back .badge.text-bg-success,
 .table .badge.text-bg-success,
 .badge.bg-success {
@@ -3097,7 +3070,7 @@ html, body.store-wrapper {
     color: #FFFFFF !important;
 }
 
-/* 5. Canceled - Muted Dusty Rose */
+
 .cart-view-table-back .badge.text-bg-danger,
 .table .badge.text-bg-danger,
 .badge.bg-danger {
@@ -3106,9 +3079,7 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   HARMONIOUS BOUTIQUE STOCK BADGE (Drawer & Cards)
-========================================================= */
+
 .drawer-stock-line .badge,
 .shop-card-pure .badge {
     font-family: 'Alinore', sans-serif !important;
@@ -3123,14 +3094,14 @@ html, body.store-wrapper {
     vertical-align: middle !important;
 }
 
-/* In Stock (Moss Green) */
+
 .drawer-stock-line .badge.text-bg-success,
 .shop-card-pure .badge.text-bg-success {
     background-color: #4D6443 !important;
     color: #FFFFFF !important;
 }
 
-/* Low Stock (Warm Amber / Latte) */
+
 .drawer-stock-line .badge[style*="background-color:#fd7e14"],
 .shop-card-pure .badge[style*="background-color:#fd7e14"] {
     background-color: #FEEED8 !important;
@@ -3138,7 +3109,7 @@ html, body.store-wrapper {
     border-color: rgba(180, 83, 9, 0.25) !important;
 }
 
-/* Out of Stock (Dusty Rose) */
+
 .drawer-stock-line .badge.text-bg-danger,
 .shop-card-pure .badge.text-bg-danger {
     background-color: #F9E3E3 !important;
@@ -3146,17 +3117,13 @@ html, body.store-wrapper {
     border-color: rgba(148, 58, 58, 0.25) !important;
 }
 
-/* =========================================================
-   25. LEFT SLIDE-OUT MENU DRAWER & BURGER BUTTON
-========================================================= */
 
 
 
-/* Left Offcanvas Drawer */
 .left-menu-drawer {
     width: 380px !important;
     max-width: 90vw !important;
-    background-color: #743014 !important; /* Rich Terracotta */
+    background-color: #743014 !important;
     color: #FFF5EA !important;
     display: flex !important;
     flex-direction: column !important;
@@ -3227,7 +3194,7 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* Center Nav Rule for R&G brand */
+
 .store-center-nav {
     position: absolute;
     left: 50%;
@@ -3237,13 +3204,11 @@ html, body.store-wrapper {
     justify-content: center;
 }
 
-/* =========================================================
-   25. LEFT MENU GROUP & AUTH BUTTON SHADES
-========================================================= */
+
 .store-left-menu-group {
     display: flex;
     align-items: center;
-    gap: 16px; /* Clean gap between the left star and the menu button */
+    gap: 16px; 
 }
 
 .menu-trigger-btn {
@@ -3268,7 +3233,7 @@ html, body.store-wrapper {
     color: var(--arch-brown);
 }
 
-/* Auth Buttons at Bottom of Menu */
+
 .left-menu-auth-btn {
     display: block;
     width: 100%;
@@ -3306,7 +3271,7 @@ html, body.store-wrapper {
 }
 
 
-/* Hero page menu button color fix */
+
 .hero-body .menu-trigger-btn {
     color: var(--text-brown) !important;
     border-color: rgba(84, 34, 14, 0.3) !important;
@@ -3322,14 +3287,12 @@ html, body.store-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25px 35px 0 35px !important; /* Lesser padding on left & right */
+    padding: 25px 35px 0 35px !important;
     z-index: 50;
     position: relative;
 }
 
-/* =========================================================
-   FIX OFFCANVAS OVERLAY LAYOUT (Drawers slide over screen)
-========================================================= */
+
 .offcanvas {
     z-index: 1055 !important;
 }
@@ -3337,14 +3300,14 @@ html, body.store-wrapper {
     z-index: 1050 !important;
 }
 
-/* Ensure Left Menu Drawer takes full height properly */
+
 .left-menu-drawer {
     height: 100vh !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
 }
-/* Backdrop smooth fade */
+
 .offcanvas-backdrop.fade {
     transition: opacity 0.3s ease-in-out !important;
 }
@@ -3353,9 +3316,7 @@ html, body.store-wrapper {
     visibility: hidden !important;
 }
 
-/* =========================================================
-   26. DETAILED SHOPPING CART PAGE (view_cart.php)
-========================================================= */
+
 .cart-page-wrapper {
     max-width: 1100px;
     margin: 20px auto 60px auto;
@@ -3516,7 +3477,7 @@ html, body.store-wrapper {
 }
 
 .cart-btn-checkout {
-    background-color: #4D6443; /* Moss green */
+    background-color: #4D6443; 
     color: #F5F5F4;
     font-family: 'Alinore', sans-serif;
     font-size: 1.45rem;
@@ -3535,16 +3496,16 @@ html, body.store-wrapper {
     transform: scale(1.02);
 }
 
-/* ===== Search box (from Anima/Figma) ===== */
+
 .hero-top-bar .search-box {
     position: absolute;
-    left: calc(50% + 450px);      /* was 90px: moves it right */
-    top: calc(50% + 14px);        /* was 50%: moves it slightly down */
+    left: calc(50% + 450px);    
+    top: calc(50% + 14px);        
     transform: translateY(-50%);
     z-index: 60;
 
     width: 300px;
-    height: 34px;                 /* a bit taller to fit the larger font */
+    height: 34px;                
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -3610,8 +3571,4 @@ html, body.store-wrapper {
     }
 }
 
-/* Fix Confirmation Status Badges */
-.confirm-meta-grid .badge {
-    border-radius: 20px !important;
-    padding: 6px 14px !important;
-}
+
