@@ -61,6 +61,20 @@ if ($isLoggedIn) {
     }
 }
 
+// FR-5 / FR-18: all delivery details must be filled in before the order can be placed
+$address_complete = false;
+if ($customer) {
+    $address_complete = true;
+    foreach (['first_name', 'last_name', 'address', 'town', 'postal_code', 'phone'] as $k) {
+        if (trim((string) ($customer[$k] ?? '')) === '') {
+            $address_complete = false;
+        }
+    }
+}
+if ($isLoggedIn && !$address_complete) {
+    $_SESSION['return_to_checkout'] = true;   // profile.php sends the customer back here after saving
+}
+
 include('includes/header.php');
 ?>
 
@@ -127,7 +141,7 @@ include('includes/header.php');
                         <?php endif; ?>
                     </div>
 
-                    <?php if ($isLoggedIn && $customer && !empty($customer['address'])): ?>
+                    <?php if ($isLoggedIn && $address_complete): ?>
                         <div style="font-weight: bold; color: var(--text-brown); font-size: 1.15rem;">
                             <?= htmlspecialchars($customer['first_name'] . ' ' . $customer['last_name']); ?>
                         </div>
@@ -136,9 +150,9 @@ include('includes/header.php');
                             Phone: <?= htmlspecialchars($customer['phone']); ?>
                         </div>
                     <?php elseif ($isLoggedIn): ?>
-                        <div class="text-danger small mb-1">No delivery address saved yet!</div>
+                        <div class="text-danger small mb-1">Your delivery details are incomplete!</div>
                         <a href="user/profile.php" class="btn btn-sm btn-outline-dark" style="font-family: 'Alinore', sans-serif;">
-                            Add Shipping Address
+                            Complete Delivery Details
                         </a>
                     <?php else: ?>
                        
@@ -194,10 +208,14 @@ include('includes/header.php');
                     </div>
 
                 
-                    <?php if ($isLoggedIn): ?>
+                    <?php if ($isLoggedIn && $address_complete): ?>
                         <button type="submit" class="checkout-submit-btn">
                             Place Order • ₱<?= number_format($total, 2); ?>
                         </button>
+                    <?php elseif ($isLoggedIn): ?>
+                        <a href="user/profile.php" class="checkout-submit-btn d-block text-center text-decoration-none">
+                            Complete Delivery Details to Order
+                        </a>
                     <?php else: ?>
                         <button type="button" class="checkout-submit-btn" data-bs-toggle="modal" data-bs-target="#authRequiredModal">
                             Place Order • ₱<?= number_format($total, 2); ?>

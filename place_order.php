@@ -36,6 +36,29 @@ if (!in_array($payment_method, $allowed_payments, true)) {
 
 $user_id = (int) $_SESSION['user_id'];
 
+// FR-5 / FR-18: delivery details must be complete before an order can be placed
+$cust_stmt = mysqli_prepare($conn,
+    "SELECT first_name, last_name, address, town, postal_code, phone FROM customers WHERE user_id = ? LIMIT 1");
+mysqli_stmt_bind_param($cust_stmt, 'i', $user_id);
+mysqli_stmt_execute($cust_stmt);
+$customer = mysqli_fetch_assoc(mysqli_stmt_get_result($cust_stmt));
+mysqli_stmt_close($cust_stmt);
+
+$details_complete = (bool) $customer;
+if ($customer) {
+    foreach ($customer as $value) {
+        if (trim((string) $value) === '') {
+            $details_complete = false;
+        }
+    }
+}
+if (!$details_complete) {
+    $_SESSION['message'] = 'Please complete your delivery details (name, address, town / city, postal code and contact number) before placing your order. Your cart has been kept.';
+    $_SESSION['return_to_checkout'] = true;
+    header('Location: user/profile.php');
+    exit;
+}
+
 mysqli_begin_transaction($conn);
 
 try {

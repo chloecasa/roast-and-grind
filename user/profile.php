@@ -107,6 +107,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmt);
 
         $_SESSION['success'] = 'Profile saved successfully.';
+
+        // Came here from checkout? Go back there (only if the cart still has items)
+        $back_to_checkout = !empty($_SESSION['return_to_checkout']) && !empty($_SESSION['cart_products']);
+        unset($_SESSION['return_to_checkout']);
+        if ($back_to_checkout) {
+            header('Location: ../checkout.php');
+            exit;
+        }
+
         header('Location: profile.php');
         exit;
     }
