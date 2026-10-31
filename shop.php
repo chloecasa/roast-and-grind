@@ -304,7 +304,7 @@ function stockBadge($qty, $extraStyle = '')
                             $iid = (int)$item['item_id'];
                             
                             
-                            $chk_p = mysqli_query($conn, "SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.user_id = $uid AND oi.item_id = $iid AND o.status != 'Canceled' LIMIT 1");
+                            $chk_p = mysqli_query($conn, "SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.user_id = $uid AND oi.item_id = $iid AND o.status = 'Delivered' LIMIT 1");
                             if (mysqli_num_rows($chk_p) > 0) $has_bought = true;
                             
                             
@@ -332,7 +332,7 @@ function stockBadge($qty, $extraStyle = '')
                                     </button>
                                 </form>
                             <?php elseif (isset($_SESSION['user_id'])): ?>
-                                <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">You must purchase this item to leave a review.</p>
+                                <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">You can review this item once an order containing it has been delivered.</p>
                             <?php else: ?>
                                 <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">Please <a href="user/login.php" style="color: #FED7AA;">log in</a> to leave a review.</p>
                             <?php endif; ?>

@@ -23,7 +23,7 @@ if (empty($raw_review)) {
 $check_purchase_sql = "
     SELECT 1 FROM orders o 
     JOIN order_items oi ON o.order_id = oi.order_id 
-    WHERE o.user_id = ? AND oi.item_id = ? AND o.status != 'Canceled' 
+    WHERE o.user_id = ? AND oi.item_id = ? AND o.status = 'Delivered' 
     LIMIT 1
 ";
 $chk_stmt = mysqli_prepare($conn, $check_purchase_sql);
@@ -33,7 +33,7 @@ $has_purchased = mysqli_stmt_get_result($chk_stmt)->num_rows > 0;
 mysqli_stmt_close($chk_stmt);
 
 if (!$has_purchased) {
-    $_SESSION['message'] = "You can only review products you have purchased.";
+    $_SESSION['message'] = "You can only review products from an order that has been delivered.";
     header("Location: $redirect");
     exit;
 }
