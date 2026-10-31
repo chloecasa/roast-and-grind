@@ -1,7 +1,6 @@
 <?php
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
-require_once "../includes/csrf.php";
 
 if (!defined('PRODUCT_CATEGORIES')) {
     define('PRODUCT_CATEGORIES', ['Coffee Beans', 'Drip Bags', 'Brewing Gear']);
@@ -161,7 +160,6 @@ require_once "../includes/header.php";
 
         <form id="deleteProductForm" action="delete.php" method="POST" class="d-none">
             <input type="hidden" name="item_id" value="<?= (int) $product['item_id']; ?>">
-            <?= csrf_field(); ?>
         </form>
     </div>
 </div>

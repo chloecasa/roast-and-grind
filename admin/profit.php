@@ -1,5 +1,4 @@
 <?php
-// admin/profit.php - FR-21: Profit Reporting 
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 

@@ -1,5 +1,4 @@
 <?php
-// admin/user_update.php - MP2: Process User Role & Status updates
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 

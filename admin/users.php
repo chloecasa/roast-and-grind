@@ -1,5 +1,5 @@
 <?php
-// admin/users.php - MP2: Admin User Management
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 

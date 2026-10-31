@@ -1,18 +1,11 @@
 <?php
 // item/delete.php - FR-10: Delete Product & Inventory Record
-// Deleting is a POST-only action protected by a CSRF token (never a plain link).
+// Deleting is a POST-only action (never a plain link), admin only.
 require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
 require_once "../includes/config.php";
-require_once "../includes/csrf.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['message'] = 'Invalid request. Please use the Delete button on the product list.';
-    header("Location: index.php");
-    exit;
-}
-
-if (!csrf_valid($_POST['csrf_token'] ?? '')) {
-    $_SESSION['message'] = 'Your session check failed. Please reload the page and try again.';
     header("Location: index.php");
     exit;
 }

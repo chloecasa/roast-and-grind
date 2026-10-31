@@ -8,7 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-// 1. Gather Inputs
 $item_name   = trim($_POST['item_name'] ?? '');
 $category    = trim($_POST['category'] ?? '');
 $origin      = trim($_POST['origin'] ?? '');
@@ -17,7 +16,7 @@ $cost_price  = trim($_POST['cost_price'] ?? '');
 $sell_price  = trim($_POST['sell_price'] ?? '');
 $quantity    = trim($_POST['quantity'] ?? '');
 
-// 2. Strict Server-Side PHP Validation (MP5 Requirement)
+
 $errors = [];
 
 if (empty($item_name)) $errors[] = "Product name is required.";
@@ -39,7 +38,6 @@ if (!isset($_FILES['product_image']) || $_FILES['product_image']['error'] === UP
     $errors[] = "A primary product image is required.";
 }
 
-// If validation fails, return to form with errors and old input
 if (count($errors) > 0) {
     $_SESSION['message'] = implode('<br>', $errors);
     $_SESSION['old_input'] = $_POST;
@@ -47,12 +45,10 @@ if (count($errors) > 0) {
     exit;
 }
 
-// Validation passed, format numbers safely
 $cost_price = floatval($cost_price);
 $sell_price = floatval($sell_price);
 $quantity   = intval($quantity);
 
-// 3. Process Primary Image
 $primary_img  = "default_coffee.jpg";
 $allowed_exts = ['jpg', 'jpeg', 'png'];
 $upload_dir   = __DIR__ . "/images/";
@@ -67,7 +63,7 @@ if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPL
     }
 }
 
-// 4. Database Insert Transaction
+
 mysqli_begin_transaction($conn);
 
 try {
@@ -85,7 +81,7 @@ try {
     mysqli_stmt_execute($stmt_stock);
     mysqli_stmt_close($stmt_stock);
 
-    // Process Multiple Gallery Images
+    
     if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
         $sql_gal = "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)";
         $stmt_gal = mysqli_prepare($conn, $sql_gal);

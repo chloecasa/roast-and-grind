@@ -1,5 +1,4 @@
 <?php
-// admin/order_view.php - FR-19: Order Details + Status Update Form
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
