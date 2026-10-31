@@ -74,12 +74,12 @@ if (isset($_POST['remove_code']) && is_array($_POST['remove_code'])) {
     }
 }
 
-// UPDATE  
+ 
 if (isset($_POST['product_qty']) && is_array($_POST['product_qty'])) {
     foreach ($_POST['product_qty'] as $key => $value) {
         $item_id = (int) $key;
 
-        // skip items that were just removed
+        
         if (!isset($_SESSION['cart_products'][$item_id])) {
             continue;
         }

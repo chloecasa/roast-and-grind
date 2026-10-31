@@ -3,7 +3,7 @@
 //                          FR-16: Canceled returns the items to stock
 include('../includes/admin_check.php');
 include('../includes/config.php');
-require_once('../includes/send_receipt.php'); // Include our new Mailer script
+require_once('../includes/send_receipt.php'); 
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

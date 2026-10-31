@@ -3609,3 +3609,9 @@ html, body.store-wrapper {
         margin-left: auto;
     }
 }
+
+/* Fix Confirmation Status Badges */
+.confirm-meta-grid .badge {
+    border-radius: 20px !important;
+    padding: 6px 14px !important;
+}

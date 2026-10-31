@@ -102,7 +102,7 @@ include('includes/header.php');
                 <?php endforeach; ?>
 
                
-                <div class="d-flex justify-content-between align-items-center border-top border-2 border-secondary pt-3 mt-4">
+                <div class="d-flex justify-content-between align-items-center  pt-3 mt-4">
                     <span style="font-family: 'Alinore', sans-serif; font-size: 1.5rem; text-transform: uppercase; color: var(--text-brown);">Amount Payable:</span>
                     <span style="font-family: 'Alinore', sans-serif; font-size: 2.2rem; font-weight: bold; color: #4D6443;">
                         ₱<?= number_format($total, 2); ?>

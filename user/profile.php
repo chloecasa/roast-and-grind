@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $is_complete = ($form['first_name'] !== '' && $form['last_name'] !== '' && $form['address'] !== ''
     && $form['town'] !== '' && $form['postal_code'] !== '' && $form['phone'] !== '');
 
-// Fetch image for display
+
 $display_img = (!empty($profile['profile_photo']) && file_exists(__DIR__ . '/images/' . $profile['profile_photo']))
     ? "images/" . $profile['profile_photo']
     : "https://placehold.co/120x120/743014/FED7AA?text=User";
@@ -140,7 +140,7 @@ require_once "../includes/header.php";
     
         <form action="profile.php" method="POST" enctype="multipart/form-data">
 
-            <!-- Profile Picture Display & Upload -->
+           
             <div class="d-flex align-items-center gap-4 mb-4 pb-3 border-bottom border-secondary">
                 <img src="<?= htmlspecialchars($display_img); ?>" alt="Profile Photo" 
                      style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--arch-brown);">
