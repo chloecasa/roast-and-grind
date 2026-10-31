@@ -35,8 +35,14 @@ try {
     if ($order['status'] === 'Canceled') {
         throw new RuntimeException('This order is already canceled and can no longer be changed.');
     }
+    if ($order['status'] === 'Delivered') {
+        throw new RuntimeException('This order is already delivered and can no longer be changed.');
+    }
     if ($order['status'] === $new_status) {
         throw new RuntimeException("The order is already $new_status.");
+    }
+    if (!in_array($new_status, allowedNextStatuses($order['status']), true)) {
+        throw new RuntimeException("An order that is {$order['status']} cannot be moved back to $new_status.");
     }
 
     // FR-16: Canceled -> give every purchased quantity back to stock

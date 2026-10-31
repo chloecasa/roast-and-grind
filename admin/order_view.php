@@ -1,4 +1,5 @@
 <?php
+// admin/order_view.php - FR-19: Order Details + Status Update Form
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
@@ -28,7 +29,9 @@ foreach ($rows as $line) {
     $grand_total += $line['unit_price'] * $line['quantity'];
 }
 
-$is_canceled = ($order['status'] === 'Canceled');
+$is_canceled   = ($order['status'] === 'Canceled');
+$next_statuses = allowedNextStatuses($order['status']);   // forward moves only
+$is_final      = !$next_statuses;                         // Delivered or Canceled
 
 $customer_name = trim($order['customer_name'] ?? '');
 $address_parts = array_filter([$order['address'] ?? '', $order['town'] ?? '', $order['postal_code'] ?? ''], 'strlen');
@@ -127,13 +130,17 @@ require_once "../includes/header.php";
                     <label class="form-label" style="font-family: 'Alinore', sans-serif; font-size: 1.1rem; color: var(--text-brown); text-transform: uppercase; margin-bottom: 6px;">
                         Update Fulfillment Status
                     </label>
-                    <select name="status" class="form-select order-select-input" <?= $is_canceled ? 'disabled' : ''; ?>>
+                    <select name="status" class="form-select order-select-input" <?= $is_final ? 'disabled' : ''; ?>>
                         <?php foreach ($order_statuses as $s): ?>
-                            <option value="<?= $s; ?>" <?= $s === $order['status'] ? 'selected' : ''; ?>><?= $s; ?></option>
+                            <?php if ($s === $order['status'] || in_array($s, $next_statuses, true)): ?>
+                                <option value="<?= $s; ?>" <?= $s === $order['status'] ? 'selected' : ''; ?>><?= $s; ?></option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
-                    <?php if ($is_canceled): ?>
-                        <div class="form-text text-danger" style="font-family: 'Alinore';">A canceled order cannot be modified.</div>
+                    <?php if ($is_final): ?>
+                        <div class="form-text text-danger" style="font-family: 'Alinore';">
+                            <?= $is_canceled ? 'A canceled order cannot be modified.' : 'A delivered order is final and cannot be modified.'; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -141,7 +148,7 @@ require_once "../includes/header.php";
                     <a href="orders.php" class="dashboard-btn-outline" style="padding: 12px 28px; font-size: 1.2rem;">
                         &larr; Back
                     </a>
-                    <?php if (!$is_canceled): ?>
+                    <?php if (!$is_final): ?>
                         <button type="submit" class="dashboard-btn-primary" style="padding: 12px 32px; font-size: 1.2rem;">
                             Update Status
                         </button>
