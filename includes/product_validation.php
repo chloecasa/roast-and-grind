@@ -2,7 +2,7 @@
 // includes/product_validation.php - server-side checks shared by item/store.php (FR-8) and item/update.php (FR-9, FR-14)
 
 const PRODUCT_CATEGORIES = ['Coffee Beans', 'Drip Bags', 'Brewing Gear'];   // FR-12: one category per product
-const PRODUCT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;                            // 5 MB per image
+const PRODUCT_IMAGE_MAX_BYTES = 10 * 1024 * 1024;                            // 10 MB per image
 
 
 function validateProductFields(array $in)
@@ -61,7 +61,7 @@ function validateImageUpload($file, $label)
             break;
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
-            return "$label is too large (max. 5 MB).";
+            return "$label is too large (max. 10 MB).";
         case UPLOAD_ERR_PARTIAL:
             return "$label was only partly uploaded. Please try again.";
         default:
@@ -69,7 +69,7 @@ function validateImageUpload($file, $label)
     }
 
     if ($file['size'] > PRODUCT_IMAGE_MAX_BYTES) {
-        return "$label is too large (max. 5 MB).";
+        return "$label is too large (max. 10 MB).";
     }
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
