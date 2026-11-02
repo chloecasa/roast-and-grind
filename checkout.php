@@ -208,19 +208,21 @@ include('includes/header.php');
                     </div>
 
                 
-                    <?php if ($isLoggedIn && $address_complete): ?>
-                        <button type="submit" class="checkout-submit-btn">
-                            Place Order • ₱<?= number_format($total, 2); ?>
-                        </button>
-                    <?php elseif ($isLoggedIn): ?>
-                        <a href="user/profile.php" class="checkout-submit-btn d-block text-center text-decoration-none">
-                            Complete Delivery Details to Order
-                        </a>
-                    <?php else: ?>
-                        <button type="button" class="checkout-submit-btn" data-bs-toggle="modal" data-bs-target="#authRequiredModal">
-                            Place Order • ₱<?= number_format($total, 2); ?>
-                        </button>
-                    <?php endif; ?>
+                   
+                <?php if ($isLoggedIn && $address_complete): ?>
+                    <button type="submit" class="checkout-submit-btn">
+                        Place Order • ₱<?= number_format($total, 2); ?>
+                    </button>
+                <?php elseif ($isLoggedIn): ?>
+                  
+                    <a href="user/profile.php" class="checkout-submit-btn d-block text-center text-decoration-none" style="line-height: 58px;">
+                        Complete Delivery Details to Order
+                    </a>
+                <?php else: ?>
+                    <button type="button" class="checkout-submit-btn" data-bs-toggle="modal" data-bs-target="#authRequiredModal">
+                        Place Order • ₱<?= number_format($total, 2); ?>
+                    </button>
+                <?php endif; ?>
                 </form>
             </div>
         </div>
