@@ -337,7 +337,17 @@ function stockBadge($qty, $extraStyle = '')
                                 <p style="font-family: 'Alinore'; color: #78716C; font-size: 1.1rem;">Please <a href="user/login.php" style="color: #FED7AA;">log in</a> to leave a review.</p>
                             <?php endif; ?>
 
-                            <
+                            <?php if ($my_review !== ''): ?>
+                                <form action="review_delete.php" method="POST" class="mb-4"
+                                      onsubmit="return confirm('Delete your review of this product?');">
+                                    <input type="hidden" name="item_id" value="<?= $item['item_id']; ?>">
+                                    <input type="hidden" name="redirect" value="shop.php?cart=open">
+                                    <button type="submit" style="background: transparent; color: #FCA5A5; border: 1px solid #FCA5A5; border-radius: 20px; padding: 6px 16px; font-family: 'Alinore'; font-size: 1rem; text-transform: uppercase; transition: all 0.2s ease;">
+                                        Delete My Review
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+
                             <div>
                                 <?php if (mysqli_num_rows($rev_q) > 0): ?>
                                     <?php while($rev = mysqli_fetch_assoc($rev_q)): ?>
