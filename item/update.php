@@ -39,7 +39,7 @@ if ($has_new_primary && ($msg = validateImageUpload($primary, 'Primary image')) 
     $errors[] = $msg;
 }
 
-$gallery = [];   // valid new gallery files, ready to be saved
+$gallery = [];  
 if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
     foreach ($_FILES['gallery_images']['name'] as $key => $name) {
         if ($_FILES['gallery_images']['error'][$key] === UPLOAD_ERR_NO_FILE) {
@@ -75,7 +75,11 @@ if (!is_dir($upload_dir)) {
 }
 
 $saved_files     = [];  
+<<<<<<< HEAD
 $files_to_delete = [];  
+=======
+$files_to_delete = [];   
+>>>>>>> 0765c70d04bfa8752c00dbd03a67094fff972490
 
 mysqli_begin_transaction($conn);
 
