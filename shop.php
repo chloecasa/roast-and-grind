@@ -179,7 +179,7 @@ function stockBadge($qty, $extraStyle = '')
                         </button>
                     </div>
 
-                    <!-- Offcanvas Drawer -->
+                  
                     <div class="offcanvas offcanvas-end product-drawer" 
                          tabindex="-1" 
                          id="drawer-<?= $item['item_id']; ?>" 
@@ -291,7 +291,7 @@ function stockBadge($qty, $extraStyle = '')
                                 <?php endif; ?>
                             </form>
                         </div>
-                        <!-- Reviews Section -->
+                   
                         <?php
                         
                         $rev_q = mysqli_query($conn, "SELECT r.*, c.first_name, c.last_name FROM reviews r JOIN customers c ON r.user_id = c.user_id WHERE r.item_id = " . intval($item['item_id']) . " ORDER BY r.created_at DESC");

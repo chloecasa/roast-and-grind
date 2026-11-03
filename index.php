@@ -169,13 +169,6 @@ $is_logged_in = isset($_SESSION['user_id']);
         item.addEventListener('mouseleave', () => isHovered = false);
     });
 
-    let touchStartX = 0;
-    window.addEventListener('touchstart', (e) => touchStartX = e.touches[0].clientX);
-    window.addEventListener('touchmove', (e) => {
-        const delta = touchStartX - e.touches[0].clientX;
-        targetAngle -= delta * 0.003;
-        touchStartX = e.touches[0].clientX;
-    }, { passive: true });
 
     function render() {
         if (!isHovered) {

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-  
+
     if (!$errors && $has_upload) {
         $photo_dir = __DIR__ . '/images/';
         if (!is_dir($photo_dir)) {
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['success'] = 'Profile saved successfully.';
 
-        // Came here from checkout? Go back there (only if the cart still has items)
+   
         $back_to_checkout = !empty($_SESSION['return_to_checkout']) && !empty($_SESSION['cart_products']);
         unset($_SESSION['return_to_checkout']);
         if ($back_to_checkout) {
