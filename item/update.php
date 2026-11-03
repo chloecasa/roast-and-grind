@@ -1,6 +1,5 @@
 <?php
-// item/update.php - FR-9: Update Product / FR-14: Restocking / MP5: server-side (PHP) validation
-// The checks live in includes/product_validation.php (shared with item/store.php).
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 require_once "../includes/product_validation.php";
@@ -10,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-// 1. Which product?
+
 $item_id = (isset($_POST['item_id']) && ctype_digit((string) $_POST['item_id'])) ? (int) $_POST['item_id'] : 0;
 if ($item_id <= 0) {
     $_SESSION['message'] = 'Invalid product ID.';
@@ -30,17 +29,17 @@ if (!$exists) {
     exit;
 }
 
-// 2. Validate the text/number fields (name, category, origin, description, prices, stock)
+
 [$errors, $clean] = validateProductFields($_POST);
 
-// 3. Validate the images (both optional on update)
+
 $primary = $_FILES['product_image'] ?? null;
 $has_new_primary = $primary && $primary['error'] !== UPLOAD_ERR_NO_FILE;
 if ($has_new_primary && ($msg = validateImageUpload($primary, 'Primary image')) !== null) {
     $errors[] = $msg;
 }
 
-$gallery = [];   // valid new gallery files, ready to be saved
+$gallery = [];  
 if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images']['name'])) {
     foreach ($_FILES['gallery_images']['name'] as $key => $name) {
         if ($_FILES['gallery_images']['error'][$key] === UPLOAD_ERR_NO_FILE) {
@@ -61,7 +60,7 @@ if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images
     }
 }
 
-// If errors exist, go back to the edit form with the messages and the old input
+
 if (count($errors) > 0) {
     $_SESSION['message']   = implode('<br>', $errors);
     $_SESSION['old_input'] = $_POST;
@@ -69,14 +68,14 @@ if (count($errors) > 0) {
     exit;
 }
 
-// 4. Save the files and the database changes together (all or nothing)
+
 $upload_dir = __DIR__ . "/images/";
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-$saved_files     = [];   // files written in this request (deleted again if the transaction fails)
-$files_to_delete = [];   // removed gallery files (deleted from disk only after a successful commit)
+$saved_files     = [];  
+$files_to_delete = [];   
 
 mysqli_begin_transaction($conn);
 
