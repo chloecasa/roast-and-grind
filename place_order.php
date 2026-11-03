@@ -1,7 +1,5 @@
 <?php
-// place_order.php - FR-18 (save order + items + payment method + stock deduction as ONE transaction)
-//                   FR-15 (automatic stock decrement on successful order placement)
-//                   Totals are computed in PHP from order_items, never stored in orders
+
 include('./includes/session.php');
 include('./includes/config.php');
 
@@ -36,7 +34,7 @@ if (!in_array($payment_method, $allowed_payments, true)) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-// FR-5 / FR-18: delivery details must be complete before an order can be placed
+
 $cust_stmt = mysqli_prepare($conn,
     "SELECT first_name, last_name, address, town, postal_code, phone FROM customers WHERE user_id = ? LIMIT 1");
 mysqli_stmt_bind_param($cust_stmt, 'i', $user_id);

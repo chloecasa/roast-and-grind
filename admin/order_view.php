@@ -1,5 +1,4 @@
 <?php
-// admin/order_view.php - FR-19: Order Details + Status Update Form
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 
@@ -30,8 +29,8 @@ foreach ($rows as $line) {
 }
 
 $is_canceled   = ($order['status'] === 'Canceled');
-$next_statuses = allowedNextStatuses($order['status']);   // forward moves only
-$is_final      = !$next_statuses;                         // Delivered or Canceled
+$next_statuses = allowedNextStatuses($order['status']);   
+$is_final      = !$next_statuses;                         
 
 $customer_name = trim($order['customer_name'] ?? '');
 $address_parts = array_filter([$order['address'] ?? '', $order['town'] ?? '', $order['postal_code'] ?? ''], 'strlen');

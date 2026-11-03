@@ -1,5 +1,4 @@
 <?php
-// includes/header.php - Clean Header with Left Star, Menu Button, Centered Logo, and Cart
 require_once __DIR__ . "/session.php";
 
 $cartCount = (isset($_SESSION['cart_products']) && is_array($_SESSION['cart_products'])) 

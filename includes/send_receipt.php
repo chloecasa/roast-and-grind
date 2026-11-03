@@ -1,5 +1,5 @@
 <?php
-// includes/send_receipt.php - Generates PDF and sends via PHPMailer + Mailtrap
+
 require_once __DIR__ . '/fpdf/fpdf.php';
 
 
