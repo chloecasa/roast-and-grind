@@ -1,5 +1,5 @@
 <?php
-// includes/left_menu.php - Dedicated Left Slide-Out Navigation Menu
+
 $user_role = $_SESSION['user_role'] ?? '';
 $is_logged_in = isset($_SESSION['user_id']);
 ?>

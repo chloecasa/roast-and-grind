@@ -8,7 +8,7 @@ function peso($n)
     return ($n < 0 ? '-' : '') . '₱' . number_format(abs($n), 2);
 }
 
-// Orders per status count
+
 $per_status = array_fill_keys($order_statuses, 0);
 $res = mysqli_query($conn, "SELECT status, COUNT(*) AS total FROM orders GROUP BY status");
 while ($r = mysqli_fetch_assoc($res)) {
@@ -16,7 +16,6 @@ while ($r = mysqli_fetch_assoc($res)) {
 }
 $total_orders = array_sum($per_status);
 
-// FR-20 / FR-21: Revenue and profit across non-canceled orders.
 $sales = mysqli_query($conn,
     "SELECT o.status, oi.unit_price, oi.unit_cost, oi.quantity
      FROM orders o
@@ -32,7 +31,6 @@ while ($r = mysqli_fetch_assoc($sales)) {
     $total_profit  += ($r['unit_price'] - $r['unit_cost']) * $r['quantity'];
 }
 
-// FR-20: Products at Low Stock (5 or below) or Out of Stock
 $low_stock = mysqli_query($conn,
     "SELECT i.item_id, i.item_name, i.category, COALESCE(s.quantity, 0) AS quantity
      FROM item i

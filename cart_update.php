@@ -63,7 +63,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'add') {
     }
 }
 
-//  REMOVE 
+
 if (isset($_POST['remove_code']) && is_array($_POST['remove_code'])) {
     foreach ($_POST['remove_code'] as $key) {
         $key = (int) $key;

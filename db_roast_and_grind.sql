@@ -56,11 +56,7 @@ INSERT INTO `customers` (`customer_id`, `user_id`, `profile_photo`, `first_name`
 (12, 9, 'default_avatar.png', 'Jazz', 'Ray', 'Block 5 Emerald Street, Central Village', 'taguig', '2600', '09778867886'),
 (13, 10, 'default_avatar.png', '', '', '', '', '', '');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `item`
---
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (

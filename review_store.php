@@ -1,5 +1,5 @@
 <?php
-// review_store.php - MP4: Submit/Update Review & Regex Foul Word Filter
+
 require_once "includes/session.php";
 require_once "includes/config.php";
 
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
 $user_id = (int)$_SESSION['user_id'];
 $item_id = (int)$_POST['item_id'];
 $raw_review = trim($_POST['review_text']);
-// Only allow redirects to an approved local page (prevents open redirects)
+
 $redirect = 'shop.php';
 if (isset($_POST['redirect'])) {
     $page = strtok($_POST['redirect'], '?');

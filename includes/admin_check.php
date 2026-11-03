@@ -16,8 +16,7 @@ if (($_SESSION['user_role'] ?? '') !== 'admin') {
 
 $order_statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Canceled'];
 
-// FR-19: an order only moves forward. Delivered and Canceled are final.
-// (Canceled is allowed until the order is delivered; it returns the items to stock, FR-16.)
+
 function allowedNextStatuses($current)
 {
     $next = [

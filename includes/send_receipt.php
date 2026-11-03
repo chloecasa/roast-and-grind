@@ -1,5 +1,5 @@
 <?php
-// includes/send_receipt.php - Generates PDF and sends via PHPMailer + Mailtrap
+
 require_once __DIR__ . '/fpdf/fpdf.php';
 
 
@@ -112,8 +112,8 @@ function sendOrderReceiptEmail($conn, $order_id, $customer_email, $customer_name
         $mail->Host = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth = true;
         $mail->Port = 2525;
-        $mail->Username = '';   
-        $mail->Password = ''; 
+        $mail->Username = '5e8c883b1cd6cd';   
+        $mail->Password = '85f40699177030'; 
         $mail->Timeout  = 10;   
 
         if ($mail->Username === '' || $mail->Password === '') {

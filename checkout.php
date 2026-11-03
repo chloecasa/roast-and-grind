@@ -61,7 +61,7 @@ if ($isLoggedIn) {
     }
 }
 
-// FR-5 / FR-18: all delivery details must be filled in before the order can be placed
+
 $address_complete = false;
 if ($customer) {
     $address_complete = true;
@@ -72,7 +72,7 @@ if ($customer) {
     }
 }
 if ($isLoggedIn && !$address_complete) {
-    $_SESSION['return_to_checkout'] = true;   // profile.php sends the customer back here after saving
+    $_SESSION['return_to_checkout'] = true;  
 }
 
 include('includes/header.php');
@@ -259,7 +259,7 @@ include('includes/header.php');
                 <button type="button" class="modal-close-btn" data-bs-dismiss="modal">[CLOSE]</button>
             </div>
 
-            <!-- Clear High-Contrast Amount Box -->
+          
             <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);">
                 <div style="color: #FED7AA; font-family: 'Alinore', sans-serif; font-size: 1.05rem; letter-spacing: 0.5px;">
                     TOTAL AMOUNT TO SEND:

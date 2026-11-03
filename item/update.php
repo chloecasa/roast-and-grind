@@ -1,6 +1,5 @@
 <?php
-// item/update.php - FR-9: Update Product / FR-14: Restocking / MP5: server-side (PHP) validation
-// The checks live in includes/product_validation.php (shared with item/store.php).
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 require_once "../includes/product_validation.php";
@@ -10,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-// 1. Which product?
+
 $item_id = (isset($_POST['item_id']) && ctype_digit((string) $_POST['item_id'])) ? (int) $_POST['item_id'] : 0;
 if ($item_id <= 0) {
     $_SESSION['message'] = 'Invalid product ID.';
@@ -30,10 +29,10 @@ if (!$exists) {
     exit;
 }
 
-// 2. Validate the text/number fields (name, category, origin, description, prices, stock)
+
 [$errors, $clean] = validateProductFields($_POST);
 
-// 3. Validate the images (both optional on update)
+
 $primary = $_FILES['product_image'] ?? null;
 $has_new_primary = $primary && $primary['error'] !== UPLOAD_ERR_NO_FILE;
 if ($has_new_primary && ($msg = validateImageUpload($primary, 'Primary image')) !== null) {
@@ -61,7 +60,7 @@ if (isset($_FILES['gallery_images']['name']) && is_array($_FILES['gallery_images
     }
 }
 
-// If errors exist, go back to the edit form with the messages and the old input
+
 if (count($errors) > 0) {
     $_SESSION['message']   = implode('<br>', $errors);
     $_SESSION['old_input'] = $_POST;
@@ -69,19 +68,19 @@ if (count($errors) > 0) {
     exit;
 }
 
-// 4. Save the files and the database changes together (all or nothing)
+
 $upload_dir = __DIR__ . "/images/";
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-$saved_files     = [];   // files written in this request (deleted again if the transaction fails)
-$files_to_delete = [];   // removed gallery files (deleted from disk only after a successful commit)
+$saved_files     = [];  
+$files_to_delete = [];  
 
 mysqli_begin_transaction($conn);
 
 try {
-    // Product row (+ new primary image if one was uploaded)
+   
     if ($has_new_primary) {
         $new_primary = productImageName('primary', $primary['name']);
         if (!move_uploaded_file($primary['tmp_name'], $upload_dir . $new_primary)) {
@@ -104,13 +103,13 @@ try {
     mysqli_stmt_execute($stmt_item);
     mysqli_stmt_close($stmt_item);
 
-    // FR-14 Restocking
+   
     $stmt_stock = mysqli_prepare($conn, "UPDATE stock SET quantity = ? WHERE item_id = ?");
     mysqli_stmt_bind_param($stmt_stock, "ii", $clean['quantity'], $item_id);
     mysqli_stmt_execute($stmt_stock);
     mysqli_stmt_close($stmt_stock);
 
-    // MP1: Remove selected gallery photos (only rows that belong to THIS product)
+   
     if (!empty($_POST['remove_images']) && is_array($_POST['remove_images'])) {
         $stmt_find_img = mysqli_prepare($conn, "SELECT img_path FROM item_images WHERE image_id = ? AND item_id = ?");
         $stmt_del      = mysqli_prepare($conn, "DELETE FROM item_images WHERE image_id = ? AND item_id = ?");
@@ -132,7 +131,7 @@ try {
         mysqli_stmt_close($stmt_del);
     }
 
-    // MP1: Add new gallery photos
+   
     if ($gallery) {
         $stmt_gal = mysqli_prepare($conn, "INSERT INTO item_images (item_id, img_path) VALUES (?, ?)");
         foreach ($gallery as $key => $file) {
@@ -149,7 +148,7 @@ try {
 
     mysqli_commit($conn);
 
-    // Delete removed photo files from disk, unless another record still uses the same file
+ 
     foreach ($files_to_delete as $file) {
         $stmt_use = mysqli_prepare($conn,
             "SELECT (SELECT COUNT(*) FROM item_images WHERE img_path = ?) +

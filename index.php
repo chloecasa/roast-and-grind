@@ -156,49 +156,35 @@ $is_logged_in = isset($_SESSION['user_id']);
 <script>
     const items = document.querySelectorAll('.orbit-item');
     const totalItems = items.length;
-    let targetAngle = 0;
-    let currentAngle = 0;
-    let isHovered = false;
 
-    window.addEventListener('wheel', (e) => {
-        targetAngle -= e.deltaY * 0.0018;
-    }, { passive: true });
-
-    items.forEach(item => {
-        item.addEventListener('mouseenter', () => isHovered = true);
-        item.addEventListener('mouseleave', () => isHovered = false);
-    });
-
+    
+    const currentAngle = 0; 
 
     function render() {
-        if (!isHovered) {
-            currentAngle += (targetAngle - currentAngle) * 0.08;
-        }
+      
         const angleStep = (2 * Math.PI) / totalItems;
+
         items.forEach((item, index) => {
             const angle = currentAngle + (index * angleStep);
             let relAngle = ((angle % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+            
+          
             const x = 50 + 38 * Math.sin(relAngle); 
             const y = 92 - 52 * Math.cos(relAngle); 
             const scale = Math.max(0.6, 0.72 + 0.38 * Math.cos(relAngle));
             const tilt = (relAngle * 180 / Math.PI) * 0.45;
-            const isVisible = Math.cos(relAngle) > -0.2;
-            const opacity = Math.max(0, Math.min(1, (Math.cos(relAngle) + 0.2) * 2));
-            const zIndex = Math.round(scale * 100);
-
-            if (isVisible) {
-                item.style.display = 'block';
-                item.style.left = `${x}vw`;
-                item.style.top = `${y}vh`;
-                item.style.transform = `translate(-50%, -50%) rotate(${tilt}deg) scale(${scale})`;
-                item.style.opacity = opacity;
-                item.style.zIndex = zIndex;
-            } else {
-                item.style.display = 'none';
-            }
+            
+           
+            item.style.display = 'block';
+            item.style.left = `${x}vw`;
+            item.style.top = `${y}vh`;
+            item.style.transform = `translate(-50%, -50%) rotate(${tilt}deg) scale(${scale})`;
+            item.style.opacity = '1';
+            item.style.zIndex = Math.round(scale * 100);
         });
-        requestAnimationFrame(render);
     }
+
+   
     render();
 </script>
 

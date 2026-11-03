@@ -1,8 +1,8 @@
 <?php
-// includes/product_validation.php - server-side checks shared by item/store.php (FR-8) and item/update.php (FR-9, FR-14)
 
-const PRODUCT_CATEGORIES = ['Coffee Beans', 'Drip Bags', 'Brewing Gear'];   // FR-12: one category per product
-const PRODUCT_IMAGE_MAX_BYTES = 10 * 1024 * 1024;                            // 10 MB per image
+
+const PRODUCT_CATEGORIES = ['Coffee Beans', 'Drip Bags', 'Brewing Gear'];   
+const PRODUCT_IMAGE_MAX_BYTES = 10 * 1024 * 1024;                            
 
 
 function validateProductFields(array $in)

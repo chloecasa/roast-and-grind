@@ -12,12 +12,14 @@ $order_id = (int) ($_GET['id'] ?? 0);
 
 
 $stmt = mysqli_prepare($conn,
-    "SELECT * FROM view_order_transaction_details
+    "SELECT *, order_status AS order_status 
+     FROM view_order_transaction_details
      WHERE order_id = ? AND user_id = ?
      ORDER BY order_item_id");
 mysqli_stmt_bind_param($stmt, 'ii', $order_id, $_SESSION['user_id']);
 mysqli_stmt_execute($stmt);
-$rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+$result = mysqli_stmt_get_result($stmt);
+$rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 if (!$rows) {
     $_SESSION['message'] = 'Order not found.';

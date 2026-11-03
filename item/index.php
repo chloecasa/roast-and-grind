@@ -1,5 +1,5 @@
 <?php
-// item/index.php - Admin Product List: Entry point for FR-8, FR-9, FR-10, FR-13, FR-14
+
 require_once "../includes/admin_check.php";
 require_once "../includes/config.php";
 

@@ -60,6 +60,7 @@ require_once "../includes/header.php";
             <div class="mb-3">
                 <label class="admin-form-label">Product Name</label>
              
+                
                 <input type="text" name="item_name" class="form-control admin-form-input" 
                        value="<?= fieldVal($old, 'item_name', $product); ?>">
             </div>
@@ -68,6 +69,7 @@ require_once "../includes/header.php";
                 <div class="col-md-6 mb-3">
                     <label class="admin-form-label">Category</label>
                  
+                    
                     <select name="category" class="form-select admin-form-select">
                         <option value="" disabled>Select category...</option>
                         <?php $currentCat = $old['category'] ?? $product['category']; ?>
@@ -79,6 +81,7 @@ require_once "../includes/header.php";
                 <div class="col-md-6 mb-3">
                     <label class="admin-form-label">Origin / Region</label>
                  
+                   
                     <input type="text" name="origin" class="form-control admin-form-input" 
                            value="<?= fieldVal($old, 'origin', $product); ?>">
                 </div>
@@ -87,6 +90,7 @@ require_once "../includes/header.php";
             <div class="mb-3">
                 <label class="admin-form-label">Description & Tasting Notes</label>
             
+             
                 <textarea name="description" rows="3" class="form-control admin-form-textarea"><?= fieldVal($old, 'description', $product); ?></textarea>
             </div>
 
@@ -94,18 +98,21 @@ require_once "../includes/header.php";
                 <div class="col-md-4 mb-3">
                     <label class="admin-form-label">Cost Price (₱)</label>
                     
+                  
                     <input type="text" name="cost_price" class="form-control admin-form-input" 
                            value="<?= fieldVal($old, 'cost_price', $product); ?>">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="admin-form-label">Selling Price (₱)</label>
                   
+               
                     <input type="text" name="sell_price" class="form-control admin-form-input" 
                            value="<?= fieldVal($old, 'sell_price', $product); ?>">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="admin-form-label" style="color: var(--arch-brown);">Available Stock (Restock)</label>
                    
+          
                     <input type="text" name="quantity" class="form-control admin-form-input restock-highlight" 
                            value="<?= fieldVal($old, 'quantity', $product); ?>">
                 </div>
@@ -118,6 +125,7 @@ require_once "../includes/header.php";
             </div>
 
           
+   
             <div class="mb-4">
                 <label class="admin-form-label">Gallery Photos</label>
 
@@ -150,6 +158,7 @@ require_once "../includes/header.php";
                 </button>
                 
               
+                
                 <button type="submit" form="deleteProductForm" class="admin-edit-delete-btn"
                         onclick="return confirm('Are you sure you want to delete \'<?= addslashes(htmlspecialchars($product['item_name'])); ?>\'?');">
                     <i class="fa-solid fa-trash me-2"></i> Delete Product

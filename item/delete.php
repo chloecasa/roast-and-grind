@@ -1,7 +1,6 @@
 <?php
-// item/delete.php - FR-10: Delete Product & Inventory Record
-// Deleting is a POST-only action (never a plain link), admin only.
-require_once "../includes/admin_check.php"; // FR-3: admin only, runs before any output
+
+require_once "../includes/admin_check.php"; 
 require_once "../includes/config.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -17,7 +16,7 @@ if ($item_id <= 0) {
     exit;
 }
 
-// Make sure the product exists (and remember its name for the confirmation message)
+
 $stmt_find = mysqli_prepare($conn, "SELECT item_name FROM item WHERE item_id = ?");
 mysqli_stmt_bind_param($stmt_find, "i", $item_id);
 mysqli_stmt_execute($stmt_find);
@@ -39,8 +38,7 @@ try {
     mysqli_stmt_execute($stmt_stock);
     mysqli_stmt_close($stmt_stock);
 
-    // item_images and reviews are removed by their foreign keys (ON DELETE CASCADE);
-    // order_items keeps its rows and just sets item_id to NULL, so order history stays intact.
+    
     $sql_item = "DELETE FROM item WHERE item_id = ?";
     $stmt_item = mysqli_prepare($conn, $sql_item);
     mysqli_stmt_bind_param($stmt_item, "i", $item_id);

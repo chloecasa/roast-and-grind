@@ -1,6 +1,5 @@
 <?php
-// admin/order_update.php - FR-19: change an order's status
-//                          FR-16: Canceled returns the items to stock
+
 include('../includes/admin_check.php');
 include('../includes/config.php');
 require_once('../includes/send_receipt.php'); 
@@ -45,7 +44,6 @@ try {
         throw new RuntimeException("An order that is {$order['status']} cannot be moved back to $new_status.");
     }
 
-    // FR-16: Canceled -> give every purchased quantity back to stock
     if ($new_status === 'Canceled') {
         $lines = mysqli_prepare($conn, "SELECT item_id, quantity FROM order_items WHERE order_id = ?");
         mysqli_stmt_bind_param($lines, 'i', $order_id);

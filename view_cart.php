@@ -1,5 +1,5 @@
 <?php
-// view_cart.php - FR-17
+
 include('./includes/session.php');
 include('./includes/header.php');
 include('./includes/config.php');
