@@ -317,20 +317,21 @@ include('includes/header.php');
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-white">Your Bank (Sent From)</label>
-                <select id="bankNameInput" class="form-select" required>
-                    <option value="BDO">BDO Unibank</option>
-                    <option value="BPI">BPI</option>
-                    <option value="Metrobank">Metrobank</option>
-                    <option value="UnionBank">UnionBank</option>
-                    <option value="Maya Bank">Maya Bank</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label class="form-label small fw-bold text-white">Transfer Reference / Confirmation Number</label>
-                <input type="text" id="bankRefNo" class="form-control" placeholder="e.g. BDO-9823412" maxlength="16" required>
-            </div>
+           
+<div class="mb-3">
+    <label class="form-label small fw-bold text-white">Your Bank (Sent From)</label>
+    <select id="bankNameInput" class="form-select" required>
+        <option value="BDO">BDO Unibank</option>
+        <option value="BPI">BPI</option>
+        <option value="Metrobank">Metrobank</option>
+        <option value="UnionBank">UnionBank</option>
+        <option value="Maya Bank">Maya Bank</option>
+    </select>
+</div>
+<div class="mb-4">
+    <label class="form-label small fw-bold text-white">Transfer Reference / Confirmation Number</label>
+    <input type="text" id="bankRefNo" class="form-control" placeholder="e.g. BDO-9823412" maxlength="16" required>
+</div>
 
             <button type="button" class="modal-pill-btn w-100" onclick="saveBankDetails()">
                 Confirm Bank Details
@@ -426,6 +427,37 @@ function saveGCashDetails() {
     document.getElementById('checkGCash').className = 'fa-solid fa-check-circle fs-4 text-success';
 
     bootstrap.Modal.getInstance(document.getElementById('gcashModal')).hide();
+}
+
+function saveBankDetails() {
+    
+    const bankSelect = document.getElementById('bankNameInput');
+    const refInput   = document.getElementById('bankRefNo');
+    
+  
+    if (!bankSelect || !refInput || !refInput.value.trim()) {
+        alert("Please enter your Transfer Reference Number.");
+        return;
+    }
+
+    const bank = bankSelect.value;
+    const ref  = refInput.value.trim();
+
+    
+    paymentInput.value = "Bank Transfer"; 
+    
+   
+    clearChecks();
+    document.getElementById('cardBank').classList.add('active');
+    document.getElementById('descBank').innerHTML = '<span class="text-success fw-bold">✓ ' + bank + ' #' + ref + ' confirmed</span>';
+    document.getElementById('checkBank').className = 'fa-solid fa-check-circle fs-4 text-success';
+
+    
+    const modalEl = document.getElementById('bankModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+    }
 }
 
 function saveCardDetails() {
